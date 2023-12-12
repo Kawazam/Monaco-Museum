@@ -17,19 +17,32 @@ async function InitApp() {
     createDefaultCamera: false,
     startSimulation: "on-assets-loaded",
   });
+  await InitFirstPersonController(characterControllerSceneUUID);
+  const entities = await SDK3DVerse.engineAPI.findEntitiesByEUID('7875aa33-7421-47b0-bcba-884aed856227');
+  console.log(entities);
+  let scriptComponent = entities[0].getComponent("script_map");
+  console.log(entities);
+  
   //const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
   //SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
 
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) =>
   {
       console.log(emitterEntity, " exited trigger of ", triggerEntity);
+      
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
+      console.log(scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
+      entities[0].setComponent("script_map", scriptComponent);
   });
   SDK3DVerse.engineAPI.onEnterTrigger((emitterEntity, triggerEntity) =>
   {
       console.log(emitterEntity, " enter trigger of ", triggerEntity);
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 1;
+      console.log(scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
+      entities[0].setComponent("script_map", scriptComponent);
   });
 
-  await InitFirstPersonController(characterControllerSceneUUID);
+  
 }
 
 //------------------------------------------------------------------------------
