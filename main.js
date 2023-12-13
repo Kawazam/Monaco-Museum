@@ -75,3 +75,5 @@ async function InitFirstPersonController(charCtlSceneUUID) {
   SDK3DVerse.setMainCamera(firstPersonCamera);
   
 }
+
+
