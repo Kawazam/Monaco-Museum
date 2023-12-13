@@ -22,9 +22,10 @@ async function InitApp() {
   console.log(entities);
   let scriptComponent = entities[0].getComponent("script_map");
   console.log(entities);
+  console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
   
-  //const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
-  //SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
+  const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
+  SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
 
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) =>
   {
@@ -33,6 +34,7 @@ async function InitApp() {
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
       console.log(scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
       entities[0].setComponent("script_map", scriptComponent);
+      console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
   });
   SDK3DVerse.engineAPI.onEnterTrigger((emitterEntity, triggerEntity) =>
   {
@@ -40,6 +42,7 @@ async function InitApp() {
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 1;
       console.log(scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
       entities[0].setComponent("script_map", scriptComponent);
+      console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
   });
 
   
