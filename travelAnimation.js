@@ -1,6 +1,7 @@
 //--------------------------------------------------------------------------------------------------
-import utils                from './utils';
-import { vec3, quat, mat4 } from 'gl-matrix';
+//import utils                from './utils';
+//import { vec3, quat, mat4 } from './node_modules/gl-matrix/gl-matrix.js';
+const { vec3, quat, mat4 } = window.glMatrix;
 
 //--------------------------------------------------------------------------------------------------
 // Globals loaded from public/index.html
@@ -8,6 +9,13 @@ const SDK3DVerse                        = window.SDK3DVerse;
 const SDK3DVerse_ThreeJS_Ext            = window.SDK3DVerse_ThreeJS_Ext;
 const SDK3DVerse_ViewportDomOverlay_Ext = window.SDK3DVerse_ViewportDomOverlay_Ext;
 const SDK3DVerse_SplineDisplay_Ext      = window.SDK3DVerse_SplineDisplay_Ext;
+
+// const anim = new TravelAnimation();
+// await anim.init();
+// const cube = (await SDK3DVerse.engineAPI.findEntitiesByEUID('efa9d792-33b3-48c3-b14b-2841347eebb9'))[0];
+// const spline = (await SDK3DVerse.engineAPI.findEntitiesByEUID('e389c1e0-551a-48a3-b1a4-d436d1a442e4'))[0];
+
+// await anim.gotoSplineAndTravel(cube, spline);
 
 //--------------------------------------------------------------------------------------------------
 export default class TravelAnimation
@@ -37,7 +45,7 @@ export default class TravelAnimation
         //       So we keep a ref on the curve before hidding splines, but that means
         //       if the spline is updated then we'll not catch it...
         await this.showSplines();
-
+        console.log(this.splines);
         for(const spline of this.splines)
         {
             spline.curvePersistence = spline.curve;
@@ -156,7 +164,8 @@ export default class TravelAnimation
         const travel             = { isAsyncTask: true, iStopped: false };
         this.travels[entityRTID] = travel;
 
-        await utils.sleep(waitBeforeStart * 1000);
+        //await utils.sleep(waitBeforeStart * 1000);
+        await new Promise(resolve => setTimeout(resolve, waitBeforeStart * 1000));
 
         if(!travel.iStopped)
         {
