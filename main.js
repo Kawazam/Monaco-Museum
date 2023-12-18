@@ -17,19 +17,35 @@ async function InitApp() {
     createDefaultCamera: false,
     startSimulation: "on-assets-loaded",
   });
-  //const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
-  //SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
+  await InitFirstPersonController(characterControllerSceneUUID);
+  const entities = await SDK3DVerse.engineAPI.findEntitiesByEUID('7875aa33-7421-47b0-bcba-884aed856227');
+  console.log(entities);
+  let scriptComponent = entities[0].getComponent("script_map");
+  console.log(entities);
+  console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
+  
+  const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
+  SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
 
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) =>
   {
       console.log(emitterEntity, " exited trigger of ", triggerEntity);
+      
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
+      console.log(scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
+      entities[0].setComponent("script_map", scriptComponent);
+      console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
   });
   SDK3DVerse.engineAPI.onEnterTrigger((emitterEntity, triggerEntity) =>
   {
       console.log(emitterEntity, " enter trigger of ", triggerEntity);
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 1;
+      console.log(scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
+      entities[0].setComponent("script_map", scriptComponent);
+      console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
   });
 
-  await InitFirstPersonController(characterControllerSceneUUID);
+  
 }
 
 //------------------------------------------------------------------------------
@@ -75,3 +91,112 @@ async function InitFirstPersonController(charCtlSceneUUID) {
   SDK3DVerse.setMainCamera(firstPersonCamera);
   
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+  // Fonction pour ajouter un corail à la liste
+  function addCoral() {
+    /*  // Récupère les valeurs des champs de texte
+      let newCoralName = document.getElementById("newCoralName").value;
+      let newCoralType = document.getElementById("newCoralType").value;
+
+      // Vérifie si les champs ne sont pas vides
+      if (newCoralName.trim() !== "" && newCoralType.trim() !== "") {
+          // Crée un nouvel élément li
+          let newLi = document.createElement("li");
+
+          // Ajoute le texte dans l'élément li
+          newLi.appendChild(document.createTextNode(`${newCoralName} - ${newCoralType}`));
+
+          // Ajoute l'élément li à la liste existante
+          document.getElementById("coralList").appendChild(newLi);
+
+          // Efface les champs de texte après l'ajout
+          document.getElementById("newCoralName").value = "";
+          document.getElementById("newCoralType").value = "";
+      }*/
+  }
+
+  // Associe la fonction addCoral à l'événement click du bouton
+  document.getElementById("addCoralBtn").addEventListener("click", addCoral);
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+  // Fonction pour ajouter un corail à la liste
+  function addCoral() {
+      // Récupère les valeurs des champs de texte
+      let newCoralName = document.getElementById("newCoralName").value;
+      let newCoralType = document.getElementById("newCoralType").value;
+
+      // Vérifie si les champs ne sont pas vides
+      if (newCoralName.trim() !== "" && newCoralType.trim() !== "") {
+          // Crée un nouvel élément li
+          let newLi = document.createElement("li");
+
+          // Ajoute le texte dans l'élément li
+          newLi.appendChild(document.createTextNode(`${newCoralName} - ${newCoralType}`));
+
+          // Ajoute l'élément li à la liste existante
+          document.getElementById("coralList").appendChild(newLi);
+
+          // Efface les champs de texte après l'ajout
+          document.getElementById("newCoralName").value = "";
+          document.getElementById("newCoralType").value = "";
+      }
+  }
+
+  // Associe la fonction addCoral à l'événement click du bouton
+  document.getElementById("addCoralBtn").addEventListener("click", addCoral);
+});
+
+
+const coralNumber = {
+  planted: [],
+  notPlanted: [],
+  coralLevel: {
+    blue: [],
+    red: [],
+    green: [],
+    white: [],
+    gold: [],
+  }
+}
+
+// IL NOUS FAUDRA SI DESSOUS les pourcentges de rops de DNA pour chaque classe.
+/*const coralDrop = {
+  blue: 
+  red: 
+  green:                
+  white:
+  gold: 
+}*/
+
+function addCoral(nom, type, statut) {
+  var nouveauCoral = {
+      nom: nom,
+      type: type,
+      statut: statut
+  };
+
+  // Ajoute le corail à la liste appropriée en fonction de son statut
+  if (statut === 'plante') {
+      listeCoraux.plantes.push(nouveauCoral);
+  } else if (statut === 'deplante') {
+      listeCoraux.deplantes.push(nouveauCoral);
+  }
+
+  // Ajoute le corail à la liste du type de corail
+  if (listeCoraux.types[type]) {
+      listeCoraux.types[type].push(nouveauCoral);
+  } else {
+      listeCoraux.types[type] = [nouveauCoral];
+  }
+}
+
+
+
+
+import {
+  publicToken,
+  mainSceneUUID,
+  characterControllerSceneUUID,
+} from "./travelAnimations.js";
