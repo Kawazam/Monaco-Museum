@@ -75,3 +75,49 @@ async function InitFirstPersonController(charCtlSceneUUID) {
   SDK3DVerse.setMainCamera(firstPersonCamera);
   
 }
+
+//-----------------------------------------------------------------------------
+
+// Fonction pour afficher le terminal avec anim
+function afficherModale() {
+    const modal = document.getElementById('maModal');
+    const body = document.body;
+    modal.style.display = 'block';
+    body.classList.add('body-overlay');
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 1000); // Delay the addition of 'show' class for the animation to take effect
+}
+
+// Fonction pour fermer le terminal
+function fermerModale() {
+    const modal = document.getElementById('maModal');
+    const body = document.body;
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        body.classList.remove('body-overlay');
+    }, 1000); // Delay the removal of 'show' class for the animation to take effect
+}
+
+// Fermer le terminal lorsque l'utilisateur clique en dehors de la zone
+window.onclick = function (event) {
+    const modal = document.getElementById('maModal');
+    const body = document.body;
+    if (event.target === modal) {
+        fermerModale();
+    }
+};
+
+// Fonction pour valider le contenu du terminal
+function validerModal() {
+    const nom = document.getElementById('nom').value;
+    const message = document.getElementById('message').value;
+
+    // Vous pouvez faire quelque chose avec les valeurs, par exemple, les afficher dans la console
+    console.log('Nom:', nom);
+    console.log('Message:', message);
+
+    // Fermer la fenêtre modale après validation
+    fermerModale();
+}
