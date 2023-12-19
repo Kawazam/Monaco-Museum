@@ -55,7 +55,7 @@ async function InitCubeTravel()
   const fishEntities = await fishesEntity.getChildren();
   for(const fish of fishEntities) {
     const children = await fish.getChildren();
-    const fishMesh = children.find(e => e.getName() === 'fish');
+    const fishMesh = children.find(e => e.getName() === 'mesh');
     const fishPath = children.find(e => e.getName() === 'spline_path');
 
     const travellingSpline = findTravellingSplineFromEntity(fishPath);
@@ -65,13 +65,13 @@ async function InitCubeTravel()
       continue;
     }
 
-    await anim.gotoSplineAndTravel(fishMesh, travellingSpline, 5, 1);
+    anim.gotoSplineAndTravel(fishMesh, travellingSpline, 5, 1);
   }
 }
 
 //------------------------------------------------------------------------------
 function findTravellingSplineFromEntity(entity) {
-  return anim.splines.find(s => s.parentEntity.getName() === entity.getName());
+  return anim.splines.find(s => s.parentEntity.getEUID() === entity.getEUID());
 }
 
 //------------------------------------------------------------------------------
