@@ -120,34 +120,6 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("addCoralBtn").addEventListener("click", addCoral);
 });
 
-document.addEventListener("DOMContentLoaded", function() {
-  // Fonction pour ajouter un corail à la liste
-  function addCoral() {
-      // Récupère les valeurs des champs de texte
-      let newCoralName = document.getElementById("newCoralName").value;
-      let newCoralType = document.getElementById("newCoralType").value;
-
-      // Vérifie si les champs ne sont pas vides
-      if (newCoralName.trim() !== "" && newCoralType.trim() !== "") {
-          // Crée un nouvel élément li
-          let newLi = document.createElement("li");
-
-          // Ajoute le texte dans l'élément li
-          newLi.appendChild(document.createTextNode(`${newCoralName} - ${newCoralType}`));
-
-          // Ajoute l'élément li à la liste existante
-          document.getElementById("coralList").appendChild(newLi);
-
-          // Efface les champs de texte après l'ajout
-          document.getElementById("newCoralName").value = "";
-          document.getElementById("newCoralType").value = "";
-      }
-  }
-
-  // Associe la fonction addCoral à l'événement click du bouton
-  document.getElementById("addCoralBtn").addEventListener("click", addCoral);
-});
-
 
 const coralNumber = {
   planted: [],
@@ -161,42 +133,36 @@ const coralNumber = {
   }
 }
 
-// IL NOUS FAUDRA SI DESSOUS les pourcentges de rops de DNA pour chaque classe.
-/*const coralDrop = {
-  blue: 
-  red: 
-  green:                
-  white:
-  gold: 
-}*/
-
 function addCoral(nom, type, statut) {
-  var nouveauCoral = {
-      nom: nom,
-      type: type,
-      statut: statut
+  const coralSpecs = {
+      coralName: coralName,
+      coralType: coralType,
+      coralStatut: coralStatut
   };
 
   // Ajoute le corail à la liste appropriée en fonction de son statut
-  if (statut === 'plante') {
-      listeCoraux.plantes.push(nouveauCoral);
-  } else if (statut === 'deplante') {
-      listeCoraux.deplantes.push(nouveauCoral);
+  if (coralStatut === 'planted') {
+      coralNumber.planted.push(planted);
+  } else if (coralStatut === 'notplanted') {
+      coralNumber.notPlanted.push(notPlanted);
   }
 
   // Ajoute le corail à la liste du type de corail
-  if (listeCoraux.types[type]) {
-      listeCoraux.types[type].push(nouveauCoral);
+  if (coralNumber.types[type]) {
+      coralNumber.types[type].push(coralType);
   } else {
-      listeCoraux.types[type] = [nouveauCoral];
+      coralNumber.types[type] = [coralType];
   }
+
+  
 }
 
 
 
 
-import {
+/* import {
   publicToken,
   mainSceneUUID,
   characterControllerSceneUUID,
 } from "./travelAnimations.js";
+*/
