@@ -44,7 +44,7 @@ async function InitApp() {
       entities[0].setComponent("script_map", scriptComponent);
       console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
   });
-
+  await SplinesForFishes();
   
 }
 
@@ -92,6 +92,60 @@ async function InitFirstPersonController(charCtlSceneUUID) {
   
 }
 
+//------------------------------------------------------------------------------
+const anim = new TravelAnimation();
+
+//------------------------------------------------------------------------------
+window.fishes = {};
+async function SplinesForFishes()
+{
+  await anim.init();
+  //const cube = (await SDK3DVerse.engineAPI.findEntitiesByEUID('51efcfcc-4888-45a9-8b39-736769f0f60a'))[0];
+  //const spline = (await SDK3DVerse.engineAPI.findEntitiesByEUID('70842758-a1bf-4b04-b29b-5c9b24808f98'))[0];
+
+  const rootEntities = await SDK3DVerse.engineAPI.getRootEntities();
+  const fishesEntity = rootEntities.find(entity => {
+    return entity.getName() === 'fishes';
+  });
+
+  const fishEntities = await fishesEntity.getChildren();
+  for(const fish of fishEntities) {
+    const children = await fish.getChildren();
+    const fishMesh = children.find(e => e.getName() === 'mesh');
+    const fishPath = children.find(e => e.getName() === 'spline_path');
+
+    const travellingSpline = findTravellingSplineFromEntity(fishPath);
+
+    if(!travellingSpline) {
+      console.error('Travelling spline not found for entity', fishPath.getName());
+      continue;
+    }
+
+    fishes[fish.getID()] = { 
+      travelling: true,
+      fish,
+      fishMesh,
+      fishPath,
+      travellingSpline
+    };
+    loopOnFishSplineTravel(fishes[fish.getID()], fishMesh, travellingSpline, 4, 0.1);
+  }
+}
+
+//------------------------------------------------------------------------------
+async function loopOnFishSplineTravel(fish, entity, spline, speed, delay)
+{
+  while(fish.travelling)
+  {
+    await anim.gotoSplineAndTravel(entity, spline, speed, delay);
+  }
+}
+
+//------------------------------------------------------------------------------
+function findTravellingSplineFromEntity(entity) {
+  return anim.splines.find(s => s.parentEntity.getEUID() === entity.getEUID());
+}
+
 //-----------------------------------------------------------------------------
 
 // Fonction pour afficher le terminal avec anim
@@ -134,6 +188,6 @@ function validerModal() {
     console.log('Nom:', nom);
     console.log('Message:', message);
 
-    // Fermer la fenêtre modale après validation
+    // Fermer la fenï¿½tre modale aprï¿½s validation
     fermerModale();
 }
