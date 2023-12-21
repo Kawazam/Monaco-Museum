@@ -1,0 +1,12 @@
+{
+    "coraux": [
+        {
+            "type": "corail1",
+            "quantity": 5
+        },
+        {
+            "type": "corail2",
+            "quantity": 48
+        }
+    ]
+}

@@ -14,10 +14,10 @@
 body {
   width: 100vw;
   height: 100dvh;
-  background-color: black;
-  margin: auto;
+  /* background-color: black; */
+  margin: 0;
   display: flex;
-  font-family: "Inter", sans-serif;
+  font-family: "Gagalin";
   overflow: hidden;
 }
 
@@ -42,7 +42,133 @@ body {
   outline: none;
 }
 
-/* Styles pour la fenêtre modale */
+#display-canvas {
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+}
+
+/*MENU*/
+#menu {
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  visibility: hidden;
+}
+
+/*MENU BAR*/
+#menu-menubar {
+  position: inherit;
+  width: 60vw;
+  height: 15vh;
+  left: 20vw;
+  top: 10vh;
+  background-color: rgba(99, 181, 201, 1);
+  border-radius: 40px;
+}
+
+.menu-menubar-title {
+  position: inherit;
+  display: grid;
+  align-items: center;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 4em;
+  user-select: none;
+  cursor: pointer;
+  border-radius: 40px;
+  color: #fff;
+  background-color: rgba(28, 129, 175, 1);
+}
+
+.selected_title {
+  color: rgba(27, 58, 140, 1);
+  background-color: rgba(162, 222, 212, 1);
+}
+
+#menu-menubar-title-inventory {
+  position: inherit;
+  width: 40%;
+  height: 100%;
+  left: 1%;
+}
+
+#menu-menubar-title-stats {
+  position: inherit;
+  width: 28%;
+  height: 100%;
+  left: 42%;
+}
+
+#menu-menubar-title-map {
+  position: inherit;
+  width: 28%;
+  height: 100%;
+  left: 71%;
+}
+
+/*MENU BLOC*/
+#menu-bloc {
+  position: inherit;
+  width: 60vw;
+  height: 65vh;
+  left: 20vw;
+  top: 25vh;
+  background: linear-gradient(to left, rgba(190, 212, 255, 0.8), rgba(222, 255, 235, 0.8));
+  border-radius: 40px;
+}
+
+.menu-bloc-all {
+  position: inherit;
+  width: 100%;
+  height: 100%;
+  /*display: grid;
+  align-items: center;
+  text-transform: uppercase;
+  text-align: center;*/
+  font-size: 4em;
+  user-select: none;
+  color: rgba(27, 58, 140, 1);
+}
+
+#menu-bloc-inventory {
+  visibility: hidden;
+}
+
+#menu-bloc-stats {
+  visibility: hidden;
+}
+
+#menu-bloc-map {
+  visibility: hidden;
+}
+
+.menu-bloc-inventory-cell {
+  position: inherit;
+  width: 15%;
+  max-height: 20%;
+  aspect-ratio: 1/1;
+
+  display: grid;
+  align-items: center;
+  text-transform: uppercase;
+  text-align: center;
+
+  font-size: 0.5em;
+  color: #fff;
+  background-color: black;
+  border-radius: 40px;
+  visibility: hidden;
+}
+
+
+
+
+
+/* Styles pour la fenï¿½tre modale */
 .modal {
     display: none;
     position: fixed;
@@ -80,7 +206,7 @@ body {
     cursor: pointer;
 }
 
-/* Style pour le bouton centré */
+/* Style pour le bouton centrï¿½ */
 .center-btn {
     position: absolute;
     top: 50%;
@@ -110,7 +236,7 @@ body {
     transform: translate(-50%, -50%) scale(1);
 }
 
-/* Style pour les éléments de formulaire dans la fenêtre modale */
+/* Style pour les ï¿½lï¿½ments de formulaire dans la fenï¿½tre modale */
 .modal-content label {
     display: block;
     margin-top: 10px;
