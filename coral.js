@@ -1,156 +1,126 @@
-class Coral_1 {
+class Cube_1 {
  //La classe du corail "coraux_tuyaux_adulte"
-    Mesh_specs(MeshEUID){
-        const MeshEUID = "c5264b70-7b21-452b-aa9d-fb0e24958885 "
+    Mesh_specs(MeshEUID, MeshCoral){
+        const MeshEUID = "13d59446-c60e-498d-bee9-7623304083cf"
+        const MeshCoral= "71b7c633-3595-47cb-bd75-b115be6baa9d"
     }
-    Price = ; // INT     Valeur en integer
+    //INT Price = ;     Valeur en integer
     Name = "coraux_tuyaux_adulte" //STRING   insertion du nom de notre corail
     Research_Level = ; //INT    Research LEvel en integer
-    DNA_Drop_Percent = 1; //INT     Le pourcentage de drop des DNA Tokens
+    DNA_Drop_Percent = [1, 12, 97]; //INT     Le pourcentage de drop des DNA Tokens
     Money_Drop_per_Second = ; //INT       Le taux d'argent d'argent que tombe un corail
 
 }
 
 
-class Coral_2 {
+class Cube_2 {
     //La classe du corail "coraux_tuyaux_adulte"
-       Mesh_specs(MeshEUID){
-           const MeshEUID = "d2e1ca8e-16d1-43ba-918d-6e9a7c388334"
+       Mesh_specs(MeshEUID, MeshCoral){
+           const MeshEUID = "c60c0ab5-1c71-4f4b-9dd0-ca6e5a782a55"
+           const MeshCoral = "1d7fd2d3-d2fe-4f5f-b795-095f133fd88c"
        }
-       Price = ; // INT     Valeur en integer
+       //INT Price = ;     Valeur en integer
        Name = "coraux_tuyaux_ado" //STRING   insertion du nom de notre corail
-       Research_Level = ; //INT    Research LEvel en integer
-       DNA_Drop_Percent = 1; //INT     Le pourcentage de drop des DNA Tokens
+//INT Research_Level    Research LEvel en integer
+       DNA_Drop_Percent = [5, 65]; //INT     Le pourcentage de drop des DNA Tokens
        Money_Drop_per_Second = ; //INT       Le taux d'argent d'argent que tombe un corail
    
    }
 
 
-   class Coral_3 {
+   class Cube_3 {
     //La classe du corail "coraux_tuyaux_adulte"
-       Mesh_specs(MeshEUID){
-           const MeshEUID = "1b2dd7d5-4a42-418f-8022-4f11c02aec0d"
+       Mesh_specs(MeshEUID, MeshCoral){
+           const MeshEUID = "b17a1511-e986-4ab8-97dc-67a943cf2d77"
+           const MeshCoral = "f0f824db-f533-4a5d-81fc-092836149429"
        }
-       Price = ; // INT     Valeur en integer
+       //INT Price = ;     Valeur en integer
        Name = "coraux_tuyaux_bebe" //STRING   insertion du nom de notre corail
-       Research_Level = ; //INT    Research LEvel en integer
-       DNA_Drop_Percent = 1; //INT     Le pourcentage de drop des DNA Tokens
+//INT Research_Level    Research LEvel en integer
+       DNA_Drop_Percent = [20];  //INT     Le pourcentage de drop des DNA Tokens
        Money_Drop_per_Second = ; //INT       Le taux d'argent d'argent que tombe un corail
    
    }
 
 
-   class Coral_4 {
+   class Cube_4 {
     //La classe du corail "coraux_tuyaux_adulte"
-       Mesh_specs(MeshEUID){
-           const MeshEUID = "bc1a2626-7e79-406a-9deb-92bce94e5e73"
+       Mesh_specs(MeshEUID, MeshCoral){
+           const MeshEUID = "9aeccbaf-c039-404f-8756-b6a800584401"
+           const MeshCoral = "3d2c58e2-0c6b-40d9-afd2-ba74449b9654"
        }
-       Price = ; // INT     Valeur en integer
+       //INT Price = ;     Valeur en integer
        Name = "coraux_arbre_bebe" //STRING   insertion du nom de notre corail
-       Research_Level = ; //INT    Research LEvel en integer
-       DNA_Drop_Percent = 1; //INT     Le pourcentage de drop des DNA Tokens
+//INT Research_Level    Research LEvel en integer
+       DNA_Drop_Percent = [38];  //INT     Le pourcentage de drop des DNA Tokens
        Money_Drop_per_Second = ; //INT       Le taux d'argent d'argent que tombe un corail
    
    }
 
 
-   class Coral_5 {
+   class Cube_5 {
     //La classe du corail "coraux_tuyaux_adulte"
-       Mesh_specs(MeshEUID){
-           const MeshEUID = "fcfaabd0-c2ff-4bb4-b2c5-50f6b9906038"
+       Mesh_specs(MeshEUID, MeshCoral){
+           const MeshEUID = "cd2fbbb0-badc-4fff-99c9-4072f2e318ca"
+           const MeshCoral = "37e5b2c8-e6d5-44eb-a0b1-424b02db2661"
        }
-       Price = ; // INT     Valeur en integer
+       //INT Price = ;     Valeur en integer
        Name = "coraux_arbre_adulte" //STRING   insertion du nom de notre corail
-       Research_Level = ; //INT    Research LEvel en integer
-       DNA_Drop_Percent = 1; //INT     Le pourcentage de drop des DNA Tokens
+//INT Research_Level    Research LEvel en integer
+       DNA_Drop_Percent = [9, 10, 84];  //INT     Le pourcentage de drop des DNA Tokens
        Money_Drop_per_Second = ; //INT       Le taux d'argent d'argent que tombe un corail
    
    }
 
 
-   class Coral_6 {
+   class Cube_6 {
     //La classe du corail "coraux_tuyaux_adulte"
-       Mesh_specs(MeshEUID){
-           const MeshEUID = "3ff02fa7-55e2-47ea-bc70-36fe86c87675"
+       Mesh_specs(MeshEUID, MeshCoral){
+           const MeshEUID = "1c7b029e-2de4-4e5b-9da8-6a85c12739ff"
+           const MeshCoral = "77445afe-41d1-4988-92e5-2576528bca5c"
        }
-       Price = ; // INT     Valeur en integer
+       //INT Price = ;     Valeur en integer
        Name = "coraux_plat_adulte" //STRING   insertion du nom de notre corail
-       Research_Level = ; //INT    Research LEvel en integer
-       DNA_Drop_Percent = 1; //INT     Le pourcentage de drop des DNA Tokens
+//INT Research_Level    Research LEvel en integer
+       DNA_Drop_Percent = [11, 30, 45];  //INT     Le pourcentage de drop des DNA Tokens
        Money_Drop_per_Second = ; //INT       Le taux d'argent d'argent que tombe un corail
    
    }
 
 
-   class Coral_7 {
+   class Cube_7 {
     //La classe du corail "coraux_tuyaux_adulte"
-       Mesh_specs(MeshEUID){
-           const MeshEUID = "f98d5810-1da4-4ea7-977f-c0813a4de5d4"
+       Mesh_specs(MeshEUID, MeshCoral){
+           const MeshEUID = "3aa968e0-d52a-43cc-8e43-ed62b0fcdbad"
+           const MeshCoral = "c8a4ac6e-45bb-44f9-90bf-2537fb7e65b6"
        }
-       Price = ; // INT     Valeur en integer
+       //INT Price = ;     Valeur en integer
        Name = "coraux_plat_bebe" //STRING   insertion du nom de notre corail
-       Research_Level = ; //INT    Research LEvel en integer
-       DNA_Drop_Percent = 1; //INT     Le pourcentage de drop des DNA Tokens
+//INT Research_Level    Research LEvel en integer
+       DNA_Drop_Percent = [77];  //INT     Le pourcentage de drop des DNA Tokens
        Money_Drop_per_Second = ; //INT       Le taux d'argent d'argent que tombe un corail
    
    }
 
 
-   class Coral_8 {
+   class Cube_8 {
     //La classe du corail "coraux_tuyaux_adulte"
-       Mesh_specs(MeshEUID){
-           const MeshEUID = "78e2060f-fc01-4350-a863-cdd6a8e72284"
+       Mesh_specs(MeshEUID, MeshCoral){
+           const MeshEUID = "fe7218c8-f9c4-4593-aa16-80116bb367c5"
+           const MeshCoral = "6395588c-6c7c-484d-a6a9-0b690d837708"
        }
-       Price = ; // INT     Valeur en integer
+       //INT Price = ;     Valeur en integer
        Name = "coraux_plat_ado" //STRING   insertion du nom de notre corail
-       Research_Level = ; //INT    Research LEvel en integer
-       DNA_Drop_Percent = 1; //INT     Le pourcentage de drop des DNA Tokens
+//INT Research_Level    Research LEvel en integer
+       DNA_Drop_Percent = [5, 39];  //INT     Le pourcentage de drop des DNA Tokens
        Money_Drop_per_Second = ; //INT       Le taux d'argent d'argent que tombe un corail
    
    }
 
 
-   class Coral_9 {
-    //La classe du corail "coraux_tuyaux_adulte"
-       Mesh_specs(MeshEUID){
-           const MeshEUID = "f29e1f37-a534-4d2f-b921-a32e3aa5cbe0"
-       }
-       Price = ; // INT     Valeur en integer
-       Name = "coraux_boule_adulte" //STRING   insertion du nom de notre corail
-       Research_Level = ; //INT    Research LEvel en integer
-       DNA_Drop_Percent = 1; //INT     Le pourcentage de drop des DNA Tokens
-       Money_Drop_per_Second = ; //INT       Le taux d'argent d'argent que tombe un corail
-   
-   }
-
-
-   class Coral_10 {
-    //La classe du corail "coraux_tuyaux_adulte"
-       Mesh_specs(MeshEUID){
-           const MeshEUID = "1547a263-6809-4809-948f-ffec603c66bb"
-       }
-       Price = ; // INT     Valeur en integer
-       Name = "coraux_boule_bebe" //STRING   insertion du nom de notre corail
-       Research_Level = ; //INT    Research LEvel en integer
-       DNA_Drop_Percent = 1; //INT     Le pourcentage de drop des DNA Tokens
-       Money_Drop_per_Second = ; //INT       Le taux d'argent d'argent que tombe un corail
-   
-   }
-
-   class Coral_11 {
-    //La classe du corail "coraux_tuyaux_adulte"
-       Mesh_specs(MeshEUID){
-           const MeshEUID = "d9d946ca-9ede-40ac-ae72-bea2a1c3125b"
-       }
-       Price = ; // INT     Valeur en integer
-       Name = "coraux_boule_ado" //STRING   insertion du nom de notre corail
-       Research_Level = ; //INT    Research LEvel en integer
-       DNA_Drop_Percent = 1; //INT     Le pourcentage de drop des DNA Tokens
-       Money_Drop_per_Second = ; //INT       Le taux d'argent d'argent que tombe un corail
-   
-   }
-
-
+class Random_DNA_DROP_Percent{
+    DNA_Drop_Percent.    
+}
 
 
 var coral_list = {};
