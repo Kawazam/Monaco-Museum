@@ -1,77 +1,104 @@
-//------------------------------------------------------------------------------
-import {
-  publicToken,
-  mainSceneUUID,
-  characterControllerSceneUUID,
-} from "./config.js";
+import {publicToken, inventorySceneUUID} from "./config.js";
 
-//------------------------------------------------------------------------------
-window.addEventListener("load", InitApp);
+const inventoryJson = require("./inventory.json");
 
-//------------------------------------------------------------------------------
-async function InitApp() {
-  await SDK3DVerse.joinOrStartSession({
-    userToken: publicToken,
-    sceneUUID: mainSceneUUID,
-    canvas: document.getElementById("display-canvas"),
-    createDefaultCamera: false,
-    startSimulation: "on-assets-loaded",
-  });
-  //const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
-  //SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
+var menu_display  = false;
+var inventory     = true;
+var stats         = false;
+var map           = false;
 
-  SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) =>
-  {
-      console.log(emitterEntity, " exited trigger of ", triggerEntity);
-  });
-  SDK3DVerse.engineAPI.onEnterTrigger((emitterEntity, triggerEntity) =>
-  {
-      console.log(emitterEntity, " enter trigger of ", triggerEntity);
-  });
+var inventory_table = "";
 
-  await InitFirstPersonController(characterControllerSceneUUID);
+const button_inventory      = document.querySelector("#menu-menubar-title-inventory");
+const button_stats          = document.querySelector("#menu-menubar-title-stats");
+const button_map            = document.querySelector("#menu-menubar-title-map");
+
+const display_inventory     = document.querySelector("#menu-bloc-inventory");
+
+for(let i = 1; i < 7; i++) {
+  for(let j = 1; j < 5; j++) {
+    inventory_table += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
+  }
 }
 
-//------------------------------------------------------------------------------
-async function InitFirstPersonController(charCtlSceneUUID) {
-  // To spawn an entity we need to create an EntityTempllate and specify the
-  // components we want to attach to it. In this case we only want a scene_ref
-  // that points to the character controller scene.
-  const playerTemplate = new SDK3DVerse.EntityTemplate();
-  playerTemplate.attachComponent("scene_ref", { value: charCtlSceneUUID });
+display_inventory.innerHTML = inventory_table;
 
-  // Passing null as parent entity will instantiate our new entity at the root
-  // of the main scene.
-  const parentEntity = null;
-  // Setting this option to true will ensure that our entity will be destroyed
-  // when the client is disconnected from the session, making sure we don't
-  // leave our 'dead' player body behind.
-  const deleteOnClientDisconnection = true;
-  // We don't want the player to be saved forever in the scene, so we
-  // instantiate a transient entity.
-  // Note that an entity template can be instantiated multiple times.
-  // Each instantiation results in a new entity.
-  const playerSceneEntity = await playerTemplate.instantiateTransientEntity(
-    "Player",
-    parentEntity,
-    deleteOnClientDisconnection
-  );
 
-  // The character controller scene is setup as having a single entity at its
-  // root which is the first person controller itself.
-  const firstPersonController = (await playerSceneEntity.getChildren())[0];
-  // Look for the first person camera in the children of the controller.
-  const children = await firstPersonController.getChildren();
-  const firstPersonCamera = children.find((child) =>
-    child.isAttached("camera")
-  );
+//window.addEventListener("load", InitApp); //Init 3DVerse SDK
+document.addEventListener("keydown", checkKeyPress); //Toggle Inventory display
 
-  // We need to assign the current client to the first person controller
-  // script which is attached to the firstPersonController entity.
-  // This allows the script to know which client inputs it should read.
-  SDK3DVerse.engineAPI.assignClientToScripts(firstPersonController);
-  
-  // Finally set the first person camera as the main camera.
-  SDK3DVerse.setMainCamera(firstPersonCamera);
-  
+//Toggle menu section
+button_inventory.addEventListener("click", function(){
+  inventory = true;
+  stats = map = false;
+  toggleMenuSection();
+});
+button_stats.addEventListener("click", function(){
+  stats = true;
+  inventory = map = false;
+  toggleMenuSection();
+});
+button_map.addEventListener("click", function(){
+  map = true;
+  inventory = stats = false;
+  toggleMenuSection();
+});
+
+
+async function InitApp() {
+    await SDK3DVerse.joinOrStartSession ({
+            userToken: publicToken,
+            sceneUUID: inventorySceneUUID,
+            canvas: document.getElementById("display-canvas"),
+            viewportProperties: {
+                defaultControllerType: SDK3DVerse.controller_type.orbit,
+            },
+    });
+}
+
+
+function checkKeyPress(event) {
+  const key = event.key;
+  if (key==='i') {
+    menu_display = !menu_display;
+  }
+
+  if (menu_display) {
+    document.querySelector("#menu").style.visibility = "visible";
+    document.querySelector("#menu-bloc-inventory").style.visibility = inventory ? "visible" : "hidden";
+    for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
+    document.querySelector("#menu-bloc-stats").style.visibility = stats ? "visible" : "hidden";
+    document.querySelector("#menu-bloc-map").style.visibility = map ? "visible" : "hidden";
+  } else {
+    document.querySelector("#menu").style.visibility = "hidden";
+    document.querySelector("#menu-bloc-inventory").style.visibility = "hidden";
+    for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = "hidden";
+    document.querySelector("#menu-bloc-stats").style.visibility = "hidden";
+    document.querySelector("#menu-bloc-map").style.visibility = "hidden";
+    document.querySelector("#display-canvas").focus();
+  }
+}
+
+
+function toggleMenuSection() {
+  button_inventory.classList.toggle("selected_title", inventory);
+  button_stats.classList.toggle("selected_title", stats);
+  button_map.classList.toggle("selected_title", map);
+
+  document.querySelector("#menu-bloc-inventory").style.visibility = inventory ? "visible" : "hidden";
+  for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
+  document.querySelector("#menu-bloc-stats").style.visibility = stats ? "visible" : "hidden";
+  document.querySelector("#menu-bloc-map").style.visibility = map ? "visible" : "hidden";
+}
+
+
+function test() {
+  for(let i = 0; i < inventoryJson.coraux.length; i++) {
+    for(let j = 0; j < 24; j++) {
+      if(document.querySelector("#inventory-cell"+j).innerHTML === "") {
+        document.querySelector("#inventory-cell"+j).innerHTML = inventoryJson.coraux[i].type + " : " + inventoryJson.coraux[i].quantity;
+        break;
+      }
+    }
+  }
 }
