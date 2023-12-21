@@ -73,7 +73,7 @@ async function SplinesForFishes()
       fishPath,
       travellingSpline
     };
-    loopOnFishSplineTravel(fishes[fish.getID()], fishMesh, travellingSpline, 5, 1);
+    loopOnFishSplineTravel(fishes[fish.getID()], fishMesh, travellingSpline, 4, 0.1);
   }
 }
 
