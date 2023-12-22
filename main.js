@@ -23,6 +23,9 @@ import {
   Coral_7,
   Coral_8,
 } from "./Coral.js"
+
+//------------------------------------------------------------------------------
+import TravelAnimation from "./travelAnimation.js";
 //##############################################################################
 
 
@@ -149,13 +152,35 @@ async function InitApp() {
     createDefaultCamera: false,
     startSimulation: "on-assets-loaded",
   });
-
-
+  
   //------------------------------------------------------------------------------
   await InitFirstPersonController(characterControllerSceneUUID);
   
   //------------------------------------------------------------------------------
   canvas.addEventListener('mousedown', () => setFPSCameraController(canvas));
+  
+  //------------------------------------------------------------------------------
+  await SplinesForFishes();
+
+  //------------------------------------------------------------------------------
+  document.addEventListener('keydown', function(event) {
+    // Vérifie si la touche pressée est 't'
+    if (event.key === 't') {
+        // Vérifie si islampvisible est true
+        if (islampvisible === true) {
+          lamp[0].setVisibility(islampvisible);
+          console.log("lamp allumé")
+            // Change la valeur de islampvisible à false
+            islampvisible = false;
+        }
+        else if (islampvisible === false) {
+          lamp[0].setVisibility(islampvisible);
+            // Change la valeur de islampvisible à false
+            islampvisible = true;
+            console.log("lampe éteinte")
+        }
+    }
+  });
 
   //------------------------------------------------------------------------------
   const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3f1d3498-dd14-49df-a6e5-bb13281095d5');
@@ -170,7 +195,7 @@ async function InitApp() {
   const lamp = await SDK3DVerse.engineAPI.findEntitiesByEUID('f95f32ec-fa18-410a-967d-7be768c539d1');
   // const sun  = await SDK3DVerse.engineAPI.findEntitiesByEUID('0e3748a2-ea86-44e0-869b-cddb715dab0e');
   
-  
+  //------------------------------------------------------------------------------
   let islampvisible = false;
   let zone;
   const entities = await SDK3DVerse.engineAPI.findEntitiesByEUID('7875aa33-7421-47b0-bcba-884aed856227');
@@ -178,28 +203,30 @@ async function InitApp() {
   let scriptComponent = entities[0].getComponent("script_map");
   console.log(entities);
   console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
-  //star animation 'moon-sun-anim'
-  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0 });
+  //star animation 'moon-sun-anim' and 'butterfly-fish-2'
+  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 20.0 });
+  SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 });
   
+  //------------------------------------------------------------------------------
   const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
   let outsideTrigger = false;
-
+  
   //------------------------------------------------------------------------------
   function TeleportInside(event) {
     if (event.key === 'e') {
       if (outsideTrigger === true){
         const inside = InsideTpPoint[0].getGlobalTransform();
-      entities[0].setGlobalTransform(inside);
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
-      console.log(scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
-      entities[0].setComponent("script_map", scriptComponent);
-      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities[0])}, 100);
-      document.removeEventListener('keydown', TeleportInside);
+        entities[0].setGlobalTransform(inside);
+        scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
+        console.log(scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
+        entities[0].setComponent("script_map", scriptComponent);
+        setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities[0])}, 100);
+        document.removeEventListener('keydown', TeleportInside);
       }
     }
   }
-
+  
   //------------------------------------------------------------------------------
   function TeleportOutside(event) {
     if (event.key === 'e') {
@@ -216,12 +243,16 @@ async function InitApp() {
   
   //------------------------------------------------------------------------------
   let canPlaceCoral = false;
-
+  
   //------------------------------------------------------------------------------
   function PlaceCoral(event){
     
     if (event.key === 'e'){
       console.log('pressed E')
+      if (zone[0] != "Coral"){
+        zone[0].setComponent('scene_ref',{value : coral_map["empty_zone"], maxRecursionCount: 1});
+        canPlaceCoral = false;
+      }
       canPlaceCoral = true;
       console.log(canPlaceCoral);
       return;
@@ -295,7 +326,7 @@ async function InitApp() {
       document.removeEventListener('keydown', TeleportToHub)
     }
   }
-
+  
   //------------------------------------------------------------------------------
   function TeleportToLab(event){
     if (event.key === 'e'){
@@ -304,8 +335,8 @@ async function InitApp() {
       document.removeEventListener('keydown', TeleportToLab);
     }
   }
-
-
+  
+  //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onEnterTrigger(async (emitterEntity, triggerEntity) =>
   {
     let emitterEntityParent = emitterEntity.getParent();
@@ -336,9 +367,7 @@ async function InitApp() {
       else if (emitterEntity.getParent().getName() == "Plantations"){
         console.log("press E");
         zone = await emitterEntity.getChildren();
-        if (zone[0] != "cube9"){
-          zone[0].setComponent('scene_ref',{value : coral_map["empty_zone"], maxRecursionCount: 1});
-        }
+        console.log(zone[0].getName());
         console.log(emitterEntity," ",emitterEntity.getName()," ",emitterEntityParent," ",zone);
         document.removeEventListener('keydown', PlaceCoral);
         document.addEventListener('keydown', PlaceCoral);
@@ -347,34 +376,13 @@ async function InitApp() {
     }
   });
 
+  //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
     console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
     outsideTrigger = false;
     console.log(outsideTrigger);
 
   });
-
-  document.addEventListener('keydown', function(event) {
-    // Vérifie si la touche pressée est 't'
-    if (event.key === 't') {
-        // Vérifie si islampvisible est true
-        if (islampvisible === true) {
-          lamp[0].setVisibility(islampvisible);
-          console.log("lamp allumé")
-            // Change la valeur de islampvisible à false
-            islampvisible = false;
-        }
-        else if (islampvisible === false) {
-          lamp[0].setVisibility(islampvisible);
-            // Change la valeur de islampvisible à false
-            islampvisible = true;
-            console.log("lampe éteinte")
-        }
-    }
-  });
-
-  await SplinesForFishes();
-  
 }
 //##############################################################################
 

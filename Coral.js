@@ -7,7 +7,7 @@ class Coral_1 {
     }
 
     Mesh_specs() {
-        this.coralMesh1 = "3736a061-4e48-4642-bc9d-d79dfc6b4c40";
+        this.coralMesh1 = "6ae18400-3d3a-4a71-a714-3f6c2337319d";
     }
 }
 
@@ -18,7 +18,7 @@ class Coral_2 {
     }
 
     Mesh_specs() {
-        this.coralMesh2 = "a4c08d35-4888-4c5d-a80c-8824d73e5251";
+        this.coralMesh2 = "f7011b36-2f4a-4b7d-b213-ef5964beb4f0";
     }
 }
 
@@ -29,7 +29,7 @@ class Coral_3 {
     }
 
     Mesh_specs() {
-        this.coralMesh3 = "fb236bac-9b40-47e1-bbfc-08824255690a";
+        this.coralMesh3 = "e1f46b19-4af8-4dca-88b6-659b055b3e33";
     }
 }
 
@@ -40,7 +40,7 @@ class Coral_4 {
     }
 
     Mesh_specs() {
-        this.coralMesh4 = "2ab54c3d-c92b-438d-bee9-6293b3a426d3";
+        this.coralMesh4 = "be51944e-03c4-4c2a-947a-ab27a9eafedb";
     }
 }
 
@@ -51,7 +51,7 @@ class Coral_5 {
     }
 
     Mesh_specs() {
-        this.coralMesh5 = "040f8588-10f6-45a1-a665-24c5921482b0";
+        this.coralMesh5 = "947d424c-7cc3-489a-99d1-fe72af95fd2b";
     }
 }
 
@@ -62,7 +62,7 @@ class Coral_6 {
     }
 
     Mesh_specs() {
-        this.coralMesh6 = "a5233545-e922-4bd6-a244-63d0806f9b1d";
+        this.coralMesh6 = "0bd507d5-9b3d-4f04-8676-2af7573271c2";
     }
 }
 
@@ -73,7 +73,7 @@ class Coral_7 {
     }
 
     Mesh_specs() {
-        this.coralMesh7 = "db675168-0289-4345-9882-a426adf03ea6";
+        this.coralMesh7 = "9de2f365-cf41-4274-9664-505b3289169f";
     }
 }
 
@@ -84,7 +84,7 @@ class Coral_8 {
     }
 
     Mesh_specs() {
-        this.coralMesh8 = "57c3eb87-3cf3-4a1c-a37d-45262699e89c";
+        this.coralMesh8 = "c704af49-451e-4e6e-bb02-cf5ded8dbbf0";
     }
 }
 
