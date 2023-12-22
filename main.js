@@ -1,13 +1,40 @@
+//##############################################################################
+//#                                 IMPORTS                                    #
+//##############################################################################
+
 //------------------------------------------------------------------------------
 import {
   publicToken,
   mainSceneUUID,
   characterControllerSceneUUID,
-  inventorySceneUUID,
+  //inventorySceneUUID,
 } from "./config.js";
 
-const inventoryJson = require("./inventory.json");
+//------------------------------------------------------------------------------
+import {
+  coral_list,
+  coral_map,
+  Coral_1,
+  Coral_2,
+  Coral_3,
+  Coral_4,
+  Coral_5,
+  Coral_6,
+  Coral_7,
+  Coral_8,
+} from "./Coral.js"
+//##############################################################################
 
+
+
+//##############################################################################
+//#                               INVENTORY                                    #
+//##############################################################################
+
+//------------------------------------------------------------------------------
+//const inventoryJson = require("./inventory.json");
+
+//------------------------------------------------------------------------------
 var menu_display  = false;
 var inventory     = true;
 var stats         = false;
@@ -21,16 +48,21 @@ const button_map            = document.querySelector("#menu-menubar-title-map");
 
 const display_inventory     = document.querySelector("#menu-bloc-inventory");
 
+//------------------------------------------------------------------------------
 for(let i = 1; i < 7; i++) {
   for(let j = 1; j < 5; j++) {
     inventory_table += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
   }
 }
 
+//------------------------------------------------------------------------------
 display_inventory.innerHTML = inventory_table;
 
-document.addEventListener("keydown", checkKeyPress); //Toggle Inventory display
+//------------------------------------------------------------------------------
+//Toggle Inventory display
+document.addEventListener("keydown", checkKeyPress);
 
+//------------------------------------------------------------------------------
 //Toggle menu section
 button_inventory.addEventListener("click", function(){
   inventory = true;
@@ -48,16 +80,14 @@ button_map.addEventListener("click", function(){
   toggleMenuSection();
 });
 
+
 //------------------------------------------------------------------------------
-window.addEventListener("load", InitApp);
-
-
 function checkKeyPress(event) {
   const key = event.key;
   if (key==='i') {
     menu_display = !menu_display;
   }
-
+  
   if (menu_display) {
     document.querySelector("#menu").style.visibility = "visible";
     document.querySelector("#menu-bloc-inventory").style.visibility = inventory ? "visible" : "hidden";
@@ -74,58 +104,306 @@ function checkKeyPress(event) {
   }
 }
 
-
+//------------------------------------------------------------------------------
 function toggleMenuSection() {
   button_inventory.classList.toggle("selected_title", inventory);
   button_stats.classList.toggle("selected_title", stats);
   button_map.classList.toggle("selected_title", map);
-
+  
   document.querySelector("#menu-bloc-inventory").style.visibility = inventory ? "visible" : "hidden";
   for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
   document.querySelector("#menu-bloc-stats").style.visibility = stats ? "visible" : "hidden";
   document.querySelector("#menu-bloc-map").style.visibility = map ? "visible" : "hidden";
 }
 
+//------------------------------------------------------------------------------
+/*function test() {
+  for(let i = 0; i < inventoryJson.coraux.length; i++) {
+    for(let j = 0; j < 24; j++) {
+      if(document.querySelector("#inventory-cell"+j).innerHTML === "") {
+        document.querySelector("#inventory-cell"+j).innerHTML = inventoryJson.coraux[i].type + " : " + inventoryJson.coraux[i].quantity;
+        break;
+      }
+    }
+  }
+}*/
+//##############################################################################
+
+
+
+//##############################################################################
+//#                                  GLOBAL                                    #
+//##############################################################################
+
+//------------------------------------------------------------------------------
+window.addEventListener("load", InitApp);
 
 //------------------------------------------------------------------------------
 async function InitApp() {
-  await SDK3DVerse.joinOrStartSession({
+  let canvas = document.getElementById("display-canvas");
+  await SDK3DVerse.startSession({
     userToken: publicToken,
     sceneUUID: mainSceneUUID,
+    // sceneUUID: inventorySceneUUID,
     canvas: document.getElementById("display-canvas"),
     createDefaultCamera: false,
     startSimulation: "on-assets-loaded",
   });
+
+
+  //------------------------------------------------------------------------------
   await InitFirstPersonController(characterControllerSceneUUID);
+  
+  //------------------------------------------------------------------------------
+  canvas.addEventListener('mousedown', () => setFPSCameraController(canvas));
+
+  //------------------------------------------------------------------------------
+  const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3f1d3498-dd14-49df-a6e5-bb13281095d5');
+  const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3c3b76c9-1b50-4f4e-9386-0566896a55ce');
+  const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('24145957-9a15-4752-9b0e-359e14b5ba8e');
+  const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('299e8f24-53fa-4bf5-b6b3-979a0348dc60');
+  const ToHubTpPoint = await SDK3DVerse.engineAPI.findEntitiesByEUID('a0854b06-1e4e-4d2f-abf2-b6f2790e75ed');
+  const ToLabTpPoint = await SDK3DVerse.engineAPI.findEntitiesByEUID('461d6d0c-7251-47c2-8da3-b3d610710347');
+  const InsideTpPoint  = await SDK3DVerse.engineAPI.findEntitiesByEUID('075dfe39-7699-4976-9504-2d30d95eef7a');
+  const OutsideTpPoint = await SDK3DVerse.engineAPI.findEntitiesByEUID('c34c10e9-071f-41e8-83ea-c8af395ed420');
+  const InteractZonePLayer = await SDK3DVerse.engineAPI.findEntitiesByEUID('67919a03-7107-402a-a87e-4027311d9ec6');
+  const lamp = await SDK3DVerse.engineAPI.findEntitiesByEUID('f95f32ec-fa18-410a-967d-7be768c539d1');
+  // const sun  = await SDK3DVerse.engineAPI.findEntitiesByEUID('0e3748a2-ea86-44e0-869b-cddb715dab0e');
+  
+  
+  let islampvisible = false;
+  let zone;
   const entities = await SDK3DVerse.engineAPI.findEntitiesByEUID('7875aa33-7421-47b0-bcba-884aed856227');
   console.log(entities);
   let scriptComponent = entities[0].getComponent("script_map");
   console.log(entities);
   console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
+  //star animation 'moon-sun-anim'
+  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0 });
   
   const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
+  let outsideTrigger = false;
 
-  SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) =>
-  {
-      console.log(emitterEntity, " exited trigger of ", triggerEntity);
-      
+  //------------------------------------------------------------------------------
+  function TeleportInside(event) {
+    if (event.key === 'e') {
+      if (outsideTrigger === true){
+        const inside = InsideTpPoint[0].getGlobalTransform();
+      entities[0].setGlobalTransform(inside);
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
       console.log(scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
       entities[0].setComponent("script_map", scriptComponent);
-      console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
-  });
-  SDK3DVerse.engineAPI.onEnterTrigger((emitterEntity, triggerEntity) =>
-  {
-      console.log(emitterEntity, " enter trigger of ", triggerEntity);
+      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities[0])}, 100);
+      document.removeEventListener('keydown', TeleportInside);
+      }
+    }
+  }
+
+  //------------------------------------------------------------------------------
+  function TeleportOutside(event) {
+    if (event.key === 'e') {
+      const outside = OutsideTpPoint[0].getGlobalTransform();
+      entities[0].setGlobalTransform(outside);
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 1;
       console.log(scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
       entities[0].setComponent("script_map", scriptComponent);
       console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
+      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities[0])}, 100);
+      document.removeEventListener('keydown', TeleportOutside);
+    }
+  }
+  
+  //------------------------------------------------------------------------------
+  let canPlaceCoral = false;
+
+  //------------------------------------------------------------------------------
+  function PlaceCoral(event){
+    
+    if (event.key === 'e'){
+      console.log('pressed E')
+      canPlaceCoral = true;
+      console.log(canPlaceCoral);
+      return;
+      }
+
+
+    if(canPlaceCoral)
+    {
+      
+      if (event.key === '1'){
+        console.log(event.key);
+        zone[0].setComponent('scene_ref',{value : coral_map["coral_1"], maxRecursionCount: 1});
+        coral_list.push(Coral_1.name);
+        console.log(coral_list);
+      }
+      if (event.key === '2'){
+        console.log(event.key);
+        zone[0].setComponent('scene_ref',{value : coral_map["coral_2"], maxRecursionCount: 1});
+        coral_list.push(Coral_2.name);
+        console.log(coral_list);
+      }
+      if (event.key === '3'){
+        console.log(event.key);
+        zone[0].setComponent('scene_ref',{value : coral_map["coral_3"], maxRecursionCount: 1});
+        coral_list.push(Coral_3.name);
+        console.log(coral_list);
+      }
+      if (event.key === '4'){
+        console.log(event.key);
+        zone[0].setComponent('scene_ref',{value : coral_map["coral_4"], maxRecursionCount: 1});
+        coral_list.push(Coral_4.name);
+        console.log(coral_list);
+      }
+      if (event.key === '5'){
+        console.log(event.key);
+        zone[0].setComponent('scene_ref',{value : coral_map["coral_5"], maxRecursionCount: 1});
+        console.log(coral_map['coral_5']);
+        coral_list.push(Coral_5.name);
+        console.log(coral_list);
+      }
+      if (event.key === '6'){
+        console.log(event.key);
+        zone[0].setComponent('scene_ref',{value : coral_map["coral_6"], maxRecursionCount: 1});
+        coral_list.push(Coral_6.name);
+        console.log(coral_list);
+        
+      }
+      if (event.key === '7'){
+        console.log(event.key);
+        zone[0].setComponent('scene_ref',{value : coral_map["coral_7"], maxRecursionCount: 1});
+        coral_list.push(Coral_7.name);
+        console.log(coral_list);
+      }
+      if (event.key === '8'){
+        console.log(event.key);
+        zone[0].setComponent('scene_ref',{value : coral_map["coral_8"], maxRecursionCount: 1});
+        coral_list.push(Coral_8.name);
+        console.log(coral_list);
+      }
+    }
+    //mathCoral();
+    canPlaceCoral = false;
+    document.removeEventListener('keydown', PlaceCoral);    
+  }
+  
+  //------------------------------------------------------------------------------
+  function TeleportToHub(event){
+    if (event.key === 'e'){
+      const hub = ToHubTpPoint[0].getGlobalTransform();
+      entities[0].setGlobalTransform(hub);
+      document.removeEventListener('keydown', TeleportToHub)
+    }
+  }
+
+  //------------------------------------------------------------------------------
+  function TeleportToLab(event){
+    if (event.key === 'e'){
+      const lab = ToLabTpPoint[0].getGlobalTransform();
+      entities[0].setGlobalTransform(lab);
+      document.removeEventListener('keydown', TeleportToLab);
+    }
+  }
+
+
+  SDK3DVerse.engineAPI.onEnterTrigger(async (emitterEntity, triggerEntity) =>
+  {
+    let emitterEntityParent = emitterEntity.getParent();
+    console.log('enter ',emitterEntity.getName()," ", triggerEntity.getName());
+    if (triggerEntity == InteractZonePLayer[0]){
+      if (emitterEntity == InsideHubDoorToOutside[0]){
+        console.log('press E to exit');
+        document.removeEventListener('keydown', TeleportOutside);
+        document.addEventListener('keydown', TeleportOutside);
+        
+      }
+      else if (emitterEntity == OutsideHubDoorToInside[0]){
+        outsideTrigger = true;
+        console.log('press E to enter');
+        document.removeEventListener('keydown', TeleportInside);
+        document.addEventListener('keydown', TeleportInside);
+      }
+      else if (emitterEntity == ToLaboratoryDoor[0]){
+        console.log('press E to loaboratory')
+        document.removeEventListener('keydown', TeleportToLab);
+        document.addEventListener('keydown', TeleportToLab);
+      }
+      else if (emitterEntity == ToHubDoor[0]){
+        console.log('press E to Hub')
+        document.removeEventListener('keydown', TeleportToHub);
+        document.addEventListener('keydown', TeleportToHub);
+      }
+      else if (emitterEntity.getParent().getName() == "Plantations"){
+        console.log("press E");
+        zone = await emitterEntity.getChildren();
+        if (zone[0] != "cube9"){
+          zone[0].setComponent('scene_ref',{value : coral_map["empty_zone"], maxRecursionCount: 1});
+        }
+        console.log(emitterEntity," ",emitterEntity.getName()," ",emitterEntityParent," ",zone);
+        document.removeEventListener('keydown', PlaceCoral);
+        document.addEventListener('keydown', PlaceCoral);
+        
+      }
+    }
   });
+
+  SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
+    console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
+    outsideTrigger = false;
+    console.log(outsideTrigger);
+
+  });
+
+  document.addEventListener('keydown', function(event) {
+    // Vérifie si la touche pressée est 't'
+    if (event.key === 't') {
+        // Vérifie si islampvisible est true
+        if (islampvisible === true) {
+          lamp[0].setVisibility(islampvisible);
+          console.log("lamp allumé")
+            // Change la valeur de islampvisible à false
+            islampvisible = false;
+        }
+        else if (islampvisible === false) {
+          lamp[0].setVisibility(islampvisible);
+            // Change la valeur de islampvisible à false
+            islampvisible = true;
+            console.log("lampe éteinte")
+        }
+    }
+  });
+
   await SplinesForFishes();
   
 }
+//##############################################################################
+
+
+
+//##############################################################################
+//#                          CHARACTER CONTROLLER                              #
+//##############################################################################
+
+//------------------------------------------------------------------------------
+async function setFPSCameraController(canvas){
+  // Remove the required click for the LOOK_LEFT, LOOK_RIGHT, LOOK_UP, and 
+  // LOOK_DOWN actions.
+  SDK3DVerse.actionMap.values["LOOK_LEFT"][0] = ["MOUSE_AXIS_X_POS"];
+  SDK3DVerse.actionMap.values["LOOK_RIGHT"][0] = ["MOUSE_AXIS_X_NEG"];
+  SDK3DVerse.actionMap.values["LOOK_DOWN"][0] = ["MOUSE_AXIS_Y_NEG"];
+  SDK3DVerse.actionMap.values["LOOK_UP"][0] = ["MOUSE_AXIS_Y_POS"];
+  SDK3DVerse.actionMap.values["JUMP"] = [["KEY_32"]];
+  SDK3DVerse.actionMap.propagate();
+
+  // Lock the mouse pointer.
+  canvas.requestPointerLock = (
+    canvas.requestPointerLock 
+    || canvas.mozRequestPointerLock 
+    || canvas.webkitPointerLockElement
+  );
+  canvas.requestPointerLock();
+};
+
 
 //------------------------------------------------------------------------------
 async function InitFirstPersonController(charCtlSceneUUID) {
@@ -151,6 +429,9 @@ async function InitFirstPersonController(charCtlSceneUUID) {
     parentEntity,
     deleteOnClientDisconnection
   );
+  const light = await SDK3DVerse.engineAPI.findEntitiesByEUID('f95f32ec-fa18-410a-967d-7be768c539d1');
+  light[0].setVisibility(false);
+
 
   // The character controller scene is setup as having a single entity at its
   // root which is the first person controller itself.
@@ -170,6 +451,13 @@ async function InitFirstPersonController(charCtlSceneUUID) {
   SDK3DVerse.setMainCamera(firstPersonCamera);
   
 }
+//##############################################################################
+
+
+
+//##############################################################################
+//#                              SPLINES FISHES                                #
+//##############################################################################
 
 //------------------------------------------------------------------------------
 const anim = new TravelAnimation();
@@ -224,11 +512,16 @@ async function loopOnFishSplineTravel(fish, entity, spline, speed, delay)
 function findTravellingSplineFromEntity(entity) {
   return anim.splines.find(s => s.parentEntity.getEUID() === entity.getEUID());
 }
+//##############################################################################
 
-//-----------------------------------------------------------------------------
 
-// Fonction pour afficher le terminal avec anim
-function afficherModale() {
+
+//##############################################################################
+//#                                  TERMINAL                                  #
+//##############################################################################
+
+//------------------------------------------------------------------------------
+/*function afficherModale() {
     const modal = document.getElementById('maModal');
     const body = document.body;
     modal.style.display = 'block';
@@ -236,9 +529,9 @@ function afficherModale() {
     setTimeout(() => {
         modal.classList.add('show');
     }, 1000); // Delay the addition of 'show' class for the animation to take effect
-}
+}*/
 
-// Fonction pour fermer le terminal
+//------------------------------------------------------------------------------
 function fermerModale() {
     const modal = document.getElementById('maModal');
     const body = document.body;
@@ -249,7 +542,7 @@ function fermerModale() {
     }, 1000); // Delay the removal of 'show' class for the animation to take effect
 }
 
-// Fermer le terminal lorsque l'utilisateur clique en dehors de la zone
+//------------------------------------------------------------------------------
 window.onclick = function (event) {
     const modal = document.getElementById('maModal');
     const body = document.body;
@@ -258,8 +551,8 @@ window.onclick = function (event) {
     }
 };
 
-// Fonction pour valider le contenu du terminal
-function validerModal() {
+//------------------------------------------------------------------------------
+/*function validerModal() {
     const nom = document.getElementById('nom').value;
     const message = document.getElementById('message').value;
 
@@ -269,4 +562,7 @@ function validerModal() {
 
     // Fermer la fen�tre modale apr�s validation
     fermerModale();
-}
+}*/
+//##############################################################################
+
+
