@@ -240,7 +240,78 @@ async function InitApp() {
       document.removeEventListener('keydown', TeleportOutside);
     }
   }
-  
+
+  function adjustCoralList(coral_list, nbZones) {
+    const totalCount = coral_list.length;
+
+    // Si le nombre total de coraux est inférieur à nbZones, retourner les occurences
+    if (totalCount < nbZones) {
+        const adjustedCounts = coral_list.reduce((counts, coralType) => {
+            counts[coralType] = (counts[coralType] || 0) + 1;
+            return counts;
+        }, {});
+        return adjustedCounts;
+    } else {
+
+      // Le reste du code reste inchangé...
+      const proportionalCounts = coral_list.reduce((counts, coralType) => {
+          counts[coralType] = (counts[coralType] || 0) + 1;
+          return counts;
+      }, {});
+
+      const roundedTotalCount = Object.values(proportionalCounts).reduce((total, count) => total + count, 0);
+
+      const adjustedProportionalCounts = {};
+      for (const coralType in proportionalCounts) {
+          adjustedProportionalCounts[coralType] = Math.round((proportionalCounts[coralType] / totalCount) * nbZones);
+      }
+
+      const adjustedLengths = {};
+      for (const coralType in adjustedProportionalCounts) {
+          adjustedLengths[coralType] = adjustedProportionalCounts[coralType];
+      }
+
+      return adjustedLengths;
+    }
+  }
+
+
+    
+
+  function getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones) {
+    console.log("adjustedLengths:", adjustedLengths);
+
+    // Si la longueur de coral_list est supérieure à nbZones, sélectionner un corail directement
+    if (coral_list.length > nbZones) {
+        const availableCoralTypes = coral_list.filter(coralType => adjustedLengths[coralType] > 0);
+
+        if (availableCoralTypes.length === 0) {
+            // Aucun type de corail disponible, retourner null ou traiter en conséquence
+            return null;
+        }
+
+        const randomCoralType = availableCoralTypes[Math.floor(Math.random() * availableCoralTypes.length)];
+        adjustedLengths[randomCoralType]--;
+
+        return randomCoralType;
+    }
+
+    // Si la longueur de coral_list est inférieure ou égale à nbZones, continuer avec la logique précédente
+    const availableCoralTypes = Object.keys(adjustedLengths).filter(coralType => adjustedLengths[coralType] > 0);
+
+    if (availableCoralTypes.length === 0) {
+        // Aucun type de corail disponible, retourner null ou traiter en conséquence
+        return null;
+    }
+
+    const randomCoralType = availableCoralTypes[Math.floor(Math.random() * availableCoralTypes.length)];
+    adjustedLengths[randomCoralType]--;
+
+    return randomCoralType;
+}
+
+
+
   //------------------------------------------------------------------------------
   let canPlaceCoral = false;
   
@@ -250,6 +321,81 @@ async function InitApp() {
     if (event.key === 'e'){
       console.log('pressed E')
       if (zone[0] != "Coral"){
+        console.log("selected ",zone[0].getComponent('scene_ref').value);
+        console.log("coral_1 : ",coral_map["coral_1"]);
+        console.log("coral_2 : ",coral_map["coral_2"]);
+        console.log("coral_3 : ",coral_map["coral_3"]);
+        console.log("coral_4 : ",coral_map["coral_4"]);
+        console.log("coral_5 : ",coral_map["coral_5"]);
+        console.log("coral_6 : ",coral_map["coral_6"]);
+        console.log("coral_7 : ",coral_map["coral_7"]);
+        console.log("coral_8 : ",coral_map["coral_8"]);
+        console.log("empty_zone : ",coral_map["coral_9"]);
+        if (zone[0].getComponent('scene_ref').value == coral_map["coral_1"]){
+          console.log("coral = 1");
+          const coralIndex = coral_list.indexOf(Coral_1.name);
+          console.log(coralIndex);
+          if (coralIndex !== -1) {
+            coral_list.splice(coralIndex, 1);
+          }
+        }
+        if (zone[0].getComponent('scene_ref').value == coral_map["coral_2"]){
+          console.log("coral = 2");
+          const coralIndex = coral_list.indexOf(Coral_2.name);
+          console.log(coralIndex);
+          if (coralIndex !== -1) {
+            coral_list.splice(coralIndex, 1);
+          }
+        }
+        if (zone[0].getComponent('scene_ref').value == coral_map["coral_3"]){
+          console.log("coral = 3");
+          const coralIndex = coral_list.indexOf(Coral_3.name);
+          console.log(coralIndex);
+          if (coralIndex !== -1) {
+            coral_list.splice(coralIndex, 1);
+          }
+        }
+        if (zone[0].getComponent('scene_ref').value == coral_map["coral_4"]){
+          console.log("coral = 4");
+          const coralIndex = coral_list.indexOf(Coral_4.name);
+          console.log(coralIndex);
+          if (coralIndex !== -1) {
+            coral_list.splice(coralIndex, 1);
+          }
+        }
+        if (zone[0].getComponent('scene_ref').value == coral_map["coral_5"]){
+          console.log("coral = 5");
+          const coralIndex = coral_list.indexOf(Coral_5.name);
+          console.log(coralIndex);
+          if (coralIndex !== -1) {
+            coral_list.splice(coralIndex, 1);
+          }
+        }
+        if (zone[0].getComponent('scene_ref').value == coral_map["coral_6"]){
+          console.log("coral = 6");
+          const coralIndex = coral_list.indexOf(Coral_6.name);
+          console.log(coralIndex);
+          if (coralIndex !== -1) {
+            coral_list.splice(coralIndex, 1);
+          }
+        }
+        if (zone[0].getComponent('scene_ref').value == coral_map["coral_7"]){
+          console.log("coral = 7");
+          const coralIndex = coral_list.indexOf(Coral_7.name);
+          console.log(coralIndex);
+          if (coralIndex !== -1) {
+            coral_list.splice(coralIndex, 1);
+          }
+        }
+        if (zone[0].getComponent('scene_ref').value == coral_map["coral_8"]){
+          console.log("coral = 8");
+          const coralIndex = coral_list.indexOf(Coral_8.name);
+          console.log(coralIndex);
+          if (coralIndex !== -1) {
+            coral_list.splice(coralIndex, 1);
+          }
+        }
+        // Retire l'élément associé au composant de coral_list
         zone[0].setComponent('scene_ref',{value : coral_map["empty_zone"], maxRecursionCount: 1});
         canPlaceCoral = false;
       }
@@ -312,11 +458,22 @@ async function InitApp() {
         coral_list.push(Coral_8.name);
         console.log(coral_list);
       }
+      const nbZones = 6; // Replace with your desired number of zones
+      const adjustedLengths = adjustCoralList(coral_list, nbZones);
+      console.log(adjustedLengths);
+      for (let i = 0; i < nbZones; i++) {
+        // Get a random coral type and decrement its count
+        const randomCoral = getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones);
+      
+        console.log(`Zone ${i + 1}: ${randomCoral}`);
+      }
     }
-    //mathCoral();
+    
+    
     canPlaceCoral = false;
     document.removeEventListener('keydown', PlaceCoral);    
   }
+
   
   //------------------------------------------------------------------------------
   function TeleportToHub(event){
