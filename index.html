@@ -19,6 +19,30 @@
         oncontextmenu="event.preventDefault()"
       ></canvas>
     </div>
+    
+  <!-- INTERFACE -->
+  <div id="menu">
+    <!-- MENU BAR -->
+    <div id="menu-menubar">
+      <div class="menu-menubar-title selected_title" id="menu-menubar-title-inventory">inventaire</div>
+      <div class="menu-menubar-title" id="menu-menubar-title-stats">stats</div>
+      <div class="menu-menubar-title" id="menu-menubar-title-map">carte</div>
+    </div>
+    <!-- MENU BLOC -->
+    <div id="menu-bloc">
+      <div class="menu-bloc-all" id="menu-bloc-inventory">
+        <div class="menu-bloc-inventory-cell"></div>
+        <div class="menu-bloc-inventory-cell"></div>
+        
+      </div>
+      <div class="menu-bloc-all" id="menu-bloc-stats">
+        stats
+      </div>
+      <div class="menu-bloc-all" id="menu-bloc-map">
+        carte
+      </div>
+    </div>
+  </div>
 
     <!-- SDK 3DVERSE -->
     <script src="https://cdn.3dverse.com/legacy/sdk/stable/SDK3DVerse.js"></script>
