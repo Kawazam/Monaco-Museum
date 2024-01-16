@@ -183,6 +183,7 @@ async function InitApp() {
   });
 
   //------------------------------------------------------------------------------
+  const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('347659d6-bd3f-44f4-b816-bd2837ed82d0');
   const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3f1d3498-dd14-49df-a6e5-bb13281095d5');
   const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3c3b76c9-1b50-4f4e-9386-0566896a55ce');
   const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('24145957-9a15-4752-9b0e-359e14b5ba8e');
@@ -204,8 +205,8 @@ async function InitApp() {
   console.log(entities);
   console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
   //star animation 'moon-sun-anim' and 'butterfly-fish-2'
-  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 20.0 });
-  SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 });
+  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 }); //'moon-sun-animation'
+  SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
   
   //------------------------------------------------------------------------------
   const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
@@ -241,6 +242,7 @@ async function InitApp() {
     }
   }
 
+  //------------------------------------------------------------------------------
   function adjustCoralList(coral_list, nbZones) {
     const totalCount = coral_list.length;
 
@@ -275,9 +277,7 @@ async function InitApp() {
     }
   }
 
-
-    
-
+  //------------------------------------------------------------------------------
   function getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones) {
     console.log("adjustedLengths:", adjustedLengths);
 
@@ -308,9 +308,7 @@ async function InitApp() {
     adjustedLengths[randomCoralType]--;
 
     return randomCoralType;
-}
-
-
+  }
 
   //------------------------------------------------------------------------------
   let canPlaceCoral = false;
@@ -492,11 +490,24 @@ async function InitApp() {
       document.removeEventListener('keydown', TeleportToLab);
     }
   }
-  
+
+  //------------------------------------------------------------------------------
+  function PassTheNight(event){
+    if (event.key === 'e'){
+      SDK3DVerse.engineAPI.stopAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
+      SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 });
+      document.removeEventListener('keydown', PassTheNight);
+    }
+  }
+
+  //------------------------------------------------------------------------------
+    
+
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onEnterTrigger(async (emitterEntity, triggerEntity) =>
   {
     let emitterEntityParent = emitterEntity.getParent();
+    //console.log('taponoir', bloupo[0]);
     console.log('enter ',emitterEntity.getName()," ", triggerEntity.getName());
     if (triggerEntity == InteractZonePLayer[0]){
       if (emitterEntity == InsideHubDoorToOutside[0]){
@@ -528,7 +539,11 @@ async function InitApp() {
         console.log(emitterEntity," ",emitterEntity.getName()," ",emitterEntityParent," ",zone);
         document.removeEventListener('keydown', PlaceCoral);
         document.addEventListener('keydown', PlaceCoral);
-        
+      }
+      else if (emitterEntity  == Couch[0]) {
+        console.log('press E to pass the night');
+        document.removeEventListener('keydown', PassTheNight);
+        document.addEventListener('keydown', PassTheNight);
       }
     }
   });
@@ -642,9 +657,19 @@ async function SplinesForFishes()
 
   const fishEntities = await fishesEntity.getChildren();
   for(const fish of fishEntities) {
+    var i = 0;
     const children = await fish.getChildren();
     const fishMesh = children.find(e => e.getName() === 'mesh');
     const fishPath = children.find(e => e.getName() === 'spline_path');
+    const fishSpeed = children.find(e => e.getName() === 'speed');
+    console.log(fishSpeed);
+    const fishSpeedNumString = await fishSpeed.getChildren();
+    console.log(fishSpeedNumString[i].getName());
+    console.log(typeof fishSpeedNumString[i].getName())
+    const fishSpeedNum = Number(fishSpeedNumString[i].getName());
+    console.log(fishSpeedNum);
+    console.log(typeof fishSpeedNum);
+    i = i + 1;
 
     const travellingSpline = findTravellingSplineFromEntity(fishPath);
 
@@ -658,9 +683,10 @@ async function SplinesForFishes()
       fish,
       fishMesh,
       fishPath,
-      travellingSpline
+      travellingSpline,
+      fishSpeedNum
     };
-    loopOnFishSplineTravel(fishes[fish.getID()], fishMesh, travellingSpline, 4, 0.1);
+    loopOnFishSplineTravel(fishes[fish.getID()], fishMesh, travellingSpline, fishSpeedNum, 0.1);
   }
 }
 

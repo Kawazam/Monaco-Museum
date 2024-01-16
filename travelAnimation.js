@@ -77,7 +77,7 @@ export default class TravelAnimation
     }
 
     //--------------------------------------------------------------------------
-    travel = (entity, destinationPosition, destinationOrientation, speed = 20) =>
+    travel = (entity, destinationPosition, destinationOrientation, speed) =>
     {
         const transform             = this.sdk.utils.clone(entity.getGlobalTransform());
         const startPosition         = transform.position;
@@ -141,7 +141,7 @@ export default class TravelAnimation
     };
 
     //--------------------------------------------------------------------------
-    gotoSplineAndTravel = async (entity, spline, speed = 20, waitBeforeStart = 4 ) =>
+    gotoSplineAndTravel = async (entity, spline, speed, waitBeforeStart = 4 ) =>
     {
         this.isStopped          = false;
 
@@ -181,7 +181,7 @@ export default class TravelAnimation
     };
 
     //--------------------------------------------------------------------------
-    travelOnSpline = (entity, spline, speed = 20) =>
+    travelOnSpline = (entity, spline, speed) =>
     {
         const distance          = spline.curvePersistence.getLength();
         const travelingDuration = distance > 0.001 ? (distance / speed) : 0.5;
