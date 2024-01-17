@@ -64,7 +64,7 @@ display_inventory.innerHTML = inventory_table;
 
 //------------------------------------------------------------------------------
 //Toggle Inventory display
-document.addEventListener("keydown", checkKeyPress);
+document.addEventListener("keydown", CheckKeyPress);
 
 //------------------------------------------------------------------------------
 //Toggle menu section
@@ -86,7 +86,7 @@ button_map.addEventListener("click", function(){
 
 
 //------------------------------------------------------------------------------
-function checkKeyPress(event) {
+function CheckKeyPress(event) {
   const key = event.key;
   if (key==='i') {
     menu_display = !menu_display;
@@ -196,6 +196,11 @@ async function InitApp() {
   const InteractZonePLayer = await SDK3DVerse.engineAPI.findEntitiesByEUID('67919a03-7107-402a-a87e-4027311d9ec6');
   const lamp = await SDK3DVerse.engineAPI.findEntitiesByEUID('f95f32ec-fa18-410a-967d-7be768c539d1');
   // const sun  = await SDK3DVerse.engineAPI.findEntitiesByEUID('0e3748a2-ea86-44e0-869b-cddb715dab0e');
+  var TimeSetMenuDisplay = false;
+  const ButtonDay = document.querySelector("#time-set-day");
+  const ButtonMidday = document.querySelector("#time-set-midday");
+  const ButtonNight = document.querySelector("#time-set-night");
+  const ButtonMidnight = document.querySelector("#time-set-midnight");
   
   //------------------------------------------------------------------------------
   let islampvisible = false;
@@ -214,6 +219,9 @@ async function InitApp() {
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
   let outsideTrigger = false;
   
+
+
+
   //------------------------------------------------------------------------------
   function TeleportInside(event) {
     if (event.key === 'e') {
@@ -493,16 +501,47 @@ async function InitApp() {
   }
 
   //------------------------------------------------------------------------------
-  function PassTheNight(event){
+  function PassTheNightMenu(event){
     if (event.key === 'e'){
-      SDK3DVerse.engineAPI.stopAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
-      SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 });
-      document.removeEventListener('keydown', PassTheNight);
+      TimeSetMenuDisplay = !TimeSetMenuDisplay;
+      console.log(TimeSetMenuDisplay);
+      console.log(ButtonDay);
+      console.log(ButtonMidday);
+      console.log(ButtonNight);
+      console.log(ButtonMidnight);
+      // SDK3DVerse.engineAPI.stopAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
+      // SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 });
+      // document.removeEventListener('keydown', PassTheNightMenu);
+    }
+
+    if (TimeSetMenuDisplay) {
+      document.querySelector("#time-set-menu").style.visibility = "visible";
+      document.querySelector("#time-set-day").style.visibility = "visible";
+      document.querySelector("#time-set-midday").style.visibility = "visible";
+      document.querySelector("#time-set-night").style.visibility = "visible";
+      document.querySelector("#time-set-midnight").style.visibility = "visible";
+    }else{
+      document.querySelector("#time-set-menu").style.visibility = "hidden";
+      document.querySelector("#time-set-day").style.visibility = "hidden";
+      document.querySelector("#time-set-midday").style.visibility = "hidden";
+      document.querySelector("#time-set-night").style.visibility = "hidden";
+      document.querySelector("#time-set-midnight").style.visibility = "hidden";
     }
   }
 
   //------------------------------------------------------------------------------
-    
+  ButtonDay.addEventListener("click", function(){
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 });
+  });
+  ButtonMidday.addEventListener("click", function(){
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.25 });
+  });
+  ButtonNight.addEventListener("click", function(){
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.5 });
+  });
+  ButtonMidnight.addEventListener("click", function(){
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.75 });
+  }); 
 
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onEnterTrigger(async (emitterEntity, triggerEntity) =>
@@ -543,8 +582,8 @@ async function InitApp() {
       }
       else if (emitterEntity  == Couch[0]) {
         console.log('press E to pass the night');
-        document.removeEventListener('keydown', PassTheNight);
-        document.addEventListener('keydown', PassTheNight);
+        document.removeEventListener('keydown', PassTheNightMenu);
+        document.addEventListener('keydown', PassTheNightMenu);
       }
     }
   });
