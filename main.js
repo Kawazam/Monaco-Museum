@@ -144,7 +144,14 @@ window.addEventListener("load", InitApp);
 
 //------------------------------------------------------------------------------
 async function InitApp() {
+
+  //show loading page-------------------------------------------------------------
+  document.querySelector("#loading-page").style.visibility = "visible";
+  
+  //------------------------------------------------------------------------------
   let canvas = document.getElementById("display-canvas");
+  
+  //------------------------------------------------------------------------------
   await SDK3DVerse.startSession({
     userToken: publicToken,
     sceneUUID: mainSceneUUID,
@@ -162,6 +169,13 @@ async function InitApp() {
   
   //------------------------------------------------------------------------------
   await SplinesForFishes();
+  
+  //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
+  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 }); //'moon-sun-animation'
+  SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
+  
+  //hide loading page-------------------------------------------------------------
+  document.querySelector("#loading-page").style.visibility = "hidden";
 
   //------------------------------------------------------------------------------
   document.addEventListener('keydown', function(event) {
@@ -184,6 +198,8 @@ async function InitApp() {
   });
 
   //------------------------------------------------------------------------------
+  var TimeSetMenuDisplay = false;
+  
   const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('347659d6-bd3f-44f4-b816-bd2837ed82d0');
   const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3f1d3498-dd14-49df-a6e5-bb13281095d5');
   const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3c3b76c9-1b50-4f4e-9386-0566896a55ce');
@@ -195,8 +211,7 @@ async function InitApp() {
   const OutsideTpPoint = await SDK3DVerse.engineAPI.findEntitiesByEUID('c34c10e9-071f-41e8-83ea-c8af395ed420');
   const InteractZonePLayer = await SDK3DVerse.engineAPI.findEntitiesByEUID('67919a03-7107-402a-a87e-4027311d9ec6');
   const lamp = await SDK3DVerse.engineAPI.findEntitiesByEUID('f95f32ec-fa18-410a-967d-7be768c539d1');
-  // const sun  = await SDK3DVerse.engineAPI.findEntitiesByEUID('0e3748a2-ea86-44e0-869b-cddb715dab0e');
-  var TimeSetMenuDisplay = false;
+
   const ButtonDay = document.querySelector("#time-set-day");
   const ButtonMidday = document.querySelector("#time-set-midday");
   const ButtonNight = document.querySelector("#time-set-night");
@@ -210,18 +225,12 @@ async function InitApp() {
   let scriptComponent = entities[0].getComponent("script_map");
   console.log(entities);
   console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
-  //star animation 'moon-sun-anim' and 'butterfly-fish-2'
-  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 }); //'moon-sun-animation'
-  SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
   
   //------------------------------------------------------------------------------
   const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
   let outsideTrigger = false;
   
-
-
-
   //------------------------------------------------------------------------------
   function TeleportInside(event) {
     if (event.key === 'e') {
@@ -504,14 +513,11 @@ async function InitApp() {
   function PassTheNightMenu(event){
     if (event.key === 'e'){
       TimeSetMenuDisplay = !TimeSetMenuDisplay;
-      console.log(TimeSetMenuDisplay);
-      console.log(ButtonDay);
-      console.log(ButtonMidday);
-      console.log(ButtonNight);
-      console.log(ButtonMidnight);
-      // SDK3DVerse.engineAPI.stopAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
-      // SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 });
-      // document.removeEventListener('keydown', PassTheNightMenu);
+      // console.log(TimeSetMenuDisplay);
+      // console.log(ButtonDay);
+      // console.log(ButtonMidday);
+      // console.log(ButtonNight);
+      // console.log(ButtonMidnight);
     }
 
     if (TimeSetMenuDisplay) {
@@ -624,7 +630,6 @@ async function setFPSCameraController(canvas){
   canvas.requestPointerLock();
 };
 
-
 //------------------------------------------------------------------------------
 async function InitFirstPersonController(charCtlSceneUUID) {
   // To spawn an entity we need to create an EntityTempllate and specify the
@@ -702,13 +707,13 @@ async function SplinesForFishes()
     const fishMesh = children.find(e => e.getName() === 'mesh');
     const fishPath = children.find(e => e.getName() === 'spline_path');
     const fishSpeed = children.find(e => e.getName() === 'speed');
-    console.log(fishSpeed);
+    // console.log(fishSpeed);
     const fishSpeedNumString = await fishSpeed.getChildren();
-    console.log(fishSpeedNumString[i].getName());
-    console.log(typeof fishSpeedNumString[i].getName())
+    // console.log(fishSpeedNumString[i].getName());
+    // console.log(typeof fishSpeedNumString[i].getName())
     const fishSpeedNum = Number(fishSpeedNumString[i].getName());
-    console.log(fishSpeedNum);
-    console.log(typeof fishSpeedNum);
+    // console.log(fishSpeedNum);
+    // console.log(typeof fishSpeedNum);
     i = i + 1;
 
     const travellingSpline = findTravellingSplineFromEntity(fishPath);
@@ -794,6 +799,7 @@ window.onclick = function (event) {
     // Fermer la fen�tre modale apr�s validation
     fermerModale();
 }*/
+
 //##############################################################################
 
 

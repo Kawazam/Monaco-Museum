@@ -47,6 +47,8 @@ body {
   width: 100vw;
   height: 100vh;
 }
+/*------------------------------------------------------------*/
+
 
 /*MENU*/
 #menu {
@@ -66,10 +68,12 @@ body {
   height: 65vh;
   left: 20vw;
   top: 25vh;
-  background: linear-gradient(to left, rgba(190, 212, 255, 0.8), rgba(222, 255, 235, 0.8));
+  background: linear-gradient(to left, #bed4ffcc, #deffebcc);
   border-radius: 40px;
   visibility: hidden;
 }
+/*------------------------------------------------------------*/
+
 
 /*MENU BAR*/
 #menu-menubar {
@@ -78,7 +82,7 @@ body {
   height: 15vh;
   left: 20vw;
   top: 10vh;
-  background-color: rgba(99, 181, 201, 1);
+  background-color: #63b5c9;
   border-radius: 40px;
 }
 
@@ -93,12 +97,12 @@ body {
   cursor: pointer;
   border-radius: 40px;
   color: #fff;
-  background-color: rgba(28, 129, 175, 1);
+  background-color: #1c81af;
 }
 
 .selected_title {
-  color: rgba(27, 58, 140, 1);
-  background-color: rgba(162, 222, 212, 1);
+  color: #1b3a8c;
+  background-color: #1b3a8c;
 }
 
 #menu-menubar-title-inventory {
@@ -121,6 +125,8 @@ body {
   height: 100%;
   left: 71%;
 }
+/*------------------------------------------------------------*/
+
 
 /*MENU BLOC*/
 #menu-bloc {
@@ -129,7 +135,7 @@ body {
   height: 65vh;
   left: 20vw;
   top: 25vh;
-  background: linear-gradient(to left, rgba(190, 212, 255, 0.8), rgba(222, 255, 235, 0.8));
+  background: linear-gradient(to left, #bed4ffcc, #deffebcc);
   border-radius: 40px;
 }
 
@@ -171,10 +177,12 @@ body {
 
   font-size: 0.5em;
   color: #fff;
-  background-color: black;
+  background-color: #000;
   border-radius: 40px;
   visibility: hidden;
 }
+/*------------------------------------------------------------*/
+
 
 /*TIME SET MENU*/
 .time-set-options {
@@ -187,7 +195,7 @@ body {
   cursor: pointer;
   border-radius: 40px;
   color: #fff;
-  background-color: rgba(28, 129, 175, 1);
+  background-color: #1c81af;
 }
 
 #time-set-day {
@@ -217,7 +225,31 @@ body {
   height: 100%;
   left: 1%;
 }
+/*------------------------------------------------------------*/
 
+
+/*LOADING PAGE*/
+#loading-page{
+  z-index: 3000;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: #000;
+  visibility: hidden;
+}
+
+#loading-txt{
+  height: 100%;
+  width: 100%;
+  position: inherit;
+  display: grid;
+  align-items: end;
+  text-align: center;
+  font-size: 4em;
+  color: #1c81af;
+}
 
 
 /* Styles pour la fen�tre modale */
@@ -257,6 +289,8 @@ body {
     font-size: 20px;
     cursor: pointer;
 }
+/*------------------------------------------------------------*/
+
 
 /* Style pour le bouton centr� */
 .center-btn {
@@ -287,6 +321,8 @@ body {
     animation: fadeIn 0.5s ease;
     transform: translate(-50%, -50%) scale(1);
 }
+/*------------------------------------------------------------*/
+
 
 /* Style pour les �l�ments de formulaire dans la fen�tre modale */
 .modal-content label {
@@ -310,6 +346,6 @@ body {
     margin-top: 10px;
 }
 
-    .modal-content button:hover {
-        background-color: #45a049;
-    }
+.modal-content button:hover {
+    background-color: #45a049;
+}
