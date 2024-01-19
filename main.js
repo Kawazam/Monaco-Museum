@@ -199,7 +199,7 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   var TimeSetMenuDisplay = false;
-  
+
   const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('347659d6-bd3f-44f4-b816-bd2837ed82d0');
   const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3f1d3498-dd14-49df-a6e5-bb13281095d5');
   const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3c3b76c9-1b50-4f4e-9386-0566896a55ce');
@@ -526,12 +526,14 @@ async function InitApp() {
       document.querySelector("#time-set-midday").style.visibility = "visible";
       document.querySelector("#time-set-night").style.visibility = "visible";
       document.querySelector("#time-set-midnight").style.visibility = "visible";
+      document.querySelector("#time-set-checkbox").style.visibility = "visible";
     }else{
       document.querySelector("#time-set-menu").style.visibility = "hidden";
       document.querySelector("#time-set-day").style.visibility = "hidden";
       document.querySelector("#time-set-midday").style.visibility = "hidden";
       document.querySelector("#time-set-night").style.visibility = "hidden";
       document.querySelector("#time-set-midnight").style.visibility = "hidden";
+      document.querySelector("#time-set-checkbox").style.visibility = "hidden";
     }
   }
 
