@@ -39,28 +39,28 @@ import TravelAnimation from "./travelAnimation.js";
 //const inventoryJson = require("./inventory.json");
 
 //------------------------------------------------------------------------------
-var menuDisplay   = false;
-var inventory     = true;
-var stats         = false;
-var map           = false;
+var MenuDisplay   = false;
+var Inventory     = true;
+var Stats         = false;
+var Map           = false;
 
-var inventoryTable = "";
+var InventoryTable = "";
 
-const buttonInventory       = document.querySelector("#menu-menubar-title-inventory");
-const buttonStats           = document.querySelector("#menu-menubar-title-stats");
-const buttonMap             = document.querySelector("#menu-menubar-title-map");
+const ButtonInventory       = document.querySelector("#menu-menubar-title-inventory");
+const ButtonStats           = document.querySelector("#menu-menubar-title-stats");
+const ButtonMap             = document.querySelector("#menu-menubar-title-map");
 
-const displayInventory      = document.querySelector("#menu-bloc-inventory");
+const DisplayInventory      = document.querySelector("#menu-bloc-inventory");
 
 //------------------------------------------------------------------------------
 for(let i = 1; i < 7; i++) {
   for(let j = 1; j < 5; j++) {
-    inventoryTable += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
+    InventoryTable += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
   }
 }
 
 //------------------------------------------------------------------------------
-displayInventory.innerHTML = inventoryTable;
+DisplayInventory.innerHTML = InventoryTable;
 
 //------------------------------------------------------------------------------
 //Toggle Inventory display
@@ -68,19 +68,19 @@ document.addEventListener("keydown", CheckKeyPress);
 
 //------------------------------------------------------------------------------
 //Toggle menu section
-buttonInventory.addEventListener("click", function(){
-  inventory = true;
-  stats = map = false;
+ButtonInventory.addEventListener("click", function(){
+  Inventory = true;
+  Stats = Map = false;
   toggleMenuSection();
 });
-buttonStats.addEventListener("click", function(){
-  stats = true;
-  inventory = map = false;
+ButtonStats.addEventListener("click", function(){
+  Stats = true;
+  Inventory = Map = false;
   toggleMenuSection();
 });
-buttonMap.addEventListener("click", function(){
-  map = true;
-  inventory = stats = false;
+ButtonMap.addEventListener("click", function(){
+  Map = true;
+  Inventory = Stats = false;
   toggleMenuSection();
 });
 
@@ -89,15 +89,15 @@ buttonMap.addEventListener("click", function(){
 function CheckKeyPress(event) {
   const key = event.key;
   if (key==='i') {
-    menuDisplay = !menuDisplay;
+    MenuDisplay = !MenuDisplay;
   }
   
-  if (menuDisplay) {
+  if (MenuDisplay) {
     document.querySelector("#menu").style.visibility = "visible";
-    document.querySelector("#menu-bloc-inventory").style.visibility = inventory ? "visible" : "hidden";
-    for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
-    document.querySelector("#menu-bloc-stats").style.visibility = stats ? "visible" : "hidden";
-    document.querySelector("#menu-bloc-map").style.visibility = map ? "visible" : "hidden";
+    document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
+    for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
+    document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
+    document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
   } else {
     document.querySelector("#menu").style.visibility = "hidden";
     document.querySelector("#menu-bloc-inventory").style.visibility = "hidden";
@@ -110,14 +110,14 @@ function CheckKeyPress(event) {
 
 //------------------------------------------------------------------------------
 function toggleMenuSection() {
-  buttonInventory.classList.toggle("selected_title", inventory);
-  buttonStats.classList.toggle("selected_title", stats);
-  buttonMap.classList.toggle("selected_title", map);
+  ButtonInventory.classList.toggle("selected_title", Inventory);
+  ButtonStats.classList.toggle("selected_title", Stats);
+  ButtonMap.classList.toggle("selected_title", Map);
   
-  document.querySelector("#menu-bloc-inventory").style.visibility = inventory ? "visible" : "hidden";
-  for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
-  document.querySelector("#menu-bloc-stats").style.visibility = stats ? "visible" : "hidden";
-  document.querySelector("#menu-bloc-map").style.visibility = map ? "visible" : "hidden";
+  document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
+  for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
+  document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
+  document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
 }
 
 //------------------------------------------------------------------------------
