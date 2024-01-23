@@ -199,6 +199,8 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   var TimeSetMenuDisplay = false;
+  var CheckboxChecked = false;
+  var CheckboxUnchecked = true;
 
   const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('347659d6-bd3f-44f4-b816-bd2837ed82d0');
   const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3f1d3498-dd14-49df-a6e5-bb13281095d5');
@@ -216,6 +218,8 @@ async function InitApp() {
   const ButtonMidday = document.querySelector("#time-set-midday");
   const ButtonNight = document.querySelector("#time-set-night");
   const ButtonMidnight = document.querySelector("#time-set-midnight");
+  const ButtonCheckbox = document.querySelector("#unchecked");
+  const ButtonUncheckbox = document.querySelector("#checked");
   
   //------------------------------------------------------------------------------
   let islampvisible = false;
@@ -550,6 +554,24 @@ async function InitApp() {
   ButtonMidnight.addEventListener("click", function(){
     SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.75 });
   }); 
+  ButtonCheckbox.addEventListener("click", function(){
+    CheckboxChecked = true;
+    CheckboxUnchecked = false;
+    console.log("unchecked", CheckboxUnchecked)
+    ToggleCheckbox();
+  })
+  ButtonUncheckbox.addEventListener("click", function(){
+    CheckboxChecked = false;
+    CheckboxUnchecked = true;
+    ToggleCheckbox();
+  })
+
+  //------------------------------------------------------------------------------
+  function ToggleCheckbox() {
+    document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
+    document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
+  }
+
 
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onEnterTrigger(async (emitterEntity, triggerEntity) =>

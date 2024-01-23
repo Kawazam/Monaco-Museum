@@ -101,7 +101,7 @@ body {
 }
 
 .selected_title {
-  color: #1b3a8c;
+  color: #1c81af;
   background-color: #1b3a8c;
 }
 
@@ -225,6 +225,16 @@ body {
   height: 100%;
   left: 1%;
 }
+
+#time-set-checkbox{
+  position: relative;
+}
+
+.checkbox{
+  position: inherit;
+  cursor: pointer;
+}
+
 /*------------------------------------------------------------*/
 
 
