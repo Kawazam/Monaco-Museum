@@ -39,28 +39,28 @@ import TravelAnimation from "./travelAnimation.js";
 //const inventoryJson = require("./inventory.json");
 
 //------------------------------------------------------------------------------
-var menu_display  = false;
+var menuDisplay   = false;
 var inventory     = true;
 var stats         = false;
 var map           = false;
 
-var inventory_table = "";
+var inventoryTable = "";
 
-const button_inventory      = document.querySelector("#menu-menubar-title-inventory");
-const button_stats          = document.querySelector("#menu-menubar-title-stats");
-const button_map            = document.querySelector("#menu-menubar-title-map");
+const buttonInventory       = document.querySelector("#menu-menubar-title-inventory");
+const buttonStats           = document.querySelector("#menu-menubar-title-stats");
+const buttonMap             = document.querySelector("#menu-menubar-title-map");
 
-const display_inventory     = document.querySelector("#menu-bloc-inventory");
+const displayInventory      = document.querySelector("#menu-bloc-inventory");
 
 //------------------------------------------------------------------------------
 for(let i = 1; i < 7; i++) {
   for(let j = 1; j < 5; j++) {
-    inventory_table += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
+    inventoryTable += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
   }
 }
 
 //------------------------------------------------------------------------------
-display_inventory.innerHTML = inventory_table;
+displayInventory.innerHTML = inventoryTable;
 
 //------------------------------------------------------------------------------
 //Toggle Inventory display
@@ -68,17 +68,17 @@ document.addEventListener("keydown", CheckKeyPress);
 
 //------------------------------------------------------------------------------
 //Toggle menu section
-button_inventory.addEventListener("click", function(){
+buttonInventory.addEventListener("click", function(){
   inventory = true;
   stats = map = false;
   toggleMenuSection();
 });
-button_stats.addEventListener("click", function(){
+buttonStats.addEventListener("click", function(){
   stats = true;
   inventory = map = false;
   toggleMenuSection();
 });
-button_map.addEventListener("click", function(){
+buttonMap.addEventListener("click", function(){
   map = true;
   inventory = stats = false;
   toggleMenuSection();
@@ -89,10 +89,10 @@ button_map.addEventListener("click", function(){
 function CheckKeyPress(event) {
   const key = event.key;
   if (key==='i') {
-    menu_display = !menu_display;
+    menuDisplay = !menuDisplay;
   }
   
-  if (menu_display) {
+  if (menuDisplay) {
     document.querySelector("#menu").style.visibility = "visible";
     document.querySelector("#menu-bloc-inventory").style.visibility = inventory ? "visible" : "hidden";
     for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
@@ -110,9 +110,9 @@ function CheckKeyPress(event) {
 
 //------------------------------------------------------------------------------
 function toggleMenuSection() {
-  button_inventory.classList.toggle("selected_title", inventory);
-  button_stats.classList.toggle("selected_title", stats);
-  button_map.classList.toggle("selected_title", map);
+  buttonInventory.classList.toggle("selected_title", inventory);
+  buttonStats.classList.toggle("selected_title", stats);
+  buttonMap.classList.toggle("selected_title", map);
   
   document.querySelector("#menu-bloc-inventory").style.visibility = inventory ? "visible" : "hidden";
   for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
