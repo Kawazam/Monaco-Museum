@@ -227,8 +227,12 @@ body {
 }
 
 #time-set-checkbox{
-  position: relative;
+  position: absolute;
+  display: grid;
   visibility: hidden;
+  height: 20%;
+  width: 30%;
+  align-items: center;
 }
 
 .checkbox{
@@ -238,12 +242,20 @@ body {
 
 #checked{
   visibility: hidden;
-  /* position: inherit; */
+  height: 100%;
 }
 
 #unchecked{
   visibility: hidden;
-  /* position: inherit; */
+  height: 100%;
+}
+
+.time-set-checkbox-text{
+  text-align: right;
+  color: #000;
+  position: absolute;
+  right: 0%;
+  font-size: 2em;
 }
 
 /*------------------------------------------------------------*/

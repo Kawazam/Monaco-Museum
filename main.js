@@ -529,7 +529,8 @@ async function InitApp() {
       document.querySelector("#time-set-midnight").style.visibility = "visible";
       document.querySelector("#time-set-checkbox").style.visibility = "visible";
       document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
-      document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";  
+      document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
+      document.removeEventListener('keydown', PassTheNightMenu);  
     }else{
       document.querySelector("#time-set-menu").style.visibility = "hidden";
       document.querySelector("#time-set-day").style.visibility = "hidden";
@@ -538,8 +539,10 @@ async function InitApp() {
       document.querySelector("#time-set-midnight").style.visibility = "hidden";
       document.querySelector("#time-set-checkbox").style.visibility = "hidden";
       document.querySelector("#checked").style.visibility = "hidden";
-      document.querySelector("#unchecked").style.visibility = "hidden";  
+      document.querySelector("#unchecked").style.visibility = "hidden";
+      document.removeEventListener('keydown', PassTheNightMenu);  
     }
+    document.removeEventListener('keydown', PassTheNightMenu);
   }
   
   //------------------------------------------------------------------------------
