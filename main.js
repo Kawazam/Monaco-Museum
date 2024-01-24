@@ -25,6 +25,19 @@ import {
 } from "./Coral.js"
 
 //------------------------------------------------------------------------------
+import {
+  Zone_map,
+  Zone_1,
+  Zone_2,
+  Zone_3,
+  Zone_4,
+  Zone_5,
+  Zone_6,
+  Zone_7,
+} from "./Zone.js";
+
+
+//------------------------------------------------------------------------------
 import TravelAnimation from "./travelAnimation.js";
 //##############################################################################
 
@@ -85,27 +98,33 @@ ButtonMap.addEventListener("click", function(){
 
 
 //------------------------------------------------------------------------------
-function CheckKeyPress(event) {
+function checkMenueToggle(event){
   const key = event.key;
   if (key==='i') {
+    console.log("I been pressed");
     MenuDisplay = !MenuDisplay;
-  }
-  
-  if (MenuDisplay) {
-    document.querySelector("#menu").style.visibility = "visible";
-    document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
-    for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
-    document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
-    document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
-  } else {
-    document.querySelector("#menu").style.visibility = "hidden";
-    document.querySelector("#menu-bloc-inventory").style.visibility = "hidden";
-    for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = "hidden";
-    document.querySelector("#menu-bloc-stats").style.visibility = "hidden";
-    document.querySelector("#menu-bloc-map").style.visibility = "hidden";
-    document.querySelector("#display-canvas").focus();
+    if (MenuDisplay) {
+      console.log(MenuDisplay);
+      console.log("display menue");
+      document.querySelector("#menu").style.visibility = "visible";
+      document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
+      for (let element of canvas.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
+      canvas.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
+      canvas.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
+      resetFPSCameraController(canvas);
+    } else {
+      document.querySelector("#menu").style.visibility = "hidden";
+      document.querySelector("#menu-bloc-inventory").style.visibility = "hidden";
+      for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = "hidden";
+      document.querySelector("#menu-bloc-stats").style.visibility = "hidden";
+      document.querySelector("#menu-bloc-map").style.visibility = "hidden";
+      document.querySelector("#display-canvas").focus();
+      setFPSCameraController(canvas);
+    }
+    console.log('menue out');
   }
 }
+
 
 //------------------------------------------------------------------------------
 function toggleMenuSection() {
@@ -114,7 +133,7 @@ function toggleMenuSection() {
   ButtonMap.classList.toggle("selected_title", Map);
   
   document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
-  for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
+  for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
   document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
   document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
 }
@@ -140,6 +159,7 @@ function toggleMenuSection() {
 
 //------------------------------------------------------------------------------
 window.addEventListener("load", InitApp);
+let canvas;
 
 //------------------------------------------------------------------------------
 async function InitApp() {
@@ -148,10 +168,11 @@ async function InitApp() {
     document.querySelector("#loading-page").style.visibility = "visible";
   
     //------------------------------------------------------------------------------
-    let canvas = document.getElementById("display-canvas");
+    canvas = document.getElementById("display-canvas");
     
     //------------------------------------------------------------------------------
-    await SDK3DVerse.startSession({
+    await SDK3DVerse.joinOrStartSession({
+      isTransient: true,
       userToken: publicToken,
       sceneUUID: mainSceneUUID,
       // sceneUUID: inventorySceneUUID,
@@ -164,8 +185,9 @@ async function InitApp() {
     await InitFirstPersonController(characterControllerSceneUUID);
     
     //------------------------------------------------------------------------------
-    canvas.addEventListener('mousedown', () => setFPSCameraController(canvas));
-    
+    canvas.addEventListener('pointerdown', () => setFPSCameraController(canvas));
+    canvas.addEventListener('keydown', checkMenueToggle);
+  
     //------------------------------------------------------------------------------
     await SplinesForFishes();
     
@@ -176,8 +198,8 @@ async function InitApp() {
     //hide loading page-------------------------------------------------------------
     document.querySelector("#loading-page").style.visibility = "hidden";
   
-  //------------------------------------------------------------------------------
-  document.addEventListener('keydown', function(event) {
+    //------------------------------------------------------------------------------
+    document.addEventListener('keydown', function(event) {
     // Vérifie si la touche pressée est 't'
     if (event.key === 't') {
         // Vérifie si islampvisible est true
@@ -200,18 +222,27 @@ async function InitApp() {
   var TimeSetMenuDisplay = false;
   var CheckboxChecked = false;
   var CheckboxUnchecked = true;
+  var tpPoint;
 
   const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('347659d6-bd3f-44f4-b816-bd2837ed82d0');
   const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3f1d3498-dd14-49df-a6e5-bb13281095d5');
   const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3c3b76c9-1b50-4f4e-9386-0566896a55ce');
   const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('24145957-9a15-4752-9b0e-359e14b5ba8e');
   const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('299e8f24-53fa-4bf5-b6b3-979a0348dc60');
-  const ToHubTpPoint = await SDK3DVerse.engineAPI.findEntitiesByEUID('a0854b06-1e4e-4d2f-abf2-b6f2790e75ed');
-  const ToLabTpPoint = await SDK3DVerse.engineAPI.findEntitiesByEUID('461d6d0c-7251-47c2-8da3-b3d610710347');
-  const InsideTpPoint  = await SDK3DVerse.engineAPI.findEntitiesByEUID('075dfe39-7699-4976-9504-2d30d95eef7a');
-  const OutsideTpPoint = await SDK3DVerse.engineAPI.findEntitiesByEUID('c34c10e9-071f-41e8-83ea-c8af395ed420');
-  const InteractZonePLayer = await SDK3DVerse.engineAPI.findEntitiesByEUID('67919a03-7107-402a-a87e-4027311d9ec6');
   const lamp = await SDK3DVerse.engineAPI.findEntitiesByEUID('f95f32ec-fa18-410a-967d-7be768c539d1');
+
+  const zoneCoralPlace = {
+    Coral_1 : Zone_map["ZonePlace_2"],
+    Coral_2 : Zone_map["ZonePlace_3"],
+    Coral_3 : Zone_map["ZonePlace_4"],
+    Coral_4 : Zone_map["ZonePlace_5"],
+    Coral_5 : Zone_map["ZonePlace_6"],
+    Coral_6 : Zone_map["ZonePlace_7"],
+    Coral_7 : Zone_map["ZonePlace_7"],
+    Coral_8 : Zone_map["ZonePlace_7"],
+    null    : Zone_map["ZonePlace_1"]
+  };
+
 
   const ButtonDay = document.querySelector("#time-set-day");
   const ButtonMidday = document.querySelector("#time-set-midday");
@@ -221,48 +252,189 @@ async function InitApp() {
   const ButtonUncheckbox = document.querySelector("#checked");
    
   //------------------------------------------------------------------------------
-  let canPlaceCoral = false;
   let islampvisible = false;
   let zone;
-  const entities = await SDK3DVerse.engineAPI.findEntitiesByEUID('7875aa33-7421-47b0-bcba-884aed856227');
-  console.log(entities);
-  let scriptComponent = entities[0].getComponent("script_map");
-  console.log(entities);
-  console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
-  
+  let entities;
+  // const entities = await SDK3DVerse.engineAPI.findEntitiesByEUID('7875aa33-7421-47b0-bcba-884aed856227');
+  // console.log(entities);
+  // let scriptComponent = entities[0].getComponent("script_map");
+  // console.log(entities);
+  // console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
+  CheckCoralList();
+
   //------------------------------------------------------------------------------
   const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
   let outsideTrigger = false;
   
   //------------------------------------------------------------------------------
-  function TeleportInside(event) {
-    if (event.key === 'e') {
-      if (outsideTrigger === true){
-        const inside = InsideTpPoint[0].getGlobalTransform();
-        entities[0].setGlobalTransform(inside);
-        scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
-        console.log(scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
-        entities[0].setComponent("script_map", scriptComponent);
-        setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities[0])}, 100);
-        document.removeEventListener('keydown', TeleportInside);
+  async function CheckCoralList(){
+    coral_list.splice(0, coral_list.length);
+    for (var i = 0; i < GlobalPlantationChildrenLenght; i++){
+      console.log(i);
+      const coralPlanted = await GlobalPlantationChildren[i].getChildren();
+      console.log("coral planted = ",coralPlanted[0].getName());
+      console.log(GlobalPlantationChildren[i].getName());
+      let coralSceneRef = coralPlanted[0].getComponent('scene_ref').value;
+      console.log(coralSceneRef);
+      if (coralSceneRef == coral_map["coral_1"]){
+        coral_list.push(Coral_1.name);
+      }
+      if (coralSceneRef == coral_map["coral_2"]){
+        coral_list.push(Coral_2.name);
+      }
+      if (coralSceneRef == coral_map["coral_3"]){
+        coral_list.push(Coral_3.name);
+      }
+      if (coralSceneRef == coral_map["coral_4"]){
+        coral_list.push(Coral_4.name);
+      }
+      if (coralSceneRef == coral_map["coral_5"]){
+        coral_list.push(Coral_5.name);
+      }
+      if (coralSceneRef == coral_map["coral_6"]){
+        coral_list.push(Coral_6.name);
+      }
+      if (coralSceneRef == coral_map["coral_7"]){
+        coral_list.push(Coral_7.name);
+      }
+      if (coralSceneRef == coral_map["coral_8"]){
+        coral_list.push(Coral_8.name);
       }
     }
+    console.log(coral_list);
   }
-  
+
   //------------------------------------------------------------------------------
-  function TeleportOutside(event) {
-    if (event.key === 'e') {
-      const outside = OutsideTpPoint[0].getGlobalTransform();
-      entities[0].setGlobalTransform(outside);
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 1;
-      console.log(scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
-      entities[0].setComponent("script_map", scriptComponent);
-      console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
-      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities[0])}, 100);
-      document.removeEventListener('keydown', TeleportOutside);
+  async function checkPlantCoral(event) {
+    if (event.key != 'e'){
+      return;
     }
-  }
+    console.log("pressed E = ",event.key);
+      // if a plantions is empty call placeCoral() to place a coral
+    if (zone[0].getComponent('scene_ref').value == coral_map["empty_zone"]){
+      document.removeEventListener('keypress', checkPlantCoral);
+      document.removeEventListener('keypress',PlaceCoral);
+      document.addEventListener('keypress',PlaceCoral);
+      return;
+    }
+    if (zone[0].getComponent('scene_ref').value == coral_map["coral_1"]){
+      console.log("coral = 1");
+      const coralIndex = coral_list.indexOf(Coral_1.name);
+      console.log(coralIndex);
+      if (coralIndex !== -1) {
+        coral_list.splice(coralIndex, 1);
+      }
+    }
+    if (zone[0].getComponent('scene_ref').value == coral_map["coral_2"]){
+      console.log("coral = 2");
+      const coralIndex = coral_list.indexOf(Coral_2.name);
+      console.log(coralIndex);
+      if (coralIndex !== -1) {
+        coral_list.splice(coralIndex, 1);
+      }
+    }
+    if (zone[0].getComponent('scene_ref').value == coral_map["coral_3"]){
+      console.log("coral = 3");
+      const coralIndex = coral_list.indexOf(Coral_3.name);
+      console.log(coralIndex);
+      if (coralIndex !== -1) {
+        coral_list.splice(coralIndex, 1);
+      }
+    }
+    if (zone[0].getComponent('scene_ref').value == coral_map["coral_4"]){
+      console.log("coral = 4");
+      const coralIndex = coral_list.indexOf(Coral_4.name);
+      console.log(coralIndex);
+      if (coralIndex !== -1) {
+        coral_list.splice(coralIndex, 1);
+      }
+    }
+    if (zone[0].getComponent('scene_ref').value == coral_map["coral_5"]){
+      console.log("coral = 5");
+      const coralIndex = coral_list.indexOf(Coral_5.name);
+      console.log(coralIndex);
+      if (coralIndex !== -1) {
+        coral_list.splice(coralIndex, 1);
+      }
+    }
+    if (zone[0].getComponent('scene_ref').value == coral_map["coral_6"]){
+      console.log("coral = 6");
+      const coralIndex = coral_list.indexOf(Coral_6.name);
+      console.log(coralIndex);
+      if (coralIndex !== -1) {
+        coral_list.splice(coralIndex, 1);
+      }
+    }
+    if (zone[0].getComponent('scene_ref').value == coral_map["coral_7"]){
+      console.log("coral = 7");
+      const coralIndex = coral_list.indexOf(Coral_7.name);
+      console.log(coralIndex);
+      if (coralIndex !== -1) {
+        coral_list.splice(coralIndex, 1);
+      }
+    }
+    if (zone[0].getComponent('scene_ref').value == coral_map["coral_8"]){
+      console.log("coral = 8");
+      const coralIndex = coral_list.indexOf(Coral_8.name);
+      console.log(coralIndex);
+      if (coralIndex !== -1) {
+        coral_list.splice(coralIndex, 1);
+      }
+    }
+    
+    zone[0].setComponent('scene_ref',{value : coral_map["empty_zone"], maxRecursionCount: 1});
+    zone[0].save();
+    CheckCoralList();
+  };
+
+  //------------------------------------------------------------------------------
+  async function teleport(){
+    let tpPointChildren = await tpPoint.getChildren()
+    let tpPointPos = tpPointChildren[0].getGlobalTransform();
+    let scriptComponent = entities.getComponent("script_map");
+    //const keepRotationView = entities.getGlobalTransform().orientation;
+    entities.setGlobalTransform(tpPointPos);
+    //entities.setGlobalTransform({orientation : keepRotationView});
+    console.log(tpPoint.getName());
+    console.log("swim = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"]);
+    console.log(InsideHubDoorToOutside[0].getName());
+    if (tpPoint.getName() == InsideHubDoorToOutside[0].getName()){
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 1;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 0.5;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["runSpeed"] = 1;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 0.2;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = 90.0;
+      entities.setComponent("script_map", scriptComponent);
+      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities)}, 100);
+      
+      
+      document.removeEventListener('click', teleport);
+    } 
+    else if (tpPoint.getName() == ToHubDoor[0].getName()){
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 2;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["runSpeed"] = 6;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 9.8;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = 90.0;
+      entities.setComponent("script_map", scriptComponent);
+      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities)}, 100);
+      document.removeEventListener('click', teleport);
+    } else {
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 2;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["runSpeed"] = 6;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 9.8;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = -90.0;
+      entities.setComponent("script_map", scriptComponent);
+      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities)}, 100);
+      document.removeEventListener('click', teleport);
+    }
+    document.removeEventListener('click', teleport);
+  };
 
   //------------------------------------------------------------------------------
   function adjustCoralList(coral_list, nbZones) {
@@ -333,181 +505,35 @@ async function InitApp() {
   }
 
   //------------------------------------------------------------------------------
-  function PlaceCoral(event){
-    
-    if (event.key === 'e'){
-      console.log('pressed E')
-      if (zone[0] != "Coral"){
-        console.log("selected ",zone[0].getComponent('scene_ref').value);
-        console.log("coral_1 : ",coral_map["coral_1"]);
-        console.log("coral_2 : ",coral_map["coral_2"]);
-        console.log("coral_3 : ",coral_map["coral_3"]);
-        console.log("coral_4 : ",coral_map["coral_4"]);
-        console.log("coral_5 : ",coral_map["coral_5"]);
-        console.log("coral_6 : ",coral_map["coral_6"]);
-        console.log("coral_7 : ",coral_map["coral_7"]);
-        console.log("coral_8 : ",coral_map["coral_8"]);
-        console.log("empty_zone : ",coral_map["coral_9"]);
-        if (zone[0].getComponent('scene_ref').value == coral_map["coral_1"]){
-          console.log("coral = 1");
-          const coralIndex = coral_list.indexOf(Coral_1.name);
-          console.log(coralIndex);
-          if (coralIndex !== -1) {
-            coral_list.splice(coralIndex, 1);
-          }
-        }
-        if (zone[0].getComponent('scene_ref').value == coral_map["coral_2"]){
-          console.log("coral = 2");
-          const coralIndex = coral_list.indexOf(Coral_2.name);
-          console.log(coralIndex);
-          if (coralIndex !== -1) {
-            coral_list.splice(coralIndex, 1);
-          }
-        }
-        if (zone[0].getComponent('scene_ref').value == coral_map["coral_3"]){
-          console.log("coral = 3");
-          const coralIndex = coral_list.indexOf(Coral_3.name);
-          console.log(coralIndex);
-          if (coralIndex !== -1) {
-            coral_list.splice(coralIndex, 1);
-          }
-        }
-        if (zone[0].getComponent('scene_ref').value == coral_map["coral_4"]){
-          console.log("coral = 4");
-          const coralIndex = coral_list.indexOf(Coral_4.name);
-          console.log(coralIndex);
-          if (coralIndex !== -1) {
-            coral_list.splice(coralIndex, 1);
-          }
-        }
-        if (zone[0].getComponent('scene_ref').value == coral_map["coral_5"]){
-          console.log("coral = 5");
-          const coralIndex = coral_list.indexOf(Coral_5.name);
-          console.log(coralIndex);
-          if (coralIndex !== -1) {
-            coral_list.splice(coralIndex, 1);
-          }
-        }
-        if (zone[0].getComponent('scene_ref').value == coral_map["coral_6"]){
-          console.log("coral = 6");
-          const coralIndex = coral_list.indexOf(Coral_6.name);
-          console.log(coralIndex);
-          if (coralIndex !== -1) {
-            coral_list.splice(coralIndex, 1);
-          }
-        }
-        if (zone[0].getComponent('scene_ref').value == coral_map["coral_7"]){
-          console.log("coral = 7");
-          const coralIndex = coral_list.indexOf(Coral_7.name);
-          console.log(coralIndex);
-          if (coralIndex !== -1) {
-            coral_list.splice(coralIndex, 1);
-          }
-        }
-        if (zone[0].getComponent('scene_ref').value == coral_map["coral_8"]){
-          console.log("coral = 8");
-          const coralIndex = coral_list.indexOf(Coral_8.name);
-          console.log(coralIndex);
-          if (coralIndex !== -1) {
-            coral_list.splice(coralIndex, 1);
-          }
-        }
-        // Retire l'élément associé au composant de coral_list
-        zone[0].setComponent('scene_ref',{value : coral_map["empty_zone"], maxRecursionCount: 1});
-        canPlaceCoral = false;
-      }
-      canPlaceCoral = true;
-      console.log(canPlaceCoral);
-      return;
-      }
+  function PlaceCoral(event) {
+    console.log("pressed to place =", event.key);
 
+    const coralIndex = parseInt(event.key);
 
-    if(canPlaceCoral)
-    {
-      
-      if (event.key === '1'){
+    if (coralIndex >= 1 && coralIndex <= 8) {
+        const coralKey = `coral_${coralIndex}`;
         console.log(event.key);
-        zone[0].setComponent('scene_ref',{value : coral_map["coral_1"], maxRecursionCount: 1});
-        coral_list.push(Coral_1.name);
+        zone[0].setComponent('scene_ref', { value: coral_map[coralKey], maxRecursionCount: 1 });
+        zone[0].save();
+        CheckCoralList();
         console.log(coral_list);
-      }
-      if (event.key === '2'){
-        console.log(event.key);
-        zone[0].setComponent('scene_ref',{value : coral_map["coral_2"], maxRecursionCount: 1});
-        coral_list.push(Coral_2.name);
-        console.log(coral_list);
-      }
-      if (event.key === '3'){
-        console.log(event.key);
-        zone[0].setComponent('scene_ref',{value : coral_map["coral_3"], maxRecursionCount: 1});
-        coral_list.push(Coral_3.name);
-        console.log(coral_list);
-      }
-      if (event.key === '4'){
-        console.log(event.key);
-        zone[0].setComponent('scene_ref',{value : coral_map["coral_4"], maxRecursionCount: 1});
-        coral_list.push(Coral_4.name);
-        console.log(coral_list);
-      }
-      if (event.key === '5'){
-        console.log(event.key);
-        zone[0].setComponent('scene_ref',{value : coral_map["coral_5"], maxRecursionCount: 1});
-        console.log(coral_map['coral_5']);
-        coral_list.push(Coral_5.name);
-        console.log(coral_list);
-      }
-      if (event.key === '6'){
-        console.log(event.key);
-        zone[0].setComponent('scene_ref',{value : coral_map["coral_6"], maxRecursionCount: 1});
-        coral_list.push(Coral_6.name);
-        console.log(coral_list);
-        
-      }
-      if (event.key === '7'){
-        console.log(event.key);
-        zone[0].setComponent('scene_ref',{value : coral_map["coral_7"], maxRecursionCount: 1});
-        coral_list.push(Coral_7.name);
-        console.log(coral_list);
-      }
-      if (event.key === '8'){
-        console.log(event.key);
-        zone[0].setComponent('scene_ref',{value : coral_map["coral_8"], maxRecursionCount: 1});
-        coral_list.push(Coral_8.name);
-        console.log(coral_list);
-      }
-      const nbZones = 6; // Replace with your desired number of zones
-      const adjustedLengths = adjustCoralList(coral_list, nbZones);
-      console.log(adjustedLengths);
-      for (let i = 0; i < nbZones; i++) {
-        // Get a random coral type and decrement its count
-        const randomCoral = getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones);
-      
-        console.log(`Zone ${i + 1}: ${randomCoral}`);
-      }
     }
-    
-    
-    canPlaceCoral = false;
-    document.removeEventListener('keydown', PlaceCoral);    
-  }
-
-  
-  //------------------------------------------------------------------------------
-  function TeleportToHub(event){
-    if (event.key === 'e'){
-      const hub = ToHubTpPoint[0].getGlobalTransform();
-      entities[0].setGlobalTransform(hub);
-      document.removeEventListener('keydown', TeleportToHub)
+    //get the occurrences and adapt them to the number of decorztion zone
+    const nbZones = 6; 
+    let adjustedLengths = adjustCoralList(coral_list, nbZones);
+    console.log(adjustedLengths);
+    for (let i = 0; i < nbZones; i++) {
+      // Get a random coral type and decrement its count
+      let randomCoral = getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones);
+      console.log("voici",CoralZone[0].getName());
+      console.log(zoneName[i].getName());
+      console.log(randomCoral);
+      console.log("this = ",zoneCoralPlace[randomCoral])
+      zoneName[i].setComponent('scene_ref',{value : zoneCoralPlace[randomCoral], maxRecursionCount: 0});
+      zoneName[i].setGlobalTransform(CoralZone[0]);
+      console.log(`Zone ${i + 1}: ${randomCoral}`);
     }
-  }
-  
-  //------------------------------------------------------------------------------
-  function TeleportToLab(event){
-    if (event.key === 'e'){
-      const lab = ToLabTpPoint[0].getGlobalTransform();
-      entities[0].setGlobalTransform(lab);
-      document.removeEventListener('keydown', TeleportToLab);
-    }
+    document.removeEventListener('keypress', PlaceCoral);
   }
   
   //------------------------------------------------------------------------------
@@ -531,6 +557,7 @@ async function InitApp() {
       document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
       document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
       document.removeEventListener('keydown', PassTheNightMenu);  
+      resetFPSCameraController();
     }else{
       document.querySelector("#time-set-menu").style.visibility = "hidden";
       document.querySelector("#time-set-day").style.visibility = "hidden";
@@ -540,7 +567,8 @@ async function InitApp() {
       document.querySelector("#time-set-checkbox").style.visibility = "hidden";
       document.querySelector("#checked").style.visibility = "hidden";
       document.querySelector("#unchecked").style.visibility = "hidden";
-      document.removeEventListener('keydown', PassTheNightMenu);  
+      document.removeEventListener('keydown', PassTheNightMenu); 
+      setFPSCameraController();
     }
     document.removeEventListener('keydown', PassTheNightMenu);
   }
@@ -586,52 +614,57 @@ async function InitApp() {
   SDK3DVerse.engineAPI.onEnterTrigger(async (emitterEntity, triggerEntity) =>
   {
     let emitterEntityParent = emitterEntity.getParent();
+    let getCamTrigger = await triggerEntity.getParent();
+    console.log(getCamTrigger);
+    entities = await getCamTrigger.getParent();
     console.log('enter ',emitterEntity.getName()," ", triggerEntity.getName());
-    if (triggerEntity == InteractZonePLayer[0]){
-      if (emitterEntity == InsideHubDoorToOutside[0]){
-        console.log('press E to exit');
-        document.removeEventListener('keydown', TeleportOutside);
-        document.addEventListener('keydown', TeleportOutside);
-        
-      }
-      else if (emitterEntity == OutsideHubDoorToInside[0]){
-        outsideTrigger = true;
-        console.log('press E to enter');
-        document.removeEventListener('keydown', TeleportInside);
-        document.addEventListener('keydown', TeleportInside);
-      }
-      else if (emitterEntity == ToLaboratoryDoor[0]){
-        console.log('press E to loaboratory')
-        document.removeEventListener('keydown', TeleportToLab);
-        document.addEventListener('keydown', TeleportToLab);
-      }
-      else if (emitterEntity == ToHubDoor[0]){
-        console.log('press E to Hub')
-        document.removeEventListener('keydown', TeleportToHub);
-        document.addEventListener('keydown', TeleportToHub);
-      }
-      else if (emitterEntity.getParent().getName() == "Plantations"){
-        console.log("press E");
-        zone = await emitterEntity.getChildren();
-        console.log(zone[0].getName());
-        console.log(emitterEntity," ",emitterEntity.getName()," ",emitterEntityParent," ",zone);
-        document.removeEventListener('keydown', PlaceCoral);
-        document.addEventListener('keydown', PlaceCoral);  
-      }
-      else if (emitterEntity  == Couch[0]) {
-        console.log('press E to pass the night');
-        document.removeEventListener('keydown', PassTheNightMenu);
-        document.addEventListener('keydown', PassTheNightMenu);
-      }
+    if (emitterEntity == InsideHubDoorToOutside[0]){
+      console.log('press E to exit');
+      tpPoint = await emitterEntity;
+      document.removeEventListener('click', teleport);
+      document.addEventListener('click',teleport);
+      
+    }
+    else if (emitterEntity == OutsideHubDoorToInside[0]){
+      outsideTrigger = true;
+      console.log('press E to enter');
+      tpPoint = await emitterEntity;
+      document.removeEventListener('click', teleport);
+      document.addEventListener('click',teleport);
+    }
+    else if (emitterEntity == ToLaboratoryDoor[0]){
+      console.log('press E to loaboratory')
+      tpPoint = await emitterEntity;
+      document.removeEventListener('click', teleport);
+      document.addEventListener('click',teleport);
+    }
+    else if (emitterEntity == ToHubDoor[0]){
+      console.log('press E to Hub')
+      tpPoint = await emitterEntity;
+      document.removeEventListener('click', teleport);
+      document.addEventListener('click',teleport);
+    }
+    else if (emitterEntity.getParent().getName() == "Plantations"){
+      console.log("press E");
+      zone = await emitterEntity.getChildren();
+      console.log(zone[0].getName());
+      console.log(emitterEntity," ",emitterEntity.getName()," ",emitterEntityParent," ",zone);
+      document.removeEventListener('keypress', checkPlantCoral);
+      document.addEventListener('keypress', checkPlantCoral);
+    }
+    else if (emitterEntity  == Couch[0]) {
+      console.log('press E to pass the night');
+      document.removeEventListener('keydown', PassTheNightMenu);
+      document.addEventListener('keydown', PassTheNightMenu);
     }
   });
-
+  
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
     console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
     outsideTrigger = false;
     console.log(outsideTrigger);
-
+    document.removeEventListener('click', teleport);
   });
 }
 //##############################################################################
@@ -662,6 +695,27 @@ async function setFPSCameraController(canvas){
   canvas.requestPointerLock();
 };
 
+//------------------------------------------------------------------------------
+async function resetFPSCameraController(canvas) {
+  const SDK3DVerse = window.SDK3DVerse
+  // // console.log(SDK3DVerse)
+  // console.log("We set moving stay")
+  // Restore the default actions for LOOK_LEFT, LOOK_RIGHT, LOOK_UP, and LOOK_DOWN.
+
+  SDK3DVerse.actionMap.values["LOOK_LEFT"][0] = ["MOUSE_BTN_LEFT"];
+  SDK3DVerse.actionMap.values["LOOK_RIGHT"][0] = ["MOUSE_BTN_LEFT"];
+  SDK3DVerse.actionMap.values["LOOK_DOWN"][0] = ["MOUSE_BTN_LEFT"];
+  SDK3DVerse.actionMap.values["LOOK_UP"][0] = ["MOUSE_BTN_LEFT"];
+  SDK3DVerse.actionMap.propagate();
+
+  // Release the pointer lock.
+  canvas.exitPointerLock = (
+      canvas.exitPointerLock
+      || canvas.mozExitPointerLock
+      || canvas.webkitExitPointerLock
+  );
+  canvas.exitPointerLock();
+};
 
 //------------------------------------------------------------------------------
 async function InitFirstPersonController(charCtlSceneUUID) {
