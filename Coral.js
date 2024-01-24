@@ -128,7 +128,7 @@ const coral_map = {
 };
 
 // Add thes instances of classes to the coral list
-const coral_list = [];
+let coral_list = [];
 
 
 //-----------------------------------EXPORT----------------------------------
