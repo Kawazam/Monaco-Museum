@@ -573,14 +573,14 @@ async function InitApp() {
     // console.log("checked", CheckboxChecked);
     SDK3DVerse.engineAPI.pauseAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
     ToggleCheckbox();
-  })
+  });
   ButtonUncheckbox.addEventListener("click", function(){
     CheckboxChecked = false;
     CheckboxUnchecked = true;
     // console.log("unchecked", CheckboxUnchecked);
     SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
     ToggleCheckbox();
-  })
+  });
 
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onEnterTrigger(async (emitterEntity, triggerEntity) =>
