@@ -38,65 +38,65 @@ import TravelAnimation from "./travelAnimation.js";
 //const inventoryJson = require("./inventory.json");
 
 //------------------------------------------------------------------------------
-var menu_display  = false;
-var inventory     = true;
-var stats         = false;
-var map           = false;
+var MenuDisplay   = false;
+var Inventory     = true;
+var Stats         = false;
+var Map           = false;
 
-var inventory_table = "";
+var InventoryTable = "";
 
-const button_inventory      = document.querySelector("#menu-menubar-title-inventory");
-const button_stats          = document.querySelector("#menu-menubar-title-stats");
-const button_map            = document.querySelector("#menu-menubar-title-map");
+const ButtonInventory       = document.querySelector("#menu-menubar-title-inventory");
+const ButtonStats           = document.querySelector("#menu-menubar-title-stats");
+const ButtonMap             = document.querySelector("#menu-menubar-title-map");
 
-const display_inventory     = document.querySelector("#menu-bloc-inventory");
+const DisplayInventory      = document.querySelector("#menu-bloc-inventory");
 
 //------------------------------------------------------------------------------
 for(let i = 1; i < 7; i++) {
   for(let j = 1; j < 5; j++) {
-    inventory_table += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
+    InventoryTable += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
   }
 }
 
 //------------------------------------------------------------------------------
-display_inventory.innerHTML = inventory_table;
+DisplayInventory.innerHTML = InventoryTable;
 
 //------------------------------------------------------------------------------
 //Toggle Inventory display
-document.addEventListener("keydown", checkKeyPress);
+document.addEventListener("keydown", CheckKeyPress);
 
 //------------------------------------------------------------------------------
 //Toggle menu section
-button_inventory.addEventListener("click", function(){
-  inventory = true;
-  stats = map = false;
+ButtonInventory.addEventListener("click", function(){
+  Inventory = true;
+  Stats = Map = false;
   toggleMenuSection();
 });
-button_stats.addEventListener("click", function(){
-  stats = true;
-  inventory = map = false;
+ButtonStats.addEventListener("click", function(){
+  Stats = true;
+  Inventory = Map = false;
   toggleMenuSection();
 });
-button_map.addEventListener("click", function(){
-  map = true;
-  inventory = stats = false;
+ButtonMap.addEventListener("click", function(){
+  Map = true;
+  Inventory = Stats = false;
   toggleMenuSection();
 });
 
 
 //------------------------------------------------------------------------------
-function checkKeyPress(event) {
+function CheckKeyPress(event) {
   const key = event.key;
   if (key==='i') {
-    menu_display = !menu_display;
+    MenuDisplay = !MenuDisplay;
   }
   
-  if (menu_display) {
+  if (MenuDisplay) {
     document.querySelector("#menu").style.visibility = "visible";
-    document.querySelector("#menu-bloc-inventory").style.visibility = inventory ? "visible" : "hidden";
-    for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
-    document.querySelector("#menu-bloc-stats").style.visibility = stats ? "visible" : "hidden";
-    document.querySelector("#menu-bloc-map").style.visibility = map ? "visible" : "hidden";
+    document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
+    for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
+    document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
+    document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
   } else {
     document.querySelector("#menu").style.visibility = "hidden";
     document.querySelector("#menu-bloc-inventory").style.visibility = "hidden";
@@ -109,14 +109,14 @@ function checkKeyPress(event) {
 
 //------------------------------------------------------------------------------
 function toggleMenuSection() {
-  button_inventory.classList.toggle("selected_title", inventory);
-  button_stats.classList.toggle("selected_title", stats);
-  button_map.classList.toggle("selected_title", map);
+  ButtonInventory.classList.toggle("selected_title", Inventory);
+  ButtonStats.classList.toggle("selected_title", Stats);
+  ButtonMap.classList.toggle("selected_title", Map);
   
-  document.querySelector("#menu-bloc-inventory").style.visibility = inventory ? "visible" : "hidden";
-  for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
-  document.querySelector("#menu-bloc-stats").style.visibility = stats ? "visible" : "hidden";
-  document.querySelector("#menu-bloc-map").style.visibility = map ? "visible" : "hidden";
+  document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
+  for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
+  document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
+  document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
 }
 
 //------------------------------------------------------------------------------
@@ -143,25 +143,39 @@ window.addEventListener("load", InitApp);
 
 //------------------------------------------------------------------------------
 async function InitApp() {
-  let canvas = document.getElementById("display-canvas");
-  await SDK3DVerse.startSession({
-    userToken: publicToken,
-    sceneUUID: mainSceneUUID,
-    // sceneUUID: inventorySceneUUID,
-    canvas: document.getElementById("display-canvas"),
-    createDefaultCamera: false,
-    startSimulation: "on-assets-loaded",
-  });
-  
-  //------------------------------------------------------------------------------
-  await InitFirstPersonController(characterControllerSceneUUID);
-  
-  //------------------------------------------------------------------------------
-  canvas.addEventListener('mousedown', () => setFPSCameraController(canvas));
-  
-  //------------------------------------------------------------------------------
-  await SplinesForFishes();
 
+    //show loading page-------------------------------------------------------------
+    document.querySelector("#loading-page").style.visibility = "visible";
+  
+    //------------------------------------------------------------------------------
+    let canvas = document.getElementById("display-canvas");
+    
+    //------------------------------------------------------------------------------
+    await SDK3DVerse.startSession({
+      userToken: publicToken,
+      sceneUUID: mainSceneUUID,
+      // sceneUUID: inventorySceneUUID,
+      canvas: document.getElementById("display-canvas"),
+      createDefaultCamera: false,
+      startSimulation: "on-assets-loaded",
+    });
+    
+    //------------------------------------------------------------------------------
+    await InitFirstPersonController(characterControllerSceneUUID);
+    
+    //------------------------------------------------------------------------------
+    canvas.addEventListener('mousedown', () => setFPSCameraController(canvas));
+    
+    //------------------------------------------------------------------------------
+    await SplinesForFishes();
+    
+    //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 }); //'moon-sun-animation'
+    SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
+    
+    //hide loading page-------------------------------------------------------------
+    document.querySelector("#loading-page").style.visibility = "hidden";
+  
   //------------------------------------------------------------------------------
   document.addEventListener('keydown', function(event) {
     // Vérifie si la touche pressée est 't'
@@ -183,6 +197,11 @@ async function InitApp() {
   });
 
   //------------------------------------------------------------------------------
+  var TimeSetMenuDisplay = false;
+  var CheckboxChecked = false;
+  var CheckboxUnchecked = true;
+
+  const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('347659d6-bd3f-44f4-b816-bd2837ed82d0');
   const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3f1d3498-dd14-49df-a6e5-bb13281095d5');
   const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3c3b76c9-1b50-4f4e-9386-0566896a55ce');
   const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('24145957-9a15-4752-9b0e-359e14b5ba8e');
@@ -193,9 +212,16 @@ async function InitApp() {
   const OutsideTpPoint = await SDK3DVerse.engineAPI.findEntitiesByEUID('c34c10e9-071f-41e8-83ea-c8af395ed420');
   const InteractZonePLayer = await SDK3DVerse.engineAPI.findEntitiesByEUID('67919a03-7107-402a-a87e-4027311d9ec6');
   const lamp = await SDK3DVerse.engineAPI.findEntitiesByEUID('f95f32ec-fa18-410a-967d-7be768c539d1');
-  // const sun  = await SDK3DVerse.engineAPI.findEntitiesByEUID('0e3748a2-ea86-44e0-869b-cddb715dab0e');
-  
+
+  const ButtonDay = document.querySelector("#time-set-day");
+  const ButtonMidday = document.querySelector("#time-set-midday");
+  const ButtonNight = document.querySelector("#time-set-night");
+  const ButtonMidnight = document.querySelector("#time-set-midnight");
+  const ButtonCheckbox = document.querySelector("#unchecked");
+  const ButtonUncheckbox = document.querySelector("#checked");
+   
   //------------------------------------------------------------------------------
+  let canPlaceCoral = false;
   let islampvisible = false;
   let zone;
   const entities = await SDK3DVerse.engineAPI.findEntitiesByEUID('7875aa33-7421-47b0-bcba-884aed856227');
@@ -203,9 +229,6 @@ async function InitApp() {
   let scriptComponent = entities[0].getComponent("script_map");
   console.log(entities);
   console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
-  //star animation 'moon-sun-anim' and 'butterfly-fish-2'
-  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 20.0 });
-  SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 });
   
   //------------------------------------------------------------------------------
   const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
@@ -241,6 +264,7 @@ async function InitApp() {
     }
   }
 
+  //------------------------------------------------------------------------------
   function adjustCoralList(coral_list, nbZones) {
     const totalCount = coral_list.length;
 
@@ -275,9 +299,7 @@ async function InitApp() {
     }
   }
 
-
-    
-
+  //------------------------------------------------------------------------------
   function getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones) {
     console.log("adjustedLengths:", adjustedLengths);
 
@@ -308,13 +330,8 @@ async function InitApp() {
     adjustedLengths[randomCoralType]--;
 
     return randomCoralType;
-}
+  }
 
-
-
-  //------------------------------------------------------------------------------
-  let canPlaceCoral = false;
-  
   //------------------------------------------------------------------------------
   function PlaceCoral(event){
     
@@ -494,6 +511,78 @@ async function InitApp() {
   }
   
   //------------------------------------------------------------------------------
+  function PassTheNightMenu(event){
+    if (event.key === 'e'){
+      TimeSetMenuDisplay = !TimeSetMenuDisplay;
+      // console.log(TimeSetMenuDisplay);
+      // console.log(ButtonDay);
+      // console.log(ButtonMidday);
+      // console.log(ButtonNight);
+      // console.log(ButtonMidnight);
+    }
+
+    if (TimeSetMenuDisplay) {
+      document.querySelector("#time-set-menu").style.visibility = "visible";
+      document.querySelector("#time-set-day").style.visibility = "visible";
+      document.querySelector("#time-set-midday").style.visibility = "visible";
+      document.querySelector("#time-set-night").style.visibility = "visible";
+      document.querySelector("#time-set-midnight").style.visibility = "visible";
+      document.querySelector("#time-set-checkbox").style.visibility = "visible";
+      document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
+      document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
+      document.removeEventListener('keydown', PassTheNightMenu);  
+    }else{
+      document.querySelector("#time-set-menu").style.visibility = "hidden";
+      document.querySelector("#time-set-day").style.visibility = "hidden";
+      document.querySelector("#time-set-midday").style.visibility = "hidden";
+      document.querySelector("#time-set-night").style.visibility = "hidden";
+      document.querySelector("#time-set-midnight").style.visibility = "hidden";
+      document.querySelector("#time-set-checkbox").style.visibility = "hidden";
+      document.querySelector("#checked").style.visibility = "hidden";
+      document.querySelector("#unchecked").style.visibility = "hidden";
+      document.removeEventListener('keydown', PassTheNightMenu);  
+    }
+    document.removeEventListener('keydown', PassTheNightMenu);
+  }
+
+  //------------------------------------------------------------------------------
+  function ToggleCheckbox() {
+    // console.log("toggle checkbox")
+    // console.log("CheckboxChecked:", CheckboxChecked);
+    // console.log("CheckboxUnchecked:", CheckboxUnchecked);
+    document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
+    document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
+  }
+
+  //------------------------------------------------------------------------------
+  ButtonDay.addEventListener("click", function(){
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.0 });
+  });
+  ButtonMidday.addEventListener("click", function(){
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.25 });
+  });
+  ButtonNight.addEventListener("click", function(){
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.5 });
+  });
+  ButtonMidnight.addEventListener("click", function(){
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.75 });
+  }); 
+  ButtonCheckbox.addEventListener("click", function(){
+    CheckboxChecked = true;
+    CheckboxUnchecked = false;
+    // console.log("checked", CheckboxChecked);
+    SDK3DVerse.engineAPI.pauseAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
+    ToggleCheckbox();
+  })
+  ButtonUncheckbox.addEventListener("click", function(){
+    CheckboxChecked = false;
+    CheckboxUnchecked = true;
+    // console.log("unchecked", CheckboxUnchecked);
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
+    ToggleCheckbox();
+  })
+
+  //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onEnterTrigger(async (emitterEntity, triggerEntity) =>
   {
     let emitterEntityParent = emitterEntity.getParent();
@@ -527,8 +616,12 @@ async function InitApp() {
         console.log(zone[0].getName());
         console.log(emitterEntity," ",emitterEntity.getName()," ",emitterEntityParent," ",zone);
         document.removeEventListener('keydown', PlaceCoral);
-        document.addEventListener('keydown', PlaceCoral);
-        
+        document.addEventListener('keydown', PlaceCoral);  
+      }
+      else if (emitterEntity  == Couch[0]) {
+        console.log('press E to pass the night');
+        document.removeEventListener('keydown', PassTheNightMenu);
+        document.addEventListener('keydown', PassTheNightMenu);
       }
     }
   });
