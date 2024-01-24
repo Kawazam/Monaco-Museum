@@ -76,7 +76,7 @@ DisplayInventory.innerHTML = InventoryTable;
 
 //------------------------------------------------------------------------------
 //Toggle Inventory display
-document.addEventListener("keydown", CheckKeyPress);
+document.addEventListener("keydown", checkMenueToggle);
 
 //------------------------------------------------------------------------------
 //Toggle menu section
@@ -109,8 +109,8 @@ function checkMenueToggle(event){
       document.querySelector("#menu").style.visibility = "visible";
       document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
       for (let element of canvas.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
-      canvas.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
-      canvas.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
+      document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
+      document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
       resetFPSCameraController(canvas);
     } else {
       document.querySelector("#menu").style.visibility = "hidden";
@@ -186,7 +186,7 @@ async function InitApp() {
     
     //------------------------------------------------------------------------------
     canvas.addEventListener('pointerdown', () => setFPSCameraController(canvas));
-    canvas.addEventListener('keydown', checkMenueToggle);
+    document.addEventListener('keydown', checkMenueToggle);
   
     //------------------------------------------------------------------------------
     await SplinesForFishes();
@@ -230,7 +230,13 @@ async function InitApp() {
   const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('24145957-9a15-4752-9b0e-359e14b5ba8e');
   const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('299e8f24-53fa-4bf5-b6b3-979a0348dc60');
   const lamp = await SDK3DVerse.engineAPI.findEntitiesByEUID('f95f32ec-fa18-410a-967d-7be768c539d1');
-
+  const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('6972f860-1786-41fd-9150-a5f605ac1ac4');
+  const zoneName = await CoralZone[0].getChildren();
+  const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
+  console.log(GlobalPlantation[0]);
+  const GlobalPlantationChildren = await GlobalPlantation[0].getChildren();
+  const GlobalPlantationChildrenLenght = await GlobalPlantationChildren.length;
+  
   const zoneCoralPlace = {
     Coral_1 : Zone_map["ZonePlace_2"],
     Coral_2 : Zone_map["ZonePlace_3"],
@@ -556,8 +562,8 @@ async function InitApp() {
       document.querySelector("#time-set-checkbox").style.visibility = "visible";
       document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
       document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
-      document.removeEventListener('keydown', PassTheNightMenu);  
-      resetFPSCameraController();
+      removeEventListener('keydown', PassTheNightMenu);  
+      resetFPSCameraController(canvas);
     }else{
       document.querySelector("#time-set-menu").style.visibility = "hidden";
       document.querySelector("#time-set-day").style.visibility = "hidden";
@@ -567,10 +573,10 @@ async function InitApp() {
       document.querySelector("#time-set-checkbox").style.visibility = "hidden";
       document.querySelector("#checked").style.visibility = "hidden";
       document.querySelector("#unchecked").style.visibility = "hidden";
-      document.removeEventListener('keydown', PassTheNightMenu); 
-      setFPSCameraController();
+      removeEventListener('keydown', PassTheNightMenu); 
+      setFPSCameraController(canvas);
     }
-    document.removeEventListener('keydown', PassTheNightMenu);
+    removeEventListener('keydown', PassTheNightMenu);
   }
 
   //------------------------------------------------------------------------------
@@ -714,7 +720,7 @@ async function resetFPSCameraController(canvas) {
       || canvas.mozExitPointerLock
       || canvas.webkitExitPointerLock
   );
-  canvas.exitPointerLock();
+  document.exitPointerLock();
 };
 
 //------------------------------------------------------------------------------
