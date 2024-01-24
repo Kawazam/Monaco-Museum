@@ -222,6 +222,7 @@ async function InitApp() {
   const ButtonUncheckbox = document.querySelector("#checked");
   
   //------------------------------------------------------------------------------
+  let canPlaceCoral = false;
   let islampvisible = false;
   let zone;
   const entities = await SDK3DVerse.engineAPI.findEntitiesByEUID('7875aa33-7421-47b0-bcba-884aed856227');
@@ -332,9 +333,6 @@ async function InitApp() {
     return randomCoralType;
   }
 
-  //------------------------------------------------------------------------------
-  let canPlaceCoral = false;
-  
   //------------------------------------------------------------------------------
   function PlaceCoral(event){
     
@@ -494,7 +492,6 @@ async function InitApp() {
     document.removeEventListener('keydown', PlaceCoral);    
   }
 
-  
   //------------------------------------------------------------------------------
   function TeleportToHub(event){
     if (event.key === 'e'){
@@ -531,6 +528,8 @@ async function InitApp() {
       document.querySelector("#time-set-night").style.visibility = "visible";
       document.querySelector("#time-set-midnight").style.visibility = "visible";
       document.querySelector("#time-set-checkbox").style.visibility = "visible";
+      document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
+      document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";  
     }else{
       document.querySelector("#time-set-menu").style.visibility = "hidden";
       document.querySelector("#time-set-day").style.visibility = "hidden";
@@ -538,7 +537,18 @@ async function InitApp() {
       document.querySelector("#time-set-night").style.visibility = "hidden";
       document.querySelector("#time-set-midnight").style.visibility = "hidden";
       document.querySelector("#time-set-checkbox").style.visibility = "hidden";
+      document.querySelector("#checked").style.visibility = "hidden";
+      document.querySelector("#unchecked").style.visibility = "hidden";  
     }
+  }
+  
+  //------------------------------------------------------------------------------
+  function ToggleCheckbox() {
+    // console.log("toggle checkbox")
+    // console.log("CheckboxChecked:", CheckboxChecked);
+    // console.log("CheckboxUnchecked:", CheckboxUnchecked);
+    document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
+    document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
   }
 
   //------------------------------------------------------------------------------
@@ -557,21 +567,17 @@ async function InitApp() {
   ButtonCheckbox.addEventListener("click", function(){
     CheckboxChecked = true;
     CheckboxUnchecked = false;
-    console.log("unchecked", CheckboxUnchecked)
+    // console.log("checked", CheckboxChecked);
+    SDK3DVerse.engineAPI.pauseAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
     ToggleCheckbox();
   })
   ButtonUncheckbox.addEventListener("click", function(){
     CheckboxChecked = false;
     CheckboxUnchecked = true;
+    // console.log("unchecked", CheckboxUnchecked);
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
     ToggleCheckbox();
   })
-
-  //------------------------------------------------------------------------------
-  function ToggleCheckbox() {
-    document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
-    document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
-  }
-
 
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onEnterTrigger(async (emitterEntity, triggerEntity) =>

@@ -228,11 +228,22 @@ body {
 
 #time-set-checkbox{
   position: relative;
+  visibility: hidden;
 }
 
 .checkbox{
-  position: inherit;
+  position: absolute;
   cursor: pointer;
+}
+
+#checked{
+  visibility: hidden;
+  /* position: inherit; */
+}
+
+#unchecked{
+  visibility: hidden;
+  /* position: inherit; */
 }
 
 /*------------------------------------------------------------*/
