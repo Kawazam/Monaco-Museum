@@ -396,6 +396,7 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   async function teleport(){
+    document.querySelector("#loading-page").style.visibility = "visible";
     let tpPointChildren = await tpPoint.getChildren()
     let tpPointPos = tpPointChildren[0].getGlobalTransform();
     let scriptComponent = entities.getComponent("script_map");
@@ -439,6 +440,7 @@ async function InitApp() {
       setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities)}, 100);
       document.removeEventListener('click', teleport);
     }
+    document.querySelector("#loading-page").style.visibility = "hidden";
     document.removeEventListener('click', teleport);
   };
 
@@ -671,14 +673,6 @@ async function InitApp() {
     outsideTrigger = false;
     console.log(outsideTrigger);
     document.removeEventListener('click', teleport);
-  });
-  
-  //------------------------------------------------------------------------------
-  SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
-    console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
-    outsideTrigger = false;
-    console.log(outsideTrigger);
-    document.removeEventListener('click', PassTheNightMenu);
   });
 }
 //##############################################################################
