@@ -672,6 +672,14 @@ async function InitApp() {
     console.log(outsideTrigger);
     document.removeEventListener('click', teleport);
   });
+  
+  //------------------------------------------------------------------------------
+  SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
+    console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
+    outsideTrigger = false;
+    console.log(outsideTrigger);
+    document.removeEventListener('click', PassTheNightMenu);
+  });
 }
 //##############################################################################
 
