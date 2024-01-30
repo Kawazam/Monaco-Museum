@@ -197,6 +197,7 @@ async function InitApp() {
     
     //hide loading page-------------------------------------------------------------
     document.querySelector("#loading-page").style.visibility = "hidden";
+    document.querySelector("#cross").style.visibility = "visible";
   
     //------------------------------------------------------------------------------
     document.addEventListener('keydown', function(event) {
@@ -249,7 +250,6 @@ async function InitApp() {
     null    : Zone_map["ZonePlace_1"]
   };
 
-
   const ButtonDay = document.querySelector("#time-set-day");
   const ButtonMidday = document.querySelector("#time-set-midday");
   const ButtonNight = document.querySelector("#time-set-night");
@@ -273,6 +273,13 @@ async function InitApp() {
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
   let outsideTrigger = false;
   
+  //------------------------------------------------------------------------------
+  function delay(milliseconds) {
+    return new Promise(resolve => {
+      setTimeout(resolve, milliseconds);
+    })
+  };
+
   //------------------------------------------------------------------------------
   async function CheckCoralList(){
     coral_list.splice(0, coral_list.length);
@@ -309,7 +316,7 @@ async function InitApp() {
       }
     }
     console.log(coral_list);
-  }
+  };
 
   //------------------------------------------------------------------------------
   async function checkPlantCoral(event) {
@@ -440,6 +447,7 @@ async function InitApp() {
       setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities)}, 100);
       document.removeEventListener('click', teleport);
     }
+    await delay(2000);
     document.querySelector("#loading-page").style.visibility = "hidden";
     document.removeEventListener('click', teleport);
   };
