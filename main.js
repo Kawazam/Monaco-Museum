@@ -271,7 +271,7 @@ async function InitApp() {
   //------------------------------------------------------------------------------
   const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
-  let outsideTrigger = false;
+  // let outsideTrigger = false;
   
   //------------------------------------------------------------------------------
   function delay(milliseconds) {
@@ -636,26 +636,34 @@ async function InitApp() {
     console.log('enter ',emitterEntity.getName()," ", triggerEntity.getName());
     if (emitterEntity == InsideHubDoorToOutside[0]){
       console.log('press E to exit');
+      document.querySelector("#cross").style.visibility = "hidden";
+      document.querySelector("#door").style.visibility = "visible";
       tpPoint = await emitterEntity;
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
       
     }
     else if (emitterEntity == OutsideHubDoorToInside[0]){
-      outsideTrigger = true;
+      // outsideTrigger = true;
       console.log('press E to enter');
+      document.querySelector("#cross").style.visibility = "hidden";
+      document.querySelector("#door").style.visibility = "visible";
       tpPoint = await emitterEntity;
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
     }
     else if (emitterEntity == ToLaboratoryDoor[0]){
-      console.log('press E to loaboratory')
+      console.log('press E to loaboratory');
+      document.querySelector("#cross").style.visibility = "hidden";
+      document.querySelector("#door").style.visibility = "visible";
       tpPoint = await emitterEntity;
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
     }
     else if (emitterEntity == ToHubDoor[0]){
-      console.log('press E to Hub')
+      console.log('press E to Hub');
+      document.querySelector("#cross").style.visibility = "hidden";
+      document.querySelector("#door").style.visibility = "visible";
       tpPoint = await emitterEntity;
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
@@ -663,6 +671,13 @@ async function InitApp() {
     else if (emitterEntity.getParent().getName() == "Plantations"){
       console.log("press E");
       zone = await emitterEntity.getChildren();
+      if (zone[0].getComponent('scene_ref').value == coral_map["empty_zone"]){
+        document.querySelector("#cross").style.visibility = "hidden";
+        document.querySelector("#put").style.visibility = "visible";
+      } else {
+        document.querySelector("#cross").style.visibility = "hidden";
+        document.querySelector("#take").style.visibility = "visible";
+      }
       console.log(zone[0].getName());
       console.log(emitterEntity," ",emitterEntity.getName()," ",emitterEntityParent," ",zone);
       document.removeEventListener('keypress', checkPlantCoral);
@@ -676,10 +691,14 @@ async function InitApp() {
   });
   
   //------------------------------------------------------------------------------
-  SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
-    console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
-    outsideTrigger = false;
-    console.log(outsideTrigger);
+  SDK3DVerse.engineAPI.onExitTrigger(() => {
+    // console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
+    // outsideTrigger = false;
+    // console.log(outsideTrigger);
+    document.querySelector("#door").style.visibility = "hidden";
+    document.querySelector("#put").style.visibility = "hidden";
+    document.querySelector("#take").style.visibility = "hidden";
+    document.querySelector("#cross").style.visibility = "visible";
     document.removeEventListener('click', teleport);
   });
 }
