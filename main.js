@@ -261,17 +261,11 @@ async function InitApp() {
   let islampvisible = false;
   let zone;
   let entities;
-  // const entities = await SDK3DVerse.engineAPI.findEntitiesByEUID('7875aa33-7421-47b0-bcba-884aed856227');
-  // console.log(entities);
-  // let scriptComponent = entities[0].getComponent("script_map");
-  // console.log(entities);
-  // console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
   CheckCoralList();
 
   //------------------------------------------------------------------------------
   const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
-  // let outsideTrigger = false;
   
   //------------------------------------------------------------------------------
   function delay(milliseconds) {
@@ -407,9 +401,7 @@ async function InitApp() {
     let tpPointChildren = await tpPoint.getChildren()
     let tpPointPos = tpPointChildren[0].getGlobalTransform();
     let scriptComponent = entities.getComponent("script_map");
-    //const keepRotationView = entities.getGlobalTransform().orientation;
     entities.setGlobalTransform(tpPointPos);
-    //entities.setGlobalTransform({orientation : keepRotationView});
     console.log(tpPoint.getName());
     console.log("swim = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"]);
     console.log(InsideHubDoorToOutside[0].getName());
@@ -692,9 +684,6 @@ async function InitApp() {
   
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onExitTrigger(() => {
-    // console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
-    // outsideTrigger = false;
-    // console.log(outsideTrigger);
     document.querySelector("#door").style.visibility = "hidden";
     document.querySelector("#put").style.visibility = "hidden";
     document.querySelector("#take").style.visibility = "hidden";
