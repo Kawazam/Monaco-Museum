@@ -131,7 +131,6 @@ const coral_map = {
 //-----------------------------------EXPORT----------------------------------
 export {
     coral_map,
-    coral_list,
     Coral_1,
     Coral_2,
     Coral_3,
