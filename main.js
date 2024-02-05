@@ -160,63 +160,82 @@ function toggleMenuSection() {
 //------------------------------------------------------------------------------
 window.addEventListener("load", InitApp);
 let canvas;
+var characterController;
+var lamp;
+
 
 //------------------------------------------------------------------------------
 async function InitApp() {
 
-    //show loading page-------------------------------------------------------------
-    document.querySelector("#loading-page").style.visibility = "visible";
+  //show loading page-------------------------------------------------------------
+  document.querySelector("#loading-page").style.visibility = "visible";
+
+  //------------------------------------------------------------------------------
+  canvas = document.getElementById("display-canvas");
   
-    //------------------------------------------------------------------------------
-    canvas = document.getElementById("display-canvas");
-    
-    //------------------------------------------------------------------------------
-    await SDK3DVerse.joinOrStartSession({
-      isTransient: true,
-      userToken: publicToken,
-      sceneUUID: mainSceneUUID,
-      // sceneUUID: inventorySceneUUID,
-      canvas: document.getElementById("display-canvas"),
-      createDefaultCamera: false,
-      startSimulation: "on-assets-loaded",
-    });
-    
-    //------------------------------------------------------------------------------
-    await InitFirstPersonController(characterControllerSceneUUID);
-    
-    //------------------------------------------------------------------------------
-    canvas.addEventListener('pointerdown', () => setFPSCameraController(canvas));
-    document.addEventListener('keydown', checkMenueToggle);
+  //------------------------------------------------------------------------------
+  await SDK3DVerse.joinOrStartSession({
+    isTransient: true,
+    userToken: publicToken,
+    sceneUUID: mainSceneUUID,
+    // sceneUUID: inventorySceneUUID,
+    canvas: document.getElementById("display-canvas"),
+    createDefaultCamera: false,
+    startSimulation: "on-assets-loaded",
+  });
   
-    //------------------------------------------------------------------------------
-    await SplinesForFishes();
-    
-    //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 }); //'moon-sun-animation'
-    SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
-    
-    //hide loading page-------------------------------------------------------------
-    document.querySelector("#loading-page").style.visibility = "hidden";
-    document.querySelector("#cross").style.visibility = "visible";
+  //------------------------------------------------------------------------------
+  characterController = await InitFirstPersonController(characterControllerSceneUUID);
+  const getCam = await characterController.getChildren();
+  console.log("getcam = ",getCam);
+  const getCamChildren = await getCam[1].getChildren();
+  lamp = await getCamChildren[0];
+  await SplinesForFishes();
   
-    //------------------------------------------------------------------------------
-    document.addEventListener('keydown', function(event) {
-    // Vérifie si la touche pressée est 't'
-    if (event.key === 't') {
-        // Vérifie si islampvisible est true
-        if (islampvisible === true) {
-          lamp[0].setVisibility(islampvisible);
-          console.log("lamp allumé")
-            // Change la valeur de islampvisible à false
-            islampvisible = false;
-        }
-        else if (islampvisible === false) {
-          lamp[0].setVisibility(islampvisible);
-            // Change la valeur de islampvisible à false
-            islampvisible = true;
-            console.log("lampe éteinte")
-        }
-    }
+  //------------------------------------------------------------------------------
+  if (lamp.getName()!= "camLamp") {
+    lamp = await getCamChildren[1];
+  };
+
+  //------------------------------------------------------------------------------
+  console.log("lamp =",lamp.getName());
+  console.log("lamp children = ", getCamChildren)
+  lamp.setVisibility(false);
+  var islampvisible = false;
+
+  //------------------------------------------------------------------------------
+  canvas.addEventListener('pointerdown', () => setFPSCameraController(canvas));
+  document.addEventListener('keydown', checkMenueToggle);
+
+  //------------------------------------------------------------------------------
+  
+  
+  //start animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
+  SDK3DVerse.engineAPI.playAnimationSequence('ba7a979b-8238-4f45-a8c8-151b5c0474e0', { playbackSpeed : 50.0 }); //'moon-sun-animation'
+  SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
+  
+  //hide loading page-------------------------------------------------------------
+  document.querySelector("#loading-page").style.visibility = "hidden";
+  document.querySelector("#cross").style.visibility = "visible";
+
+  //------------------------------------------------------------------------------
+  document.addEventListener('keydown', function(event) {
+  // Vérifie si la touche pressée est 't'
+  if (event.key === 't') {
+      // Vérifie si islampvisible est true
+      if (islampvisible === true) {
+        lamp.setVisibility(!islampvisible);
+        console.log("lamp allumé")
+          // Change la valeur de islampvisible à false
+          islampvisible = false;
+      }
+      else if (islampvisible === false) {
+        lamp.setVisibility(!islampvisible);
+          // Change la valeur de islampvisible à false
+          islampvisible = true;
+          console.log("lampe éteinte")
+      }
+  }
   });
 
   //------------------------------------------------------------------------------
@@ -793,7 +812,7 @@ async function InitFirstPersonController(charCtlSceneUUID) {
 
 
 //##############################################################################
-//#                              SPLINES FISHES                                #
+//#                   SplinesForFishes           SPLINES FISHES                                #
 //##############################################################################
 
 //------------------------------------------------------------------------------
