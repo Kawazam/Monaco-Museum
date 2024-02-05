@@ -684,6 +684,7 @@ async function InitApp() {
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
     console.log("exit trigger");
+    zone = emitterEntity.getChildren();
     if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0] || emitterEntity === zone[0]){
       console.log("cursor hidden, exit trigger");
       document.querySelector("#door").style.visibility = "hidden";
