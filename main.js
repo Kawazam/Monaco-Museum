@@ -261,6 +261,7 @@ async function InitApp() {
   let islampvisible = false;
   let zone;
   let entities;
+  let outsideTrigger = false;
   await CheckCoralList();
 
   //------------------------------------------------------------------------------
@@ -634,7 +635,7 @@ async function InitApp() {
       
     }
     else if (emitterEntity == OutsideHubDoorToInside[0]){
-      // outsideTrigger = true;
+      outsideTrigger = true;
       console.log('press E to enter');
       document.querySelector("#cross").style.visibility = "hidden";
       document.querySelector("#door").style.visibility = "visible";
@@ -681,14 +682,18 @@ async function InitApp() {
   });
   
   //------------------------------------------------------------------------------
-  SDK3DVerse.engineAPI.onExitTrigger(() => {
+  SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
+    console.log("exit trigger");
     if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0]){
+      console.log("cursor hidden, exit trigger");
       document.querySelector("#door").style.visibility = "hidden";
       document.querySelector("#put").style.visibility = "hidden";
       document.querySelector("#take").style.visibility = "hidden";
       document.querySelector("#cross").style.visibility = "visible";
     }
-    
+    console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
+    outsideTrigger = false;
+    console.log(outsideTrigger);
     document.removeEventListener('click', teleport);
   });
 }
