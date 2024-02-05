@@ -163,59 +163,59 @@ let canvas;
 //------------------------------------------------------------------------------
 async function InitApp() {
 
-    //show loading page-------------------------------------------------------------
-    document.querySelector("#loading-page").style.visibility = "visible";
+  //show loading page-------------------------------------------------------------
+  document.querySelector("#loading-page").style.visibility = "visible";
+
+  //------------------------------------------------------------------------------
+  canvas = document.getElementById("display-canvas");
   
-    //------------------------------------------------------------------------------
-    canvas = document.getElementById("display-canvas");
-    
-    //------------------------------------------------------------------------------
-    await SDK3DVerse.joinOrStartSession({
-      isTransient: true,
-      userToken: publicToken,
-      sceneUUID: mainSceneUUID,
-      // sceneUUID: inventorySceneUUID,
-      canvas: document.getElementById("display-canvas"),
-      createDefaultCamera: false,
-      startSimulation: "on-assets-loaded",
-    });
-    
-    //------------------------------------------------------------------------------
-    await InitFirstPersonController(characterControllerSceneUUID);
-    
-    //------------------------------------------------------------------------------
-    canvas.addEventListener('pointerdown', () => setFPSCameraController(canvas));
-    document.addEventListener('keydown', checkMenueToggle);
+  //------------------------------------------------------------------------------
+  await SDK3DVerse.joinOrStartSession({
+    isTransient: true,
+    userToken: publicToken,
+    sceneUUID: mainSceneUUID,
+    // sceneUUID: inventorySceneUUID,
+    canvas: document.getElementById("display-canvas"),
+    createDefaultCamera: false,
+    startSimulation: "on-assets-loaded",
+  });
   
-    //------------------------------------------------------------------------------
-    await SplinesForFishes();
-    
-    //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 }); //'moon-sun-animation'
-    SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
-    
-    //hide loading page-------------------------------------------------------------
-    document.querySelector("#loading-page").style.visibility = "hidden";
-    document.querySelector("#cross").style.visibility = "visible";
+  //------------------------------------------------------------------------------
+  await InitFirstPersonController(characterControllerSceneUUID);
   
-    //------------------------------------------------------------------------------
-    document.addEventListener('keydown', function(event) {
-    // Vérifie si la touche pressée est 't'
-    if (event.key === 't') {
-        // Vérifie si islampvisible est true
-        if (islampvisible === true) {
-          lamp[0].setVisibility(islampvisible);
-          console.log("lamp allumé")
-            // Change la valeur de islampvisible à false
-            islampvisible = false;
-        }
-        else if (islampvisible === false) {
-          lamp[0].setVisibility(islampvisible);
-            // Change la valeur de islampvisible à false
-            islampvisible = true;
-            console.log("lampe éteinte")
-        }
-    }
+  //------------------------------------------------------------------------------
+  canvas.addEventListener('pointerdown', () => setFPSCameraController(canvas));
+  document.addEventListener('keydown', checkMenueToggle);
+
+  //------------------------------------------------------------------------------
+  await SplinesForFishes();
+  
+  //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
+  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 }); //'moon-sun-animation'
+  SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
+  
+  //hide loading page-------------------------------------------------------------
+  document.querySelector("#loading-page").style.visibility = "hidden";
+  document.querySelector("#cross").style.visibility = "visible";
+
+  //------------------------------------------------------------------------------
+  document.addEventListener('keydown', function(event) {
+  // Vérifie si la touche pressée est 't'
+  if (event.key === 't') {
+      // Vérifie si islampvisible est true
+      if (islampvisible === true) {
+        lamp[0].setVisibility(islampvisible);
+        console.log("lamp allumé")
+          // Change la valeur de islampvisible à false
+          islampvisible = false;
+      }
+      else if (islampvisible === false) {
+        lamp[0].setVisibility(islampvisible);
+          // Change la valeur de islampvisible à false
+          islampvisible = true;
+          console.log("lampe éteinte")
+      }
+  }
   });
 
   //------------------------------------------------------------------------------
@@ -230,7 +230,7 @@ async function InitApp() {
   const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
   const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
   const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
-  const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('1df0a64c-6b66-401d-8bfd-f1c4685fb4f2');
+  const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
   const zoneName = await CoralZone[0].getChildren();
   const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
   console.log(GlobalPlantation[0]);
@@ -684,7 +684,7 @@ async function InitApp() {
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
     console.log("exit trigger");
-    if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0]){
+    if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0] || emitterEntity === GlobalPlantation[0]){
       console.log("cursor hidden, exit trigger");
       document.querySelector("#door").style.visibility = "hidden";
       document.querySelector("#put").style.visibility = "hidden";
