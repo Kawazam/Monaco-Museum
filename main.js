@@ -164,59 +164,59 @@ await SplinesForFishes();
 //------------------------------------------------------------------------------
 async function InitApp() {
 
-    //show loading page-------------------------------------------------------------
-    document.querySelector("#loading-page").style.visibility = "visible";
+  //show loading page-------------------------------------------------------------
+  document.querySelector("#loading-page").style.visibility = "visible";
+
+  //------------------------------------------------------------------------------
+  canvas = document.getElementById("display-canvas");
   
-    //------------------------------------------------------------------------------
-    canvas = document.getElementById("display-canvas");
-    
-    //------------------------------------------------------------------------------
-    await SDK3DVerse.joinOrStartSession({
-      isTransient: true,
-      userToken: publicToken,
-      sceneUUID: mainSceneUUID,
-      // sceneUUID: inventorySceneUUID,
-      canvas: document.getElementById("display-canvas"),
-      createDefaultCamera: false,
-      startSimulation: "on-assets-loaded",
-    });
-    
-    //------------------------------------------------------------------------------
-    await InitFirstPersonController(characterControllerSceneUUID);
-    
-    //------------------------------------------------------------------------------
-    canvas.addEventListener('pointerdown', () => setFPSCameraController(canvas));
-    document.addEventListener('keydown', checkMenueToggle);
+  //------------------------------------------------------------------------------
+  await SDK3DVerse.joinOrStartSession({
+    isTransient: true,
+    userToken: publicToken,
+    sceneUUID: mainSceneUUID,
+    // sceneUUID: inventorySceneUUID,
+    canvas: document.getElementById("display-canvas"),
+    createDefaultCamera: false,
+    startSimulation: "on-assets-loaded",
+  });
   
-    //------------------------------------------------------------------------------
-    
-    
-    //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 }); //'moon-sun-animation'
-    SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
-    
-    //hide loading page-------------------------------------------------------------
-    document.querySelector("#loading-page").style.visibility = "hidden";
-    document.querySelector("#cross").style.visibility = "visible";
+  //------------------------------------------------------------------------------
+  await InitFirstPersonController(characterControllerSceneUUID);
   
-    //------------------------------------------------------------------------------
-    document.addEventListener('keydown', function(event) {
-    // Vérifie si la touche pressée est 't'
-    if (event.key === 't') {
-        // Vérifie si islampvisible est true
-        if (islampvisible === true) {
-          lamp[0].setVisibility(islampvisible);
-          console.log("lamp allumé")
-            // Change la valeur de islampvisible à false
-            islampvisible = false;
-        }
-        else if (islampvisible === false) {
-          lamp[0].setVisibility(islampvisible);
-            // Change la valeur de islampvisible à false
-            islampvisible = true;
-            console.log("lampe éteinte")
-        }
-    }
+  //------------------------------------------------------------------------------
+  canvas.addEventListener('pointerdown', () => setFPSCameraController(canvas));
+  document.addEventListener('keydown', checkMenueToggle);
+
+  //------------------------------------------------------------------------------
+  await SplinesForFishes();
+  
+  //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
+  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 }); //'moon-sun-animation'
+  SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
+  
+  //hide loading page-------------------------------------------------------------
+  document.querySelector("#loading-page").style.visibility = "hidden";
+  document.querySelector("#cross").style.visibility = "visible";
+
+  //------------------------------------------------------------------------------
+  document.addEventListener('keydown', function(event) {
+  // Vérifie si la touche pressée est 't'
+  if (event.key === 't') {
+      // Vérifie si islampvisible est true
+      if (islampvisible === true) {
+        lamp[0].setVisibility(islampvisible);
+        console.log("lamp allumé")
+          // Change la valeur de islampvisible à false
+          islampvisible = false;
+      }
+      else if (islampvisible === false) {
+        lamp[0].setVisibility(islampvisible);
+          // Change la valeur de islampvisible à false
+          islampvisible = true;
+          console.log("lampe éteinte")
+      }
+  }
   });
 
   //------------------------------------------------------------------------------
@@ -412,8 +412,8 @@ async function InitApp() {
     console.log(InsideHubDoorToOutside[0].getName());
     if (tpPoint.getName() == InsideHubDoorToOutside[0].getName()){
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 1;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 0.5;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["runSpeed"] = 1;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 1.5;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["runSpeed"] = 5;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 0.2;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = 90.0;
@@ -685,7 +685,8 @@ async function InitApp() {
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
     console.log("exit trigger");
-    if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0]){
+    zone = emitterEntity.getChildren();
+    if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0] || emitterEntity === zone[0]){
       console.log("cursor hidden, exit trigger");
       document.querySelector("#door").style.visibility = "hidden";
       document.querySelector("#put").style.visibility = "hidden";

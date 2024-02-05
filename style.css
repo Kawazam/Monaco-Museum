@@ -266,6 +266,10 @@ body {
   left: 0;
   background-color: #000;
   visibility: hidden;
+  background-image: url(img/loading_screen.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 #loading-txt{
