@@ -21,7 +21,7 @@ import {
   Coral_6,
   Coral_7,
   Coral_8,
-} from "./Coral.js"
+} from "./Coral.js";
 
 //------------------------------------------------------------------------------
 import {
@@ -68,7 +68,7 @@ for(let i = 1; i < 7; i++) {
   for(let j = 1; j < 5; j++) {
     InventoryTable += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
   }
-}
+};
 
 //------------------------------------------------------------------------------
 DisplayInventory.innerHTML = InventoryTable;
@@ -122,7 +122,7 @@ function checkMenueToggle(event){
     }
     console.log('menue out');
   }
-}
+};
 
 
 //------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ function toggleMenuSection() {
   for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
   document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
   document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
-}
+};
 
 //------------------------------------------------------------------------------
 /*function test() {
@@ -159,6 +159,8 @@ function toggleMenuSection() {
 //------------------------------------------------------------------------------
 window.addEventListener("load", InitApp);
 let canvas;
+var characterController;
+var lamp;
 
 //------------------------------------------------------------------------------
 async function InitApp() {
@@ -181,8 +183,23 @@ async function InitApp() {
   });
   
   //------------------------------------------------------------------------------
-  await InitFirstPersonController(characterControllerSceneUUID);
+  characterController = await InitFirstPersonController(characterControllerSceneUUID);
+  const getCam = await characterController.getChildren();
+  console.log("getcam = ",getCam);
+  const getCamChildren = await getCam[1].getChildren();
+  lamp = await getCamChildren[0];
   
+  //------------------------------------------------------------------------------
+  if (lamp.getName()!= "camLamp") {
+    lamp = await getCamChildren[1];
+  };
+
+  //------------------------------------------------------------------------------
+  console.log("lamp =",lamp.getName());
+  console.log("lamp children = ", getCamChildren)
+  lamp.setVisibility(false);
+  var islampvisible = false;
+
   //------------------------------------------------------------------------------
   canvas.addEventListener('pointerdown', () => setFPSCameraController(canvas));
   document.addEventListener('keydown', checkMenueToggle);
@@ -204,13 +221,13 @@ async function InitApp() {
   if (event.key === 't') {
       // Vérifie si islampvisible est true
       if (islampvisible === true) {
-        lamp[0].setVisibility(islampvisible);
+        lamp.setVisibility(!islampvisible);
         console.log("lamp allumé")
           // Change la valeur de islampvisible à false
           islampvisible = false;
       }
       else if (islampvisible === false) {
-        lamp[0].setVisibility(islampvisible);
+        lamp.setVisibility(!islampvisible);
           // Change la valeur de islampvisible à false
           islampvisible = true;
           console.log("lampe éteinte")
@@ -258,7 +275,6 @@ async function InitApp() {
   const ButtonUncheckbox = document.querySelector("#checked");
    
   //------------------------------------------------------------------------------
-  let islampvisible = false;
   let zone;
   let entities;
   let outsideTrigger = false;
@@ -482,8 +498,7 @@ async function InitApp() {
       console.log("adjusted lenghts", adjustedLengths, adjustedProportionalCounts);
       return adjustedLengths;
     }
-  }
-
+  };
 
   //------------------------------------------------------------------------------
   function getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones) {
@@ -512,7 +527,7 @@ async function InitApp() {
     adjustedLengths[randomCoralType]--;
 
     return randomCoralType;
-  }
+  };
 
   //------------------------------------------------------------------------------
   async function PlaceCoral(event) {
@@ -541,7 +556,7 @@ async function InitApp() {
       console.log(`Zone ${i + 1}: ${randomCoral}`);
     }
     document.removeEventListener('keypress', PlaceCoral);
-  }
+  };
   
   //------------------------------------------------------------------------------
   function PassTheNightMenu(event){
@@ -578,7 +593,7 @@ async function InitApp() {
       setFPSCameraController(canvas);
     }
     removeEventListener('keydown', PassTheNightMenu);
-  }
+  };
 
   //------------------------------------------------------------------------------
   function ToggleCheckbox() {
@@ -587,7 +602,7 @@ async function InitApp() {
     // console.log("CheckboxUnchecked:", CheckboxUnchecked);
     document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
     document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
-  }
+  };
 
   //------------------------------------------------------------------------------
   ButtonDay.addEventListener("click", function(){
@@ -684,14 +699,14 @@ async function InitApp() {
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
     console.log("exit trigger");
-    zone = emitterEntity.getChildren();
-    if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0] || emitterEntity === zone[0]){
+    if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0] || emitterEntity.getParent().getName() === "Plantations"){
       console.log("cursor hidden, exit trigger");
       document.querySelector("#door").style.visibility = "hidden";
       document.querySelector("#put").style.visibility = "hidden";
       document.querySelector("#take").style.visibility = "hidden";
       document.querySelector("#cross").style.visibility = "visible";
     }
+  
     console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
     outsideTrigger = false;
     console.log(outsideTrigger);
@@ -792,8 +807,9 @@ async function InitFirstPersonController(charCtlSceneUUID) {
   
   // Finally set the first person camera as the main camera.
   SDK3DVerse.setMainCamera(firstPersonCamera);
+  return firstPersonController;
   
-}
+};
 //##############################################################################
 
 
@@ -840,7 +856,7 @@ async function SplinesForFishes()
     };
     loopOnFishSplineTravel(fishes[fish.getID()], fishMesh, travellingSpline, 4, 0.1);
   }
-}
+};
 
 //------------------------------------------------------------------------------
 async function loopOnFishSplineTravel(fish, entity, spline, speed, delay)
@@ -849,12 +865,12 @@ async function loopOnFishSplineTravel(fish, entity, spline, speed, delay)
   {
     await anim.gotoSplineAndTravel(entity, spline, speed, delay);
   }
-}
+};
 
 //------------------------------------------------------------------------------
 function findTravellingSplineFromEntity(entity) {
   return anim.splines.find(s => s.parentEntity.getEUID() === entity.getEUID());
-}
+};
 //##############################################################################
 
 
@@ -883,7 +899,7 @@ function fermerModale() {
         modal.style.display = 'none';
         body.classList.remove('body-overlay');
     }, 1000); // Delay the removal of 'show' class for the animation to take effect
-}
+};
 
 //------------------------------------------------------------------------------
 window.onclick = function (event) {
