@@ -159,6 +159,7 @@ function toggleMenuSection() {
 //------------------------------------------------------------------------------
 window.addEventListener("load", InitApp);
 let canvas;
+await SplinesForFishes();
 
 //------------------------------------------------------------------------------
 async function InitApp() {
@@ -188,7 +189,7 @@ async function InitApp() {
     document.addEventListener('keydown', checkMenueToggle);
   
     //------------------------------------------------------------------------------
-    await SplinesForFishes();
+    
     
     //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
     SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 }); //'moon-sun-animation'
@@ -230,7 +231,7 @@ async function InitApp() {
   const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
   const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
   const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
-  const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('1df0a64c-6b66-401d-8bfd-f1c4685fb4f2');
+  const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
   const zoneName = await CoralZone[0].getChildren();
   const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
   console.log(GlobalPlantation[0]);
