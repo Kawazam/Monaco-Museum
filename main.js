@@ -225,18 +225,18 @@ async function InitApp() {
   var CheckboxUnchecked = true;
   var tpPoint;
 
-  const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('347659d6-bd3f-44f4-b816-bd2837ed82d0');
-  const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3f1d3498-dd14-49df-a6e5-bb13281095d5');
-  const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3c3b76c9-1b50-4f4e-9386-0566896a55ce');
-  const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('24145957-9a15-4752-9b0e-359e14b5ba8e');
-  const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('299e8f24-53fa-4bf5-b6b3-979a0348dc60');
-  const lamp = await SDK3DVerse.engineAPI.findEntitiesByEUID('f95f32ec-fa18-410a-967d-7be768c539d1');
-  const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('6972f860-1786-41fd-9150-a5f605ac1ac4');
+  const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
+  const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
+  const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
+  const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
+  const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
+  const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('1df0a64c-6b66-401d-8bfd-f1c4685fb4f2');
   const zoneName = await CoralZone[0].getChildren();
   const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
   console.log(GlobalPlantation[0]);
   const GlobalPlantationChildren = await GlobalPlantation[0].getChildren();
   const GlobalPlantationChildrenLenght = await GlobalPlantationChildren.length;
+  const nbZones = GlobalPlantationChildrenLenght; 
   
   const zoneCoralPlace = {
     Coral_1 : Zone_map["ZonePlace_2"],
@@ -261,7 +261,7 @@ async function InitApp() {
   let islampvisible = false;
   let zone;
   let entities;
-  CheckCoralList();
+  await CheckCoralList();
 
   //------------------------------------------------------------------------------
   const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
@@ -276,7 +276,7 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   async function CheckCoralList(){
-    coral_list.splice(0, coral_list.length);
+    coral_list = [];
     for (var i = 0; i < GlobalPlantationChildrenLenght; i++){
       console.log(i);
       const coralPlanted = await GlobalPlantationChildren[i].getChildren();
@@ -309,8 +309,11 @@ async function InitApp() {
         coral_list.push(Coral_8.name);
       }
     }
-    console.log(coral_list);
-  };
+    console.log("checkCoralList = ",coral_list.length,coral_list);
+    return coral_list;
+  }
+  console.log(CoralZone);
+  console.log(zoneName);
 
   //------------------------------------------------------------------------------
   async function checkPlantCoral(event) {
@@ -445,8 +448,10 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  function adjustCoralList(coral_list, nbZones) {
+  function adjustCoralList() {
     const totalCount = coral_list.length;
+    console.log("longueur =",coral_list.length);
+    console.log("coral-list = ",typeof coral_list,coral_list,Array.isArray(coral_list));
 
     // Si le nombre total de coraux est inférieur à nbZones, retourner les occurences
     if (totalCount < nbZones) {
@@ -454,6 +459,7 @@ async function InitApp() {
             counts[coralType] = (counts[coralType] || 0) + 1;
             return counts;
         }, {});
+        console.log("adjustedCounts =",adjustedCounts);
         return adjustedCounts;
     } else {
 
@@ -462,8 +468,6 @@ async function InitApp() {
           counts[coralType] = (counts[coralType] || 0) + 1;
           return counts;
       }, {});
-
-      const roundedTotalCount = Object.values(proportionalCounts).reduce((total, count) => total + count, 0);
 
       const adjustedProportionalCounts = {};
       for (const coralType in proportionalCounts) {
@@ -474,27 +478,24 @@ async function InitApp() {
       for (const coralType in adjustedProportionalCounts) {
           adjustedLengths[coralType] = adjustedProportionalCounts[coralType];
       }
-
+      console.log("adjusted lenghts", adjustedLengths, adjustedProportionalCounts);
       return adjustedLengths;
     }
   }
 
+
   //------------------------------------------------------------------------------
   function getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones) {
     console.log("adjustedLengths:", adjustedLengths);
-
     // Si la longueur de coral_list est supérieure à nbZones, sélectionner un corail directement
     if (coral_list.length > nbZones) {
         const availableCoralTypes = coral_list.filter(coralType => adjustedLengths[coralType] > 0);
-
         if (availableCoralTypes.length === 0) {
             // Aucun type de corail disponible, retourner null ou traiter en conséquence
             return null;
         }
-
         const randomCoralType = availableCoralTypes[Math.floor(Math.random() * availableCoralTypes.length)];
         adjustedLengths[randomCoralType]--;
-
         return randomCoralType;
     }
 
@@ -513,21 +514,18 @@ async function InitApp() {
   }
 
   //------------------------------------------------------------------------------
-  function PlaceCoral(event) {
+  async function PlaceCoral(event) {
     console.log("pressed to place =", event.key);
-
     const coralIndex = parseInt(event.key);
-
     if (coralIndex >= 1 && coralIndex <= 8) {
         const coralKey = `coral_${coralIndex}`;
         console.log(event.key);
         zone[0].setComponent('scene_ref', { value: coral_map[coralKey], maxRecursionCount: 1 });
         zone[0].save();
-        CheckCoralList();
+        await CheckCoralList();
         console.log(coral_list);
     }
     //get the occurrences and adapt them to the number of decorztion zone
-    const nbZones = 6; 
     let adjustedLengths = adjustCoralList(coral_list, nbZones);
     console.log(adjustedLengths);
     for (let i = 0; i < nbZones; i++) {
