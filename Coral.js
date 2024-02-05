@@ -127,9 +127,6 @@ const coral_map = {
     empty_zone: emptyZone.emptyMesh
 };
 
-// Add thes instances of classes to the coral list
-const coral_list = [];
-
 
 //-----------------------------------EXPORT----------------------------------
 export {
