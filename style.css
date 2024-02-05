@@ -280,6 +280,46 @@ body {
   color: #1c81af;
 }
 
+/*------------------------------------------------------------*/
+
+
+/*CURSOR*/
+#cursor{
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 50px;
+  width: 50px;
+  visibility: visible;
+}
+
+#cross{
+  visibility: hidden;
+  height: 100%;
+}
+
+#door{
+  visibility: hidden;
+  height: 100%;
+}
+
+#put{
+  visibility: hidden;
+  height: 100%;
+}
+
+#take{
+  visibility: hidden;
+  height: 100%;
+}
+
+.cursor-pos{
+  position: absolute;
+}
+
+
 /* input[type="checkbox"][id^="time-set-checkbox"]{
   display: none;
 }
