@@ -684,10 +684,13 @@ async function InitApp() {
   
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onExitTrigger(() => {
-    document.querySelector("#door").style.visibility = "hidden";
-    document.querySelector("#put").style.visibility = "hidden";
-    document.querySelector("#take").style.visibility = "hidden";
-    document.querySelector("#cross").style.visibility = "visible";
+    if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0]){
+      document.querySelector("#door").style.visibility = "hidden";
+      document.querySelector("#put").style.visibility = "hidden";
+      document.querySelector("#take").style.visibility = "hidden";
+      document.querySelector("#cross").style.visibility = "visible";
+    }
+    
     document.removeEventListener('click', teleport);
   });
 }
