@@ -22,8 +22,9 @@ import {
   Coral_6,
   Coral_7,
   Coral_8,
-} from "./Coral.js";
+} from "./Coral.js"
 
+//------------------------------------------------------------------------------
 import {
   Zone_map,
   Zone_1,
@@ -35,13 +36,10 @@ import {
   Zone_7,
 } from "./Zone.js";
 
+
 //------------------------------------------------------------------------------
 import TravelAnimation from "./travelAnimation.js";
-import { PlayerInventory } from './player.js';
-
-const playerInventory = new PlayerInventory();
 //##############################################################################
-
 
 
 
@@ -53,63 +51,66 @@ const playerInventory = new PlayerInventory();
 //const inventoryJson = require("./inventory.json");
 
 //------------------------------------------------------------------------------
-var menu_display  = false;
-var inventory     = true;
-var stats         = false;
-var map           = false;
+var MenuDisplay   = false;
+var Inventory     = true;
+var Stats         = false;
+var Map           = false;
 
-var inventory_table = "";
+var InventoryTable = "";
 
-const button_inventory      = document.querySelector("#menu-menubar-title-inventory");
-const button_stats          = document.querySelector("#menu-menubar-title-stats");
-const button_map            = document.querySelector("#menu-menubar-title-map");
+const ButtonInventory       = document.querySelector("#menu-menubar-title-inventory");
+const ButtonStats           = document.querySelector("#menu-menubar-title-stats");
+const ButtonMap             = document.querySelector("#menu-menubar-title-map");
 
-const display_inventory     = document.querySelector("#menu-bloc-inventory");
+const DisplayInventory      = document.querySelector("#menu-bloc-inventory");
 
 //------------------------------------------------------------------------------
 for(let i = 1; i < 7; i++) {
   for(let j = 1; j < 5; j++) {
-    inventory_table += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
+    InventoryTable += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
   }
 }
 
 //------------------------------------------------------------------------------
-display_inventory.innerHTML = inventory_table;
+DisplayInventory.innerHTML = InventoryTable;
 
 //------------------------------------------------------------------------------
-
+//Toggle Inventory display
+document.addEventListener("keydown", checkMenueToggle);
 
 //------------------------------------------------------------------------------
 //Toggle menu section
-button_inventory.addEventListener("pointerdown", function(){
-  inventory = true;
-  stats = map = false;
+ButtonInventory.addEventListener("click", function(){
+  Inventory = true;
+  Stats = Map = false;
   toggleMenuSection();
 });
-button_stats.addEventListener("pointerdown", function(){
-  stats = true;
-  inventory = map = false;
+ButtonStats.addEventListener("click", function(){
+  Stats = true;
+  Inventory = Map = false;
   toggleMenuSection();
 });
-button_map.addEventListener("pointerdown", function(){
-  map = true;
-  inventory = stats = false;
+ButtonMap.addEventListener("click", function(){
+  Map = true;
+  Inventory = Stats = false;
   toggleMenuSection();
 });
 
+
+//------------------------------------------------------------------------------
 function checkMenueToggle(event){
   const key = event.key;
   if (key==='i') {
     console.log("I been pressed");
-    menu_display = !menu_display;
-    if (menu_display) {
-      console.log(menu_display);
+    MenuDisplay = !MenuDisplay;
+    if (MenuDisplay) {
+      console.log(MenuDisplay);
       console.log("display menue");
       document.querySelector("#menu").style.visibility = "visible";
-      document.querySelector("#menu-bloc-inventory").style.visibility = inventory ? "visible" : "hidden";
-      for (let element of canvas.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
-      canvas.querySelector("#menu-bloc-stats").style.visibility = stats ? "visible" : "hidden";
-      canvas.querySelector("#menu-bloc-map").style.visibility = map ? "visible" : "hidden";
+      document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
+      for (let element of canvas.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
+      document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
+      document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
       resetFPSCameraController(canvas);
     } else {
       document.querySelector("#menu").style.visibility = "hidden";
@@ -126,17 +127,15 @@ function checkMenueToggle(event){
 
 
 //------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
 function toggleMenuSection() {
-  button_inventory.classList.toggle("selected_title", inventory);
-  button_stats.classList.toggle("selected_title", stats);
-  button_map.classList.toggle("selected_title", map);
+  ButtonInventory.classList.toggle("selected_title", Inventory);
+  ButtonStats.classList.toggle("selected_title", Stats);
+  ButtonMap.classList.toggle("selected_title", Map);
   
-  document.querySelector("#menu-bloc-inventory").style.visibility = inventory ? "visible" : "hidden";
+  document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
   for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
-  document.querySelector("#menu-bloc-stats").style.visibility = stats ? "visible" : "hidden";
-  document.querySelector("#menu-bloc-map").style.visibility = map ? "visible" : "hidden";
+  document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
+  document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
 }
 
 //------------------------------------------------------------------------------
@@ -154,8 +153,6 @@ function toggleMenuSection() {
 
 
 
-
-
 //##############################################################################
 //#                                  GLOBAL                                    #
 //##############################################################################
@@ -163,34 +160,49 @@ function toggleMenuSection() {
 //------------------------------------------------------------------------------
 window.addEventListener("load", InitApp);
 let canvas;
+
 //------------------------------------------------------------------------------
 async function InitApp() {
-  canvas = document.getElementById("display-canvas");
-  await SDK3DVerse.joinOrStartSession({
-    isTransient: true,
-    userdocumentToken: publicToken,
-    sceneUUID: mainSceneUUID,
-    // sceneUUID: inventorySceneUUID,
-    canvas: document.getElementById("display-canvas"),
-    createDefaultCamera: false,
-    startSimulation: "on-assets-loaded",
-  });
-  
-  //------------------------------------------------------------------------------
-  await InitFirstPersonController(characterControllerSceneUUID);
-  
-  //------------------------------------------------------------------------------
-  canvas.addEventListener('pointerdown', () => setFPSCameraController(canvas));
-  canvas.addEventListener('keydown', checkMenueToggle);
-  
-  //------------------------------------------------------------------------------
-  await SplinesForFishes();
 
-  //------------------------------------------------------------------------------
-  canvas.addEventListener('keydown', function(event) {
+    //show loading page-------------------------------------------------------------
+    document.querySelector("#loading-page").style.visibility = "visible";
+  
+    //------------------------------------------------------------------------------
+    canvas = document.getElementById("display-canvas");
+    
+    //------------------------------------------------------------------------------
+    await SDK3DVerse.joinOrStartSession({
+      isTransient: true,
+      userToken: publicToken,
+      sceneUUID: mainSceneUUID,
+      // sceneUUID: inventorySceneUUID,
+      canvas: document.getElementById("display-canvas"),
+      createDefaultCamera: false,
+      startSimulation: "on-assets-loaded",
+    });
+    
+    //------------------------------------------------------------------------------
+    await InitFirstPersonController(characterControllerSceneUUID);
+    
+    //------------------------------------------------------------------------------
+    canvas.addEventListener('pointerdown', () => setFPSCameraController(canvas));
+    document.addEventListener('keydown', checkMenueToggle);
+  
+    //------------------------------------------------------------------------------
+    await SplinesForFishes();
+    
+    //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 }); //'moon-sun-animation'
+    SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
+    
+    //hide loading page-------------------------------------------------------------
+    document.querySelector("#loading-page").style.visibility = "hidden";
+    document.querySelector("#cross").style.visibility = "visible";
+  
+    //------------------------------------------------------------------------------
+    document.addEventListener('keydown', function(event) {
     // Vérifie si la touche pressée est 't'
     if (event.key === 't') {
-      console.log("t been Pressed")
         // Vérifie si islampvisible est true
         if (islampvisible === true) {
           lamp[0].setVisibility(islampvisible);
@@ -207,6 +219,25 @@ async function InitApp() {
     }
   });
 
+  //------------------------------------------------------------------------------
+  var TimeSetMenuDisplay = false;
+  var CheckboxChecked = false;
+  var CheckboxUnchecked = true;
+  var tpPoint;
+
+  const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
+  const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
+  const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
+  const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
+  const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
+  const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('1df0a64c-6b66-401d-8bfd-f1c4685fb4f2');
+  const zoneName = await CoralZone[0].getChildren();
+  const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
+  console.log(GlobalPlantation[0]);
+  const GlobalPlantationChildren = await GlobalPlantation[0].getChildren();
+  const GlobalPlantationChildrenLenght = await GlobalPlantationChildren.length;
+  const nbZones = GlobalPlantationChildrenLenght; 
+  
   const zoneCoralPlace = {
     Coral_1 : Zone_map["ZonePlace_2"],
     Coral_2 : Zone_map["ZonePlace_3"],
@@ -219,41 +250,33 @@ async function InitApp() {
     null    : Zone_map["ZonePlace_1"]
   };
 
-  //------------------------------------------------------------------------------
-  const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3f1d3498-dd14-49df-a6e5-bb13281095d5');
-  const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('3c3b76c9-1b50-4f4e-9386-0566896a55ce');
-  const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('24145957-9a15-4752-9b0e-359e14b5ba8e');
-  const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('299e8f24-53fa-4bf5-b6b3-979a0348dc60');
-  const InteractZonePLayer = await SDK3DVerse.engineAPI.findEntitiesByEUID('67919a03-7107-402a-a87e-4027311d9ec6');
-  const lamp = await SDK3DVerse.engineAPI.findEntitiesByEUID('f95f32ec-fa18-410a-967d-7be768c539d1');
-  const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('6972f860-1786-41fd-9150-a5f605ac1ac4');
-  const zoneName = await CoralZone[0].getChildren();
-  const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
-  console.log(GlobalPlantation[0]);
-  const GlobalPlantationChildren = await GlobalPlantation[0].getChildren();
-  const GlobalPlantationChildrenLenght = await GlobalPlantationChildren.length;
-  var tpPoint;
-  // const sun  = await SDK3DVerse.engineAPI.findEntitiesByEUID('0e3748a2-ea86-44e0-869b-cddb715dab0e');
+  const ButtonDay = document.querySelector("#time-set-day");
+  const ButtonMidday = document.querySelector("#time-set-midday");
+  const ButtonNight = document.querySelector("#time-set-night");
+  const ButtonMidnight = document.querySelector("#time-set-midnight");
+  const ButtonCheckbox = document.querySelector("#unchecked");
+  const ButtonUncheckbox = document.querySelector("#checked");
+   
   //------------------------------------------------------------------------------
   let islampvisible = false;
   let zone;
   let entities;
-  //const entities = await SDK3DVerse.engineAPI.findEntitiesByEUID('7875aa33-7421-47b0-bcba-884aed856227');
-  //console.log(entities);
-  //let scriptComponent = entities.getComponent("script_map");
-  //console.log(entities);
-  //console.log("is Swimming = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"])
-  //star animation 'moon-sun-anim' and 'butterfly-fish-2'
-  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 20.0 });
-  SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 });
-  CheckCoralList();
+  await CheckCoralList();
+
   //------------------------------------------------------------------------------
   const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
-  let outsideTrigger = false;
+  
+  //------------------------------------------------------------------------------
+  function delay(milliseconds) {
+    return new Promise(resolve => {
+      setTimeout(resolve, milliseconds);
+    })
+  };
+
   //------------------------------------------------------------------------------
   async function CheckCoralList(){
-    coral_list.splice(0, coral_list.length);
+    coral_list = [];
     for (var i = 0; i < GlobalPlantationChildrenLenght; i++){
       console.log(i);
       const coralPlanted = await GlobalPlantationChildren[i].getChildren();
@@ -286,8 +309,12 @@ async function InitApp() {
         coral_list.push(Coral_8.name);
       }
     }
-    console.log(coral_list);
+    console.log("checkCoralList = ",coral_list.length,coral_list);
+    return coral_list;
   }
+  console.log(CoralZone);
+  console.log(zoneName);
+
   //------------------------------------------------------------------------------
   async function checkPlantCoral(event) {
     if (event.key != 'e'){
@@ -371,13 +398,13 @@ async function InitApp() {
     CheckCoralList();
   };
 
+  //------------------------------------------------------------------------------
   async function teleport(){
+    document.querySelector("#loading-page").style.visibility = "visible";
     let tpPointChildren = await tpPoint.getChildren()
     let tpPointPos = tpPointChildren[0].getGlobalTransform();
     let scriptComponent = entities.getComponent("script_map");
-    //const keepRotationView = entities.getGlobalTransform().orientation;
     entities.setGlobalTransform(tpPointPos);
-    //entities.setGlobalTransform({orientation : keepRotationView});
     console.log(tpPoint.getName());
     console.log("swim = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"]);
     console.log(InsideHubDoorToOutside[0].getName());
@@ -415,94 +442,90 @@ async function InitApp() {
       setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities)}, 100);
       document.removeEventListener('click', teleport);
     }
+    await delay(2000);
+    document.querySelector("#loading-page").style.visibility = "hidden";
     document.removeEventListener('click', teleport);
   };
+
   //------------------------------------------------------------------------------
-  function adjustCoralList(coral_list, nbZones) {
-    let totalCount = coral_list.length;
+  function adjustCoralList() {
+    const totalCount = coral_list.length;
+    console.log("longueur =",coral_list.length);
+    console.log("coral-list = ",typeof coral_list,coral_list,Array.isArray(coral_list));
 
     // Si le nombre total de coraux est inférieur à nbZones, retourner les occurences
     if (totalCount < nbZones) {
-        let adjustedCounts = coral_list.reduce((counts, coralType) => {
+        const adjustedCounts = coral_list.reduce((counts, coralType) => {
             counts[coralType] = (counts[coralType] || 0) + 1;
             return counts;
         }, {});
+        console.log("adjustedCounts =",adjustedCounts);
         return adjustedCounts;
     } else {
-      let proportionalCounts = coral_list.reduce((counts, coralType) => {
+
+      // Le reste du code reste inchangé...
+      const proportionalCounts = coral_list.reduce((counts, coralType) => {
           counts[coralType] = (counts[coralType] || 0) + 1;
           return counts;
       }, {});
 
-      const roundedTotalCount = Object.values(proportionalCounts).reduce((total, count) => total + count, 0);
-
-      let adjustedProportionalCounts = {};
+      const adjustedProportionalCounts = {};
       for (const coralType in proportionalCounts) {
           adjustedProportionalCounts[coralType] = Math.round((proportionalCounts[coralType] / totalCount) * nbZones);
       }
 
-      let adjustedLengths = {};
+      const adjustedLengths = {};
       for (const coralType in adjustedProportionalCounts) {
           adjustedLengths[coralType] = adjustedProportionalCounts[coralType];
       }
-
+      console.log("adjusted lenghts", adjustedLengths, adjustedProportionalCounts);
       return adjustedLengths;
     }
   }
 
 
-    
-
+  //------------------------------------------------------------------------------
   function getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones) {
     console.log("adjustedLengths:", adjustedLengths);
-
     // Si la longueur de coral_list est supérieure à nbZones, sélectionner un corail directement
     if (coral_list.length > nbZones) {
-        let availableCoralTypes = coral_list.filter(coralType => adjustedLengths[coralType] > 0);
-
+        const availableCoralTypes = coral_list.filter(coralType => adjustedLengths[coralType] > 0);
         if (availableCoralTypes.length === 0) {
             // Aucun type de corail disponible, retourner null ou traiter en conséquence
             return null;
         }
-
-        let randomCoralType = availableCoralTypes[Math.floor(Math.random() * availableCoralTypes.length)];
+        const randomCoralType = availableCoralTypes[Math.floor(Math.random() * availableCoralTypes.length)];
         adjustedLengths[randomCoralType]--;
-
         return randomCoralType;
     }
 
     // Si la longueur de coral_list est inférieure ou égale à nbZones, continuer avec la logique précédente
-    let availableCoralTypes = Object.keys(adjustedLengths).filter(coralType => adjustedLengths[coralType] > 0);
+    const availableCoralTypes = Object.keys(adjustedLengths).filter(coralType => adjustedLengths[coralType] > 0);
 
     if (availableCoralTypes.length === 0) {
         // Aucun type de corail disponible, retourner null ou traiter en conséquence
         return null;
     }
 
-    let randomCoralType = availableCoralTypes[Math.floor(Math.random() * availableCoralTypes.length)];
+    const randomCoralType = availableCoralTypes[Math.floor(Math.random() * availableCoralTypes.length)];
     adjustedLengths[randomCoralType]--;
 
     return randomCoralType;
   }
 
-
-
   //------------------------------------------------------------------------------
-  function PlaceCoral(event) {
+  async function PlaceCoral(event) {
     console.log("pressed to place =", event.key);
-
     const coralIndex = parseInt(event.key);
-
     if (coralIndex >= 1 && coralIndex <= 8) {
         const coralKey = `coral_${coralIndex}`;
         console.log(event.key);
         zone[0].setComponent('scene_ref', { value: coral_map[coralKey], maxRecursionCount: 1 });
         zone[0].save();
-        CheckCoralList();
+        await CheckCoralList();
         console.log(coral_list);
     }
     //get the occurrences and adapt them to the number of decorztion zone
-    const nbZones = 6; 
     let adjustedLengths = adjustCoralList(coral_list, nbZones);
     console.log(adjustedLengths);
     for (let i = 0; i < nbZones; i++) {
@@ -518,10 +541,81 @@ async function InitApp() {
     }
     document.removeEventListener('keypress', PlaceCoral);
   }
-
   
   //------------------------------------------------------------------------------
-  
+  function PassTheNightMenu(event){
+    if (event.key === 'e'){
+      TimeSetMenuDisplay = !TimeSetMenuDisplay;
+      // console.log(TimeSetMenuDisplay);
+      // console.log(ButtonDay);
+      // console.log(ButtonMidday);
+      // console.log(ButtonNight);
+      // console.log(ButtonMidnight);
+    }
+
+    if (TimeSetMenuDisplay) {
+      document.querySelector("#time-set-menu").style.visibility = "visible";
+      document.querySelector("#time-set-day").style.visibility = "visible";
+      document.querySelector("#time-set-midday").style.visibility = "visible";
+      document.querySelector("#time-set-night").style.visibility = "visible";
+      document.querySelector("#time-set-midnight").style.visibility = "visible";
+      document.querySelector("#time-set-checkbox").style.visibility = "visible";
+      document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
+      document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
+      removeEventListener('keydown', PassTheNightMenu);  
+      resetFPSCameraController(canvas);
+    }else{
+      document.querySelector("#time-set-menu").style.visibility = "hidden";
+      document.querySelector("#time-set-day").style.visibility = "hidden";
+      document.querySelector("#time-set-midday").style.visibility = "hidden";
+      document.querySelector("#time-set-night").style.visibility = "hidden";
+      document.querySelector("#time-set-midnight").style.visibility = "hidden";
+      document.querySelector("#time-set-checkbox").style.visibility = "hidden";
+      document.querySelector("#checked").style.visibility = "hidden";
+      document.querySelector("#unchecked").style.visibility = "hidden";
+      removeEventListener('keydown', PassTheNightMenu); 
+      setFPSCameraController(canvas);
+    }
+    removeEventListener('keydown', PassTheNightMenu);
+  }
+
+  //------------------------------------------------------------------------------
+  function ToggleCheckbox() {
+    // console.log("toggle checkbox")
+    // console.log("CheckboxChecked:", CheckboxChecked);
+    // console.log("CheckboxUnchecked:", CheckboxUnchecked);
+    document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
+    document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
+  }
+
+  //------------------------------------------------------------------------------
+  ButtonDay.addEventListener("click", function(){
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.0 });
+  });
+  ButtonMidday.addEventListener("click", function(){
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.25 });
+  });
+  ButtonNight.addEventListener("click", function(){
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.5 });
+  });
+  ButtonMidnight.addEventListener("click", function(){
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.75 });
+  }); 
+  ButtonCheckbox.addEventListener("click", function(){
+    CheckboxChecked = true;
+    CheckboxUnchecked = false;
+    // console.log("checked", CheckboxChecked);
+    SDK3DVerse.engineAPI.pauseAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
+    ToggleCheckbox();
+  });
+  ButtonUncheckbox.addEventListener("click", function(){
+    CheckboxChecked = false;
+    CheckboxUnchecked = true;
+    // console.log("unchecked", CheckboxUnchecked);
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
+    ToggleCheckbox();
+  });
+
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onEnterTrigger(async (emitterEntity, triggerEntity) =>
   {
@@ -532,26 +626,34 @@ async function InitApp() {
     console.log('enter ',emitterEntity.getName()," ", triggerEntity.getName());
     if (emitterEntity == InsideHubDoorToOutside[0]){
       console.log('press E to exit');
+      document.querySelector("#cross").style.visibility = "hidden";
+      document.querySelector("#door").style.visibility = "visible";
       tpPoint = await emitterEntity;
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
       
     }
     else if (emitterEntity == OutsideHubDoorToInside[0]){
-      outsideTrigger = true;
+      // outsideTrigger = true;
       console.log('press E to enter');
+      document.querySelector("#cross").style.visibility = "hidden";
+      document.querySelector("#door").style.visibility = "visible";
       tpPoint = await emitterEntity;
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
     }
     else if (emitterEntity == ToLaboratoryDoor[0]){
-      console.log('press E to loaboratory')
+      console.log('press E to loaboratory');
+      document.querySelector("#cross").style.visibility = "hidden";
+      document.querySelector("#door").style.visibility = "visible";
       tpPoint = await emitterEntity;
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
     }
     else if (emitterEntity == ToHubDoor[0]){
-      console.log('press E to Hub')
+      console.log('press E to Hub');
+      document.querySelector("#cross").style.visibility = "hidden";
+      document.querySelector("#door").style.visibility = "visible";
       tpPoint = await emitterEntity;
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
@@ -559,21 +661,35 @@ async function InitApp() {
     else if (emitterEntity.getParent().getName() == "Plantations"){
       console.log("press E");
       zone = await emitterEntity.getChildren();
+      if (zone[0].getComponent('scene_ref').value == coral_map["empty_zone"]){
+        document.querySelector("#cross").style.visibility = "hidden";
+        document.querySelector("#put").style.visibility = "visible";
+      } else {
+        document.querySelector("#cross").style.visibility = "hidden";
+        document.querySelector("#take").style.visibility = "visible";
+      }
       console.log(zone[0].getName());
       console.log(emitterEntity," ",emitterEntity.getName()," ",emitterEntityParent," ",zone);
       document.removeEventListener('keypress', checkPlantCoral);
       document.addEventListener('keypress', checkPlantCoral);
-      
+    }
+    else if (emitterEntity  == Couch[0]) {
+      console.log('press E to pass the night');
+      document.removeEventListener('keydown', PassTheNightMenu);
+      document.addEventListener('keydown', PassTheNightMenu);
     }
   });
-
+  
   //------------------------------------------------------------------------------
-  SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
-    console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
-    outsideTrigger = false;
-    console.log(outsideTrigger);
+  SDK3DVerse.engineAPI.onExitTrigger(() => {
+    if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0]){
+      document.querySelector("#door").style.visibility = "hidden";
+      document.querySelector("#put").style.visibility = "hidden";
+      document.querySelector("#take").style.visibility = "hidden";
+      document.querySelector("#cross").style.visibility = "visible";
+    }
+    
     document.removeEventListener('click', teleport);
-
   });
 }
 //##############################################################################
@@ -586,7 +702,7 @@ async function InitApp() {
 
 //------------------------------------------------------------------------------
 async function setFPSCameraController(canvas){
-  // Remove the required pointerdown for the LOOK_LEFT, LOOK_RIGHT, LOOK_UP, and 
+  // Remove the required click for the LOOK_LEFT, LOOK_RIGHT, LOOK_UP, and 
   // LOOK_DOWN actions.
   SDK3DVerse.actionMap.values["LOOK_LEFT"][0] = ["MOUSE_AXIS_X_POS"];
   SDK3DVerse.actionMap.values["LOOK_RIGHT"][0] = ["MOUSE_AXIS_X_NEG"];
@@ -604,6 +720,7 @@ async function setFPSCameraController(canvas){
   canvas.requestPointerLock();
 };
 
+//------------------------------------------------------------------------------
 async function resetFPSCameraController(canvas) {
   const SDK3DVerse = window.SDK3DVerse
   // // console.log(SDK3DVerse)
@@ -616,27 +733,13 @@ async function resetFPSCameraController(canvas) {
   SDK3DVerse.actionMap.values["LOOK_UP"][0] = ["MOUSE_BTN_LEFT"];
   SDK3DVerse.actionMap.propagate();
 
-
-
-  // const clientUUID = await SDK3DVerse.getClientUUID()
-
-  // const player = await SDK3DVerse.engineAPI.findEntitiesByNames(`Player_${clientUUID}`);
-
-  // await player[0].setOrientation([1,1,1,1]);
-
-
-
   // Release the pointer lock.
-  document.exitPointerLock = (
-      document.exitPointerLock
-      || document.mozExitPointerLock
-      || document.webkitExitPointerLock
+  canvas.exitPointerLock = (
+      canvas.exitPointerLock
+      || canvas.mozExitPointerLock
+      || canvas.webkitExitPointerLock
   );
   document.exitPointerLock();
-
-
-
-
 };
 
 //------------------------------------------------------------------------------
@@ -777,7 +880,7 @@ function fermerModale() {
 }
 
 //------------------------------------------------------------------------------
-window.onpointerdown = function (event) {
+window.onclick = function (event) {
     const modal = document.getElementById('maModal');
     const body = document.body;
     if (event.target === modal) {
