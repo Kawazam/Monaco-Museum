@@ -161,6 +161,7 @@ window.addEventListener("load", InitApp);
 let canvas;
 var characterController;
 var lamp;
+await SplinesForFishes();
 
 //------------------------------------------------------------------------------
 async function InitApp() {
