@@ -208,7 +208,7 @@ async function InitApp() {
   await SplinesForFishes();
   
   //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
-  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 }); //'moon-sun-animation'
+  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0 }); //'moon-sun-animation'
   SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
   
   //hide loading page-------------------------------------------------------------
@@ -411,7 +411,6 @@ async function InitApp() {
     }
     
     zone[0].setComponent('scene_ref',{value : coral_map["empty_zone"], maxRecursionCount: 1});
-    zone[0].save();
     CheckCoralList();
   };
 
@@ -606,16 +605,16 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   ButtonDay.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.0 });
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.0 });
   });
   ButtonMidday.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.25 });
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.25 });
   });
   ButtonNight.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.5 });
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.5 });
   });
   ButtonMidnight.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.75 });
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.75 });
   }); 
   ButtonCheckbox.addEventListener("click", function(){
     CheckboxChecked = true;
@@ -710,6 +709,8 @@ async function InitApp() {
     console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
     outsideTrigger = false;
     console.log(outsideTrigger);
+    document.removeEventListener('keydown', checkPlantCoral);
+    document.removeEventListener('keydown', PassTheNightMenu);
     document.removeEventListener('click', teleport);
   });
 }
