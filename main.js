@@ -536,23 +536,22 @@ async function InitApp() {
         const coralKey = `coral_${coralIndex}`;
         console.log(event.key);
         zone[0].setComponent('scene_ref', { value: coral_map[coralKey], maxRecursionCount: 1 });
-        zone[0].save();
         await CheckCoralList();
         console.log(coral_list);
-    }
+        let adjustedLengths = adjustCoralList(coral_list, nbZones);
+        console.log(adjustedLengths);
+        for (let i = 0; i < nbZones; i++) {
+          // Get a random coral type and decrement its count
+          let randomCoral = getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones);
+          console.log("voici",CoralZone[0].getName());
+          console.log(zoneName[i].getName());
+          console.log(randomCoral);
+          console.log("this = ",zoneCoralPlace[randomCoral])
+          zoneName[i].setComponent('scene_ref',{value : zoneCoralPlace[randomCoral], maxRecursionCount: 0});
+          zoneName[i].setGlobalTransform(CoralZone[0]);
+          console.log(`Zone ${i + 1}: ${randomCoral}`);
+        }
     //get the occurrences and adapt them to the number of decorztion zone
-    let adjustedLengths = adjustCoralList(coral_list, nbZones);
-    console.log(adjustedLengths);
-    for (let i = 0; i < nbZones; i++) {
-      // Get a random coral type and decrement its count
-      let randomCoral = getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones);
-      console.log("voici",CoralZone[0].getName());
-      console.log(zoneName[i].getName());
-      console.log(randomCoral);
-      console.log("this = ",zoneCoralPlace[randomCoral])
-      zoneName[i].setComponent('scene_ref',{value : zoneCoralPlace[randomCoral], maxRecursionCount: 0});
-      zoneName[i].setGlobalTransform(CoralZone[0]);
-      console.log(`Zone ${i + 1}: ${randomCoral}`);
     }
     document.removeEventListener('keypress', PlaceCoral);
   };
