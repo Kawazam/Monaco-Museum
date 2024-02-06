@@ -21,7 +21,7 @@ import {
   Coral_6,
   Coral_7,
   Coral_8,
-} from "./Coral.js"
+} from "./Coral.js";
 
 //------------------------------------------------------------------------------
 import {
@@ -68,7 +68,7 @@ for(let i = 1; i < 7; i++) {
   for(let j = 1; j < 5; j++) {
     InventoryTable += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
   }
-}
+};
 
 //------------------------------------------------------------------------------
 DisplayInventory.innerHTML = InventoryTable;
@@ -122,7 +122,7 @@ function checkMenueToggle(event){
     }
     console.log('menue out');
   }
-}
+};
 
 
 //------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ function toggleMenuSection() {
   for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
   document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
   document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
-}
+};
 
 //------------------------------------------------------------------------------
 /*function test() {
@@ -159,63 +159,80 @@ function toggleMenuSection() {
 //------------------------------------------------------------------------------
 window.addEventListener("load", InitApp);
 let canvas;
+var characterController;
+var lamp;
 
 //------------------------------------------------------------------------------
 async function InitApp() {
 
-    //show loading page-------------------------------------------------------------
-    document.querySelector("#loading-page").style.visibility = "visible";
+  //show loading page-------------------------------------------------------------
+  document.querySelector("#loading-page").style.visibility = "visible";
+
+  //------------------------------------------------------------------------------
+  canvas = document.getElementById("display-canvas");
   
-    //------------------------------------------------------------------------------
-    canvas = document.getElementById("display-canvas");
-    
-    //------------------------------------------------------------------------------
-    await SDK3DVerse.joinOrStartSession({
-      isTransient: true,
-      userToken: publicToken,
-      sceneUUID: mainSceneUUID,
-      // sceneUUID: inventorySceneUUID,
-      canvas: document.getElementById("display-canvas"),
-      createDefaultCamera: false,
-      startSimulation: "on-assets-loaded",
-    });
-    
-    //------------------------------------------------------------------------------
-    await InitFirstPersonController(characterControllerSceneUUID);
-    
-    //------------------------------------------------------------------------------
-    canvas.addEventListener('pointerdown', () => setFPSCameraController(canvas));
-    document.addEventListener('keydown', checkMenueToggle);
+  //------------------------------------------------------------------------------
+  await SDK3DVerse.joinOrStartSession({
+    isTransient: true,
+    userToken: publicToken,
+    sceneUUID: mainSceneUUID,
+    // sceneUUID: inventorySceneUUID,
+    canvas: document.getElementById("display-canvas"),
+    createDefaultCamera: false,
+    startSimulation: "on-assets-loaded",
+  });
   
-    //------------------------------------------------------------------------------
-    await SplinesForFishes();
-    
-    //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0 }); //'moon-sun-animation'
-    SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
-    
-    //hide loading page-------------------------------------------------------------
-    document.querySelector("#loading-page").style.visibility = "hidden";
-    document.querySelector("#cross").style.visibility = "visible";
+  //------------------------------------------------------------------------------
+  characterController = await InitFirstPersonController(characterControllerSceneUUID);
+  const getCam = await characterController.getChildren();
+  console.log("getcam = ",getCam);
+  const getCamChildren = await getCam[1].getChildren();
+  lamp = await getCamChildren[0];
   
-    //------------------------------------------------------------------------------
-    document.addEventListener('keydown', function(event) {
-    // Vérifie si la touche pressée est 't'
-    if (event.key === 't') {
-        // Vérifie si islampvisible est true
-        if (islampvisible === true) {
-          lamp[0].setVisibility(islampvisible);
-          console.log("lamp allumé")
-            // Change la valeur de islampvisible à false
-            islampvisible = false;
-        }
-        else if (islampvisible === false) {
-          lamp[0].setVisibility(islampvisible);
-            // Change la valeur de islampvisible à false
-            islampvisible = true;
-            console.log("lampe éteinte")
-        }
-    }
+  //------------------------------------------------------------------------------
+  if (lamp.getName()!= "camLamp") {
+    lamp = await getCamChildren[1];
+  };
+
+  //------------------------------------------------------------------------------
+  console.log("lamp =",lamp.getName());
+  console.log("lamp children = ", getCamChildren)
+  lamp.setVisibility(false);
+  var islampvisible = false;
+
+  //------------------------------------------------------------------------------
+  canvas.addEventListener('pointerdown', () => setFPSCameraController(canvas));
+  document.addEventListener('keydown', checkMenueToggle);
+
+  //------------------------------------------------------------------------------
+  await SplinesForFishes();
+  
+  //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
+  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0 }); //'moon-sun-animation'
+  SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
+  
+  //hide loading page-------------------------------------------------------------
+  document.querySelector("#loading-page").style.visibility = "hidden";
+  document.querySelector("#cross").style.visibility = "visible";
+
+  //------------------------------------------------------------------------------
+  document.addEventListener('keydown', function(event) {
+  // Vérifie si la touche pressée est 't'
+  if (event.key === 't') {
+      // Vérifie si islampvisible est true
+      if (islampvisible === true) {
+        lamp.setVisibility(!islampvisible);
+        console.log("lamp allumé")
+          // Change la valeur de islampvisible à false
+          islampvisible = false;
+      }
+      else if (islampvisible === false) {
+        lamp.setVisibility(!islampvisible);
+          // Change la valeur de islampvisible à false
+          islampvisible = true;
+          console.log("lampe éteinte")
+      }
+  }
   });
 
   //------------------------------------------------------------------------------
@@ -230,7 +247,7 @@ async function InitApp() {
   const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
   const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
   const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
-  const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('1df0a64c-6b66-401d-8bfd-f1c4685fb4f2');
+  const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
   const zoneName = await CoralZone[0].getChildren();
   const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
   console.log(GlobalPlantation[0]);
@@ -258,7 +275,6 @@ async function InitApp() {
   const ButtonUncheckbox = document.querySelector("#checked");
    
   //------------------------------------------------------------------------------
-  let islampvisible = false;
   let zone;
   let entities;
   let outsideTrigger = false;
@@ -395,7 +411,6 @@ async function InitApp() {
     }
     
     zone[0].setComponent('scene_ref',{value : coral_map["empty_zone"], maxRecursionCount: 1});
-    zone[0].save();
     CheckCoralList();
   };
 
@@ -411,8 +426,8 @@ async function InitApp() {
     console.log(InsideHubDoorToOutside[0].getName());
     if (tpPoint.getName() == InsideHubDoorToOutside[0].getName()){
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 1;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 0.5;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["runSpeed"] = 1;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 1.5;
+      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["runSpeed"] = 5;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 0.2;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = 90.0;
@@ -482,8 +497,7 @@ async function InitApp() {
       console.log("adjusted lenghts", adjustedLengths, adjustedProportionalCounts);
       return adjustedLengths;
     }
-  }
-
+  };
 
   //------------------------------------------------------------------------------
   function getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones) {
@@ -512,7 +526,7 @@ async function InitApp() {
     adjustedLengths[randomCoralType]--;
 
     return randomCoralType;
-  }
+  };
 
   //------------------------------------------------------------------------------
   async function PlaceCoral(event) {
@@ -541,7 +555,7 @@ async function InitApp() {
       console.log(`Zone ${i + 1}: ${randomCoral}`);
     }
     document.removeEventListener('keypress', PlaceCoral);
-  }
+  };
   
   //------------------------------------------------------------------------------
   function PassTheNightMenu(event){
@@ -578,7 +592,7 @@ async function InitApp() {
       setFPSCameraController(canvas);
     }
     removeEventListener('keydown', PassTheNightMenu);
-  }
+  };
 
   //------------------------------------------------------------------------------
   function ToggleCheckbox() {
@@ -587,20 +601,20 @@ async function InitApp() {
     // console.log("CheckboxUnchecked:", CheckboxUnchecked);
     document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
     document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
-  }
+  };
 
   //------------------------------------------------------------------------------
   ButtonDay.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.0 });
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.0 });
   });
   ButtonMidday.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.25 });
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.25 });
   });
   ButtonNight.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.5 });
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.5 });
   });
   ButtonMidnight.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 15.0, seekOffset : 0.75 });
+    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.75 });
   }); 
   ButtonCheckbox.addEventListener("click", function(){
     CheckboxChecked = true;
@@ -684,16 +698,19 @@ async function InitApp() {
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
     console.log("exit trigger");
-    if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0]){
+    if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0] || emitterEntity.getParent().getName() === "Plantations"){
       console.log("cursor hidden, exit trigger");
       document.querySelector("#door").style.visibility = "hidden";
       document.querySelector("#put").style.visibility = "hidden";
       document.querySelector("#take").style.visibility = "hidden";
       document.querySelector("#cross").style.visibility = "visible";
     }
+  
     console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
     outsideTrigger = false;
     console.log(outsideTrigger);
+    document.removeEventListener('keydown', checkPlantCoral);
+    document.removeEventListener('keydown', PassTheNightMenu);
     document.removeEventListener('click', teleport);
   });
 }
@@ -791,8 +808,9 @@ async function InitFirstPersonController(charCtlSceneUUID) {
   
   // Finally set the first person camera as the main camera.
   SDK3DVerse.setMainCamera(firstPersonCamera);
+  return firstPersonController;
   
-}
+};
 //##############################################################################
 
 
@@ -839,7 +857,7 @@ async function SplinesForFishes()
     };
     loopOnFishSplineTravel(fishes[fish.getID()], fishMesh, travellingSpline, 4, 0.1);
   }
-}
+};
 
 //------------------------------------------------------------------------------
 async function loopOnFishSplineTravel(fish, entity, spline, speed, delay)
@@ -848,12 +866,12 @@ async function loopOnFishSplineTravel(fish, entity, spline, speed, delay)
   {
     await anim.gotoSplineAndTravel(entity, spline, speed, delay);
   }
-}
+};
 
 //------------------------------------------------------------------------------
 function findTravellingSplineFromEntity(entity) {
   return anim.splines.find(s => s.parentEntity.getEUID() === entity.getEUID());
-}
+};
 //##############################################################################
 
 
@@ -882,7 +900,7 @@ function fermerModale() {
         modal.style.display = 'none';
         body.classList.remove('body-overlay');
     }, 1000); // Delay the removal of 'show' class for the animation to take effect
-}
+};
 
 //------------------------------------------------------------------------------
 window.onclick = function (event) {
