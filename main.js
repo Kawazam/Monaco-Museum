@@ -240,9 +240,11 @@ async function InitApp() {
   var TimeSetMenuDisplay = false;
   var CheckboxChecked = false;
   var CheckboxUnchecked = true;
+  var LaboratoryMenuDisplay = false;
   var tpPoint;
   let coral_list=[];
 
+  const Laboratory = await SDK3DVerse.engineAPI.findEntitiesByEUID('7eb18798-4822-4fe9-a3ec-766fa63d31a4');
   const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
   const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
   const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
@@ -527,7 +529,7 @@ async function InitApp() {
       // console.log(ButtonMidday);
       // console.log(ButtonNight);
       // console.log(ButtonMidnight);
-    }
+    };
 
     if (TimeSetMenuDisplay) {
       document.querySelector("#time-set-menu").style.visibility = "visible";
@@ -551,7 +553,7 @@ async function InitApp() {
       document.querySelector("#unchecked").style.visibility = "hidden";
       removeEventListener('keydown', PassTheNightMenu); 
       setFPSCameraController(canvas);
-    }
+    };
     removeEventListener('keydown', PassTheNightMenu);
   };
 
@@ -563,6 +565,13 @@ async function InitApp() {
     document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
     document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
   };
+
+  //------------------------------------------------------------------------------
+  function LaboratoryMenu() {
+    if (event.key === 'e') {
+      LaboratoryMenuDisplay = !LaboratoryMenuDisplay
+    };
+  }
 
   //------------------------------------------------------------------------------
   ButtonDay.addEventListener("click", function(){
@@ -649,10 +658,15 @@ async function InitApp() {
       document.removeEventListener('keypress', checkPlantCoral);
       document.addEventListener('keypress', checkPlantCoral);
     }
-    else if (emitterEntity  == Couch[0]) {
+    else if (emitterEntity == Couch[0]) {
       console.log('press E to pass the night');
       document.removeEventListener('keydown', PassTheNightMenu);
       document.addEventListener('keydown', PassTheNightMenu);
+    }
+    else if (emitterEntity == Laboratory[0]) {
+      console.log('press E to open the laboratory Menu');
+      document.removeEventListener('keydown', LaboratoryMenu);
+      document.addEventListener('keydown', LaboratoryMenu);
     }
   });
   
