@@ -35,6 +35,7 @@ import {
   Zone_7,
 } from "./Zone.js";
 
+import { inventory } from "./inventory.js";
 
 //------------------------------------------------------------------------------
 import TravelAnimation from "./travelAnimation.js";
@@ -337,80 +338,32 @@ async function InitApp() {
     if (event.key != 'e'){
       return;
     }
+    const currentCoralValue = zone[0].getComponent('scene_ref').value;
     console.log("pressed E = ",event.key);
       // if a plantions is empty call placeCoral() to place a coral
-    if (zone[0].getComponent('scene_ref').value == coral_map["empty_zone"]){
+    if (currentCoralValue == coral_map["empty_zone"]){
       document.removeEventListener('keypress', checkPlantCoral);
       document.removeEventListener('keypress',PlaceCoral);
       document.addEventListener('keypress',PlaceCoral);
       return;
     }
-    if (zone[0].getComponent('scene_ref').value == coral_map["coral_1"]){
-      console.log("coral = 1");
-      const coralIndex = coral_list.indexOf(Coral_1.name);
-      console.log(coralIndex);
-      if (coralIndex !== -1) {
-        coral_list.splice(coralIndex, 1);
-      }
-    }
-    if (zone[0].getComponent('scene_ref').value == coral_map["coral_2"]){
-      console.log("coral = 2");
-      const coralIndex = coral_list.indexOf(Coral_2.name);
-      console.log(coralIndex);
-      if (coralIndex !== -1) {
-        coral_list.splice(coralIndex, 1);
-      }
-    }
-    if (zone[0].getComponent('scene_ref').value == coral_map["coral_3"]){
-      console.log("coral = 3");
-      const coralIndex = coral_list.indexOf(Coral_3.name);
-      console.log(coralIndex);
-      if (coralIndex !== -1) {
-        coral_list.splice(coralIndex, 1);
-      }
-    }
-    if (zone[0].getComponent('scene_ref').value == coral_map["coral_4"]){
-      console.log("coral = 4");
-      const coralIndex = coral_list.indexOf(Coral_4.name);
-      console.log(coralIndex);
-      if (coralIndex !== -1) {
-        coral_list.splice(coralIndex, 1);
-      }
-    }
-    if (zone[0].getComponent('scene_ref').value == coral_map["coral_5"]){
-      console.log("coral = 5");
-      const coralIndex = coral_list.indexOf(Coral_5.name);
-      console.log(coralIndex);
-      if (coralIndex !== -1) {
-        coral_list.splice(coralIndex, 1);
-      }
-    }
-    if (zone[0].getComponent('scene_ref').value == coral_map["coral_6"]){
-      console.log("coral = 6");
-      const coralIndex = coral_list.indexOf(Coral_6.name);
-      console.log(coralIndex);
-      if (coralIndex !== -1) {
-        coral_list.splice(coralIndex, 1);
-      }
-    }
-    if (zone[0].getComponent('scene_ref').value == coral_map["coral_7"]){
-      console.log("coral = 7");
-      const coralIndex = coral_list.indexOf(Coral_7.name);
-      console.log(coralIndex);
-      if (coralIndex !== -1) {
-        coral_list.splice(coralIndex, 1);
-      }
-    }
-    if (zone[0].getComponent('scene_ref').value == coral_map["coral_8"]){
-      console.log("coral = 8");
-      const coralIndex = coral_list.indexOf(Coral_8.name);
-      console.log(coralIndex);
-      if (coralIndex !== -1) {
-        coral_list.splice(coralIndex, 1);
+    
+    for (const coralKey in coral_map) {
+      if (currentCoralValue === coral_map[coralKey]) {
+          const coralIndex = coral_list.indexOf(coralKey);
+          if (coralIndex !== -1) {
+              console.log(`coral = ${coralKey.replace("coral_", "")}`);
+              console.log(coralIndex);
+              coral_list.splice(coralIndex, 1);
+              inventory[`coral_${coralKey}`] += 1;
+              console.log("inventory =",inventory)
+          }
+          break; // Sortir de la boucle dès qu'on trouve le corail
       }
     }
     
     zone[0].setComponent('scene_ref',{value : coral_map["empty_zone"], maxRecursionCount: 1});
+    zone[0].save()
     CheckCoralList();
   };
 
@@ -533,26 +486,34 @@ async function InitApp() {
     console.log("pressed to place =", event.key);
     const coralIndex = parseInt(event.key);
     if (coralIndex >= 1 && coralIndex <= 8) {
-        const coralKey = `coral_${coralIndex}`;
+      const coralKey = `coral_${coralIndex}`;
+      console.log(inventory[coralKey]);
+      if (inventory[coralKey] > 0){
         console.log(event.key);
         zone[0].setComponent('scene_ref', { value: coral_map[coralKey], maxRecursionCount: 1 });
-        zone[0].save();
+        zone[0].save()
+        inventory[coralKey] -= 1;
+        console.log("inventory",inventory);
         await CheckCoralList();
         console.log(coral_list);
-    }
+        let adjustedLengths = adjustCoralList(coral_list, nbZones);
+        console.log(adjustedLengths);
+        for (let i = 0; i < nbZones; i++) {
+          // Get a random coral type and decrement its count
+          let randomCoral = getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones);
+          console.log("voici",CoralZone[0].getName());
+          console.log(zoneName[i].getName());
+          console.log(randomCoral);
+          console.log("this = ",zoneCoralPlace[randomCoral])
+          zoneName[i].setComponent('scene_ref',{value : zoneCoralPlace[randomCoral], maxRecursionCount: 0});
+          zoneName[i].setGlobalTransform(CoralZone[0]);
+          console.log(`Zone ${i + 1}: ${randomCoral}`);
+        }
+      }else{
+        console.log("not enough coral :\n", inventory);
+      }
+        
     //get the occurrences and adapt them to the number of decorztion zone
-    let adjustedLengths = adjustCoralList(coral_list, nbZones);
-    console.log(adjustedLengths);
-    for (let i = 0; i < nbZones; i++) {
-      // Get a random coral type and decrement its count
-      let randomCoral = getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones);
-      console.log("voici",CoralZone[0].getName());
-      console.log(zoneName[i].getName());
-      console.log(randomCoral);
-      console.log("this = ",zoneCoralPlace[randomCoral])
-      zoneName[i].setComponent('scene_ref',{value : zoneCoralPlace[randomCoral], maxRecursionCount: 0});
-      zoneName[i].setGlobalTransform(CoralZone[0]);
-      console.log(`Zone ${i + 1}: ${randomCoral}`);
     }
     document.removeEventListener('keypress', PlaceCoral);
   };
