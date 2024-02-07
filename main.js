@@ -98,7 +98,7 @@ ButtonMap.addEventListener("click", function(){
 
 
 //------------------------------------------------------------------------------
-function checkMenueToggle(event){
+function checkMenueToggle(event) {
   const key = event.key;
   if (key==='i') {
     console.log("I been pressed");
@@ -295,7 +295,7 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  async function CheckCoralList(){
+  async function CheckCoralList() {
     coral_list = [];
     for (var i = 0; i < GlobalPlantationChildrenLenght; i++){
       console.log(i);
@@ -370,7 +370,7 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  async function teleport(){
+  async function teleport() {
     document.querySelector("#loading-page").style.visibility = "visible";
     let tpPointChildren = await tpPoint.getChildren()
     let tpPointPos = tpPointChildren[0].getGlobalTransform();
@@ -521,8 +521,8 @@ async function InitApp() {
   };
   
   //------------------------------------------------------------------------------
-  function PassTheNightMenu(event){
-    if (event.key === 'e'){
+  function PassTheNightMenu(event) {
+    if (event.key === 'e') {
       TimeSetMenuDisplay = !TimeSetMenuDisplay;
       // console.log(TimeSetMenuDisplay);
       // console.log(ButtonDay);
@@ -533,21 +533,21 @@ async function InitApp() {
 
     if (TimeSetMenuDisplay) {
       document.querySelector("#time-set-menu").style.visibility = "visible";
-      document.querySelector("#time-set-day").style.visibility = "visible";
-      document.querySelector("#time-set-midday").style.visibility = "visible";
-      document.querySelector("#time-set-night").style.visibility = "visible";
-      document.querySelector("#time-set-midnight").style.visibility = "visible";
+      // document.querySelector("#time-set-day").style.visibility = "visible";
+      // document.querySelector("#time-set-midday").style.visibility = "visible";
+      // document.querySelector("#time-set-night").style.visibility = "visible";
+      // document.querySelector("#time-set-midnight").style.visibility = "visible";
       document.querySelector("#time-set-checkbox").style.visibility = "visible";
       document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
       document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
       removeEventListener('keydown', PassTheNightMenu);  
       resetFPSCameraController(canvas);
-    }else{
+    } else {
       document.querySelector("#time-set-menu").style.visibility = "hidden";
-      document.querySelector("#time-set-day").style.visibility = "hidden";
-      document.querySelector("#time-set-midday").style.visibility = "hidden";
-      document.querySelector("#time-set-night").style.visibility = "hidden";
-      document.querySelector("#time-set-midnight").style.visibility = "hidden";
+      // document.querySelector("#time-set-day").style.visibility = "hidden";
+      // document.querySelector("#time-set-midday").style.visibility = "hidden";
+      // document.querySelector("#time-set-night").style.visibility = "hidden";
+      // document.querySelector("#time-set-midnight").style.visibility = "hidden";
       document.querySelector("#time-set-checkbox").style.visibility = "hidden";
       document.querySelector("#checked").style.visibility = "hidden";
       document.querySelector("#unchecked").style.visibility = "hidden";
@@ -567,10 +567,18 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  function LaboratoryMenu() {
+  function LaboratoryMenu(event) {
     if (event.key === 'e') {
       LaboratoryMenuDisplay = !LaboratoryMenuDisplay
     };
+
+    if (LaboratoryMenuDisplay){
+      console.log("Laboratory Menu = ", LaboratoryMenuDisplay)
+    } else {
+      console.log("Laboratory Menu = ", LaboratoryMenuDisplay)
+    }
+
+    removeEventListener('keydown', LaboratoryMenu);
   }
 
   //------------------------------------------------------------------------------
@@ -643,6 +651,16 @@ async function InitApp() {
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
     }
+    else if (emitterEntity == Laboratory[0]) {
+      console.log('press E to open the laboratory Menu');
+      document.removeEventListener('keydown', LaboratoryMenu);
+      document.addEventListener('keydown', LaboratoryMenu);
+    }
+    else if (emitterEntity == Couch[0]) {
+      console.log('press E to pass the night');
+      document.removeEventListener('keydown', PassTheNightMenu);
+      document.addEventListener('keydown', PassTheNightMenu);
+    }
     else if (emitterEntity.getParent().getName() == "Plantations"){
       console.log("press E");
       zone = await emitterEntity.getChildren();
@@ -657,16 +675,6 @@ async function InitApp() {
       console.log(emitterEntity," ",emitterEntity.getName()," ",emitterEntityParent," ",zone);
       document.removeEventListener('keypress', checkPlantCoral);
       document.addEventListener('keypress', checkPlantCoral);
-    }
-    else if (emitterEntity == Couch[0]) {
-      console.log('press E to pass the night');
-      document.removeEventListener('keydown', PassTheNightMenu);
-      document.addEventListener('keydown', PassTheNightMenu);
-    }
-    else if (emitterEntity == Laboratory[0]) {
-      console.log('press E to open the laboratory Menu');
-      document.removeEventListener('keydown', LaboratoryMenu);
-      document.addEventListener('keydown', LaboratoryMenu);
     }
   });
   
@@ -686,6 +694,7 @@ async function InitApp() {
     console.log(outsideTrigger);
     document.removeEventListener('keydown', checkPlantCoral);
     document.removeEventListener('keydown', PassTheNightMenu);
+    document.removeEventListener('keydown', LaboratoryMenu);
     document.removeEventListener('click', teleport);
   });
 }
