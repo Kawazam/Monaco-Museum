@@ -570,15 +570,16 @@ async function InitApp() {
   function LaboratoryMenu(event) {
     if (event.key === 'e') {
       LaboratoryMenuDisplay = !LaboratoryMenuDisplay
-    };
-
-    if (LaboratoryMenuDisplay){
-      console.log("Laboratory Menu = ", LaboratoryMenuDisplay)
-    } else {
-      console.log("Laboratory Menu = ", LaboratoryMenuDisplay)
     }
 
-    removeEventListener('keydown', LaboratoryMenu);
+    if (LaboratoryMenuDisplay){
+      console.log("Laboratory Menu Display = ", LaboratoryMenuDisplay)
+      removeEventListener('keydown', LaboratoryMenu)
+    } else {
+      console.log("Laboratory Menu Display = ", LaboratoryMenuDisplay)
+      removeEventListener('keydown', LaboratoryMenu)
+    }
+    removeEventListener('keydown', LaboratoryMenu)
   }
 
   //------------------------------------------------------------------------------
@@ -651,15 +652,15 @@ async function InitApp() {
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
     }
-    else if (emitterEntity == Laboratory[0]) {
-      console.log('press E to open the laboratory Menu');
-      document.removeEventListener('keydown', LaboratoryMenu);
-      document.addEventListener('keydown', LaboratoryMenu);
-    }
     else if (emitterEntity == Couch[0]) {
       console.log('press E to pass the night');
       document.removeEventListener('keydown', PassTheNightMenu);
       document.addEventListener('keydown', PassTheNightMenu);
+    }
+    else if (emitterEntity == Laboratory[0]) {
+      console.log('press E to open the laboratory Menu');
+      document.removeEventListener('keydown', LaboratoryMenu);
+      document.addEventListener('keydown', LaboratoryMenu);
     }
     else if (emitterEntity.getParent().getName() == "Plantations"){
       console.log("press E");
@@ -681,14 +682,6 @@ async function InitApp() {
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
     console.log("exit trigger");
-    if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0] || emitterEntity.getParent().getName() === "Plantations"){
-      console.log("cursor hidden, exit trigger");
-      document.querySelector("#door").style.visibility = "hidden";
-      document.querySelector("#put").style.visibility = "hidden";
-      document.querySelector("#take").style.visibility = "hidden";
-      document.querySelector("#cross").style.visibility = "visible";
-    }
-  
     console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
     outsideTrigger = false;
     console.log(outsideTrigger);
@@ -696,6 +689,14 @@ async function InitApp() {
     document.removeEventListener('keydown', PassTheNightMenu);
     document.removeEventListener('keydown', LaboratoryMenu);
     document.removeEventListener('click', teleport);
+    
+    if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0] || emitterEntity.getParent().getName() === "Plantations"){
+      console.log("cursor hidden, exit trigger");
+      document.querySelector("#door").style.visibility = "hidden";
+      document.querySelector("#put").style.visibility = "hidden";
+      document.querySelector("#take").style.visibility = "hidden";
+      document.querySelector("#cross").style.visibility = "visible";
+    }
   });
 }
 //##############################################################################
