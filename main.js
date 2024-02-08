@@ -524,7 +524,7 @@ async function InitApp() {
   function PassTheNightMenu(event) {
     if (event.key === 'e') {
       TimeSetMenuDisplay = !TimeSetMenuDisplay;
-      // console.log(TimeSetMenuDisplay);
+      // console.log("Time set menu Display = ", TimeSetMenuDisplay);
       // console.log(ButtonDay);
       // console.log(ButtonMidday);
       // console.log(ButtonNight);
@@ -533,10 +533,6 @@ async function InitApp() {
 
     if (TimeSetMenuDisplay) {
       document.querySelector("#time-set-menu").style.visibility = "visible";
-      // document.querySelector("#time-set-day").style.visibility = "visible";
-      // document.querySelector("#time-set-midday").style.visibility = "visible";
-      // document.querySelector("#time-set-night").style.visibility = "visible";
-      // document.querySelector("#time-set-midnight").style.visibility = "visible";
       document.querySelector("#time-set-checkbox").style.visibility = "visible";
       document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
       document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
@@ -544,10 +540,6 @@ async function InitApp() {
       resetFPSCameraController(canvas);
     } else {
       document.querySelector("#time-set-menu").style.visibility = "hidden";
-      // document.querySelector("#time-set-day").style.visibility = "hidden";
-      // document.querySelector("#time-set-midday").style.visibility = "hidden";
-      // document.querySelector("#time-set-night").style.visibility = "hidden";
-      // document.querySelector("#time-set-midnight").style.visibility = "hidden";
       document.querySelector("#time-set-checkbox").style.visibility = "hidden";
       document.querySelector("#checked").style.visibility = "hidden";
       document.querySelector("#unchecked").style.visibility = "hidden";
