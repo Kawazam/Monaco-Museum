@@ -173,7 +173,7 @@ async function InitApp() {
   canvas = document.getElementById("display-canvas");
   
   //------------------------------------------------------------------------------
-  await SDK3DVerse.joinOrStartSession({
+  const isSessionCreator = await SDK3DVerse.joinOrStartSession({
     isTransient: true,
     userToken: publicToken,
     sceneUUID: mainSceneUUID,
@@ -206,7 +206,9 @@ async function InitApp() {
   document.addEventListener('keydown', checkMenueToggle);
 
   //------------------------------------------------------------------------------
-  await SplinesForFishes();
+  if(isSessionCreator) {
+    await SplinesForFishes();
+  }
   
   //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
   SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0 }); //'moon-sun-animation'
