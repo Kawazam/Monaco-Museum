@@ -72,6 +72,16 @@ body {
   border-radius: 40px;
   visibility: hidden;
 }
+
+#laboratory-menu{
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  visibility: hidden;
+}
 /*------------------------------------------------------------*/
 
 
