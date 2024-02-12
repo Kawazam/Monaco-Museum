@@ -279,7 +279,7 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   let zone;
-  let entities;
+  let currentPlayerController;
   let outsideTrigger = false;
   await CheckCoralList();
 
@@ -374,8 +374,8 @@ async function InitApp() {
     document.querySelector("#loading-page").style.visibility = "visible";
     let tpPointChildren = await tpPoint.getChildren()
     let tpPointPos = tpPointChildren[0].getGlobalTransform();
-    let scriptComponent = entities.getComponent("script_map");
-    entities.setGlobalTransform(tpPointPos);
+    let scriptComponent = currentPlayerController.getComponent("script_map");
+    currentPlayerController.setGlobalTransform(tpPointPos);
     console.log(tpPoint.getName());
     console.log("swim = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"]);
     console.log(InsideHubDoorToOutside[0].getName());
@@ -386,10 +386,10 @@ async function InitApp() {
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 0.2;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = 90.0;
-      entities.setComponent("script_map", scriptComponent);
-      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities)}, 100);
-      
-      
+      currentPlayerController.setComponent("script_map", scriptComponent);
+      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
+
+
       document.removeEventListener('click', teleport);
     }
     else if (tpPoint.getName() == ToHubDoor[0].getName()){
@@ -399,8 +399,8 @@ async function InitApp() {
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 9.8;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = 90.0;
-      entities.setComponent("script_map", scriptComponent);
-      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities)}, 100);
+      currentPlayerController.setComponent("script_map", scriptComponent);
+      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
       document.removeEventListener('click', teleport);
     } else {
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
@@ -409,8 +409,8 @@ async function InitApp() {
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 9.8;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = -90.0;
-      entities.setComponent("script_map", scriptComponent);
-      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities)}, 100);
+      currentPlayerController.setComponent("script_map", scriptComponent);
+      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
       document.removeEventListener('click', teleport);
     }
     await delay(2000);
@@ -598,10 +598,29 @@ async function InitApp() {
   SDK3DVerse.engineAPI.onEnterTrigger(async (emitterEntity, triggerEntity) =>
   {
     let emitterEntityParent = emitterEntity.getParent();
-    let getCamTrigger = await triggerEntity.getParent();
-    console.log(getCamTrigger);
-    entities = await getCamTrigger.getParent();
-    console.log('enter ',emitterEntity.getName()," ", triggerEntity.getName());
+    let triggerEntityParent = triggerEntity.getParent();
+    console.log("triggerEntityParent:", triggerEntityParent);
+    if(!triggerEntityParent.isAttached('camera'))
+    {
+      // if it's not a camera then it's not the player'camera that we expect to be
+      // the parent of the player's InteractZone entity.
+      return;
+    }
+
+    const firstPersonControllerEntity = triggerEntityParent.getParent();
+    const playerEntity = firstPersonControllerEntity.getParent();
+    const playerClientUUID = playerEntity.getName().split('_')[1];
+    console.log("!!!!!!!!", playerEntity, playerClientUUID);
+    if(playerClientUUID !== SDK3DVerse.getClientUUID())
+    {
+      // it's the entity of another player, so we don't care about it!
+      return;
+    }
+
+    currentPlayerController = firstPersonControllerEntity;
+    console.log("We entered an interaction area player controller:", currentPlayerController);
+    console.log('The interaction area is:', emitterEntity.getName());
+
     if (emitterEntity == InsideHubDoorToOutside[0]){
       console.log('press E to exit');
       document.querySelector("#cross").style.visibility = "hidden";
@@ -747,13 +766,10 @@ async function InitFirstPersonController(charCtlSceneUUID) {
   // Note that an entity template can be instantiated multiple times.
   // Each instantiation results in a new entity.
   const playerSceneEntity = await playerTemplate.instantiateTransientEntity(
-    "Player",
+    "Player_" + SDK3DVerse.getClientUUID(),
     parentEntity,
     deleteOnClientDisconnection
   );
-  const light = await SDK3DVerse.engineAPI.findEntitiesByEUID('f95f32ec-fa18-410a-967d-7be768c539d1');
-  light[0].setVisibility(false);
-
 
   // The character controller scene is setup as having a single entity at its
   // root which is the first person controller itself.
