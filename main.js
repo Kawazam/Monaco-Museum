@@ -8,6 +8,9 @@ import {
   mainSceneUUID,
   characterControllerSceneUUID,
   //inventorySceneUUID,
+  moonSunAnimUUID,
+  butterflyFish2UUID,
+  engineOutputEventUUID,
 } from "./config.js";
 
 //------------------------------------------------------------------------------
@@ -211,8 +214,8 @@ async function InitApp() {
   }
 
   //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
-  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0 }); //'moon-sun-animation'
-  SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
+  SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID, { playbackSpeed : 1.0 });
+  SDK3DVerse.engineAPI.playAnimationSequence(butterflyFish2UUID, { playbackSpeed : 1.0 });
 
   //hide loading page-------------------------------------------------------------
   document.querySelector("#loading-page").style.visibility = "hidden";
@@ -286,7 +289,6 @@ async function InitApp() {
   await CheckCoralList();
 
   //------------------------------------------------------------------------------
-  const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
 
   //------------------------------------------------------------------------------
@@ -586,29 +588,29 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   ButtonDay.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.0 });
+    SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID, { playbackSpeed : 1.0, seekOffset : 0.0 });
   });
   ButtonMidday.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.25 });
+    SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID, { playbackSpeed : 1.0, seekOffset : 0.25 });
   });
   ButtonNight.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.5 });
+    SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID, { playbackSpeed : 1.0, seekOffset : 0.5 });
   });
   ButtonMidnight.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.75 });
+    SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID, { playbackSpeed : 1.0, seekOffset : 0.75 });
   });
   ButtonCheckbox.addEventListener("click", function(){
     CheckboxChecked = true;
     CheckboxUnchecked = false;
     // console.log("checked", CheckboxChecked);
-    SDK3DVerse.engineAPI.pauseAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
+    SDK3DVerse.engineAPI.pauseAnimationSequence(moonSunAnimUUID);
     ToggleCheckbox();
   });
   ButtonUncheckbox.addEventListener("click", function(){
     CheckboxChecked = false;
     CheckboxUnchecked = true;
     // console.log("unchecked", CheckboxUnchecked);
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
+    SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID);
     ToggleCheckbox();
   });
 
