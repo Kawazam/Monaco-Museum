@@ -98,7 +98,7 @@ ButtonMap.addEventListener("click", function(){
 
 
 //------------------------------------------------------------------------------
-function checkMenueToggle(event) {
+function checkMenueToggle(event){
   const key = event.key;
   if (key==='i') {
     console.log("I been pressed");
@@ -131,7 +131,7 @@ function toggleMenuSection() {
   ButtonInventory.classList.toggle("selected_title", Inventory);
   ButtonStats.classList.toggle("selected_title", Stats);
   ButtonMap.classList.toggle("selected_title", Map);
-  
+
   document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
   for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
   document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
@@ -160,8 +160,8 @@ function toggleMenuSection() {
 //------------------------------------------------------------------------------
 window.addEventListener("load", InitApp);
 let canvas;
-var characterController;
-var lamp;
+let characterController;
+let lamp;
 
 //------------------------------------------------------------------------------
 async function InitApp() {
@@ -171,9 +171,9 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   canvas = document.getElementById("display-canvas");
-  
+
   //------------------------------------------------------------------------------
-  await SDK3DVerse.joinOrStartSession({
+  const isSessionCreator = await SDK3DVerse.joinOrStartSession({
     isTransient: true,
     userToken: publicToken,
     sceneUUID: mainSceneUUID,
@@ -182,14 +182,14 @@ async function InitApp() {
     createDefaultCamera: false,
     startSimulation: "on-assets-loaded",
   });
-  
+
   //------------------------------------------------------------------------------
   characterController = await InitFirstPersonController(characterControllerSceneUUID);
   const getCam = await characterController.getChildren();
   console.log("getcam = ",getCam);
   const getCamChildren = await getCam[1].getChildren();
   lamp = await getCamChildren[0];
-  
+
   //------------------------------------------------------------------------------
   if (lamp.getName()!= "camLamp") {
     lamp = await getCamChildren[1];
@@ -206,12 +206,14 @@ async function InitApp() {
   document.addEventListener('keydown', checkMenueToggle);
 
   //------------------------------------------------------------------------------
-  await SplinesForFishes();
-  
+  if(isSessionCreator) {
+    await SplinesForFishes();
+  }
+
   //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
   SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0 }); //'moon-sun-animation'
   SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
-  
+
   //hide loading page-------------------------------------------------------------
   document.querySelector("#loading-page").style.visibility = "hidden";
   document.querySelector("#cross").style.visibility = "visible";
@@ -240,11 +242,9 @@ async function InitApp() {
   var TimeSetMenuDisplay = false;
   var CheckboxChecked = false;
   var CheckboxUnchecked = true;
-  var LaboratoryMenuDisplay = false;
   var tpPoint;
   let coral_list=[];
 
-  const Laboratory = await SDK3DVerse.engineAPI.findEntitiesByEUID('7eb18798-4822-4fe9-a3ec-766fa63d31a4');
   const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
   const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
   const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
@@ -256,8 +256,8 @@ async function InitApp() {
   console.log(GlobalPlantation[0]);
   const GlobalPlantationChildren = await GlobalPlantation[0].getChildren();
   const GlobalPlantationChildrenLenght = await GlobalPlantationChildren.length;
-  const nbZones = GlobalPlantationChildrenLenght; 
-  
+  const nbZones = GlobalPlantationChildrenLenght;
+
   const zoneCoralPlace = {
     Coral_1 : Zone_map["ZonePlace_2"],
     Coral_2 : Zone_map["ZonePlace_3"],
@@ -276,17 +276,17 @@ async function InitApp() {
   const ButtonMidnight = document.querySelector("#time-set-midnight");
   const ButtonCheckbox = document.querySelector("#unchecked");
   const ButtonUncheckbox = document.querySelector("#checked");
-   
+
   //------------------------------------------------------------------------------
   let zone;
-  let entities;
+  let currentPlayerController;
   let outsideTrigger = false;
   await CheckCoralList();
 
   //------------------------------------------------------------------------------
   const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
-  
+
   //------------------------------------------------------------------------------
   function delay(milliseconds) {
     return new Promise(resolve => {
@@ -295,7 +295,7 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  async function CheckCoralList() {
+  async function CheckCoralList(){
     coral_list = [];
     for (var i = 0; i < GlobalPlantationChildrenLenght; i++){
       console.log(i);
@@ -349,7 +349,7 @@ async function InitApp() {
       document.addEventListener('keypress',PlaceCoral);
       return;
     }
-    
+
     for (const coralKey in coral_map) {
       if (currentCoralValue === coral_map[coralKey]) {
           const coralIndex = coral_list.indexOf(coralKey);
@@ -363,19 +363,19 @@ async function InitApp() {
           break; // Sortir de la boucle dès qu'on trouve le corail
       }
     }
-    
+
     zone[0].setComponent('scene_ref',{value : coral_map["empty_zone"], maxRecursionCount: 1});
     zone[0].save()
     CheckCoralList();
   };
 
   //------------------------------------------------------------------------------
-  async function teleport() {
+  async function teleport(){
     document.querySelector("#loading-page").style.visibility = "visible";
     let tpPointChildren = await tpPoint.getChildren()
     let tpPointPos = tpPointChildren[0].getGlobalTransform();
-    let scriptComponent = entities.getComponent("script_map");
-    entities.setGlobalTransform(tpPointPos);
+    let scriptComponent = currentPlayerController.getComponent("script_map");
+    currentPlayerController.setGlobalTransform(tpPointPos);
     console.log(tpPoint.getName());
     console.log("swim = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"]);
     console.log(InsideHubDoorToOutside[0].getName());
@@ -386,12 +386,12 @@ async function InitApp() {
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 0.2;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = 90.0;
-      entities.setComponent("script_map", scriptComponent);
-      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities)}, 100);
-      
-      
+      currentPlayerController.setComponent("script_map", scriptComponent);
+      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
+
+
       document.removeEventListener('click', teleport);
-    } 
+    }
     else if (tpPoint.getName() == ToHubDoor[0].getName()){
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 2;
@@ -399,8 +399,8 @@ async function InitApp() {
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 9.8;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = 90.0;
-      entities.setComponent("script_map", scriptComponent);
-      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities)}, 100);
+      currentPlayerController.setComponent("script_map", scriptComponent);
+      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
       document.removeEventListener('click', teleport);
     } else {
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
@@ -409,8 +409,8 @@ async function InitApp() {
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 9.8;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
       scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = -90.0;
-      entities.setComponent("script_map", scriptComponent);
-      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(entities)}, 100);
+      currentPlayerController.setComponent("script_map", scriptComponent);
+      setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
       document.removeEventListener('click', teleport);
     }
     await delay(2000);
@@ -514,38 +514,46 @@ async function InitApp() {
       }else{
         console.log("not enough coral :\n", inventory);
       }
-        
+
     //get the occurrences and adapt them to the number of decorztion zone
     }
     document.removeEventListener('keypress', PlaceCoral);
   };
-  
+
   //------------------------------------------------------------------------------
-  function PassTheNightMenu(event) {
-    if (event.key === 'e') {
+  function PassTheNightMenu(event){
+    if (event.key === 'e'){
       TimeSetMenuDisplay = !TimeSetMenuDisplay;
-      // console.log("Time set menu Display = ", TimeSetMenuDisplay);
+      // console.log(TimeSetMenuDisplay);
       // console.log(ButtonDay);
       // console.log(ButtonMidday);
       // console.log(ButtonNight);
       // console.log(ButtonMidnight);
-    };
+    }
 
     if (TimeSetMenuDisplay) {
       document.querySelector("#time-set-menu").style.visibility = "visible";
+      document.querySelector("#time-set-day").style.visibility = "visible";
+      document.querySelector("#time-set-midday").style.visibility = "visible";
+      document.querySelector("#time-set-night").style.visibility = "visible";
+      document.querySelector("#time-set-midnight").style.visibility = "visible";
       document.querySelector("#time-set-checkbox").style.visibility = "visible";
       document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
       document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
-      removeEventListener('keydown', PassTheNightMenu);  
+      removeEventListener('keydown', PassTheNightMenu);
       resetFPSCameraController(canvas);
-    } else {
+    }else{
       document.querySelector("#time-set-menu").style.visibility = "hidden";
+      document.querySelector("#time-set-day").style.visibility = "hidden";
+      document.querySelector("#time-set-midday").style.visibility = "hidden";
+      document.querySelector("#time-set-night").style.visibility = "hidden";
+      document.querySelector("#time-set-midnight").style.visibility = "hidden";
       document.querySelector("#time-set-checkbox").style.visibility = "hidden";
       document.querySelector("#checked").style.visibility = "hidden";
       document.querySelector("#unchecked").style.visibility = "hidden";
-      removeEventListener('keydown', PassTheNightMenu); 
+      removeEventListener('keydown', PassTheNightMenu);
       setFPSCameraController(canvas);
-    };
+    }
     removeEventListener('keydown', PassTheNightMenu);
   };
 
@@ -559,22 +567,6 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  function LaboratoryMenu(event) {
-    if (event.key === 'e') {
-      LaboratoryMenuDisplay = !LaboratoryMenuDisplay
-    }
-
-    if (LaboratoryMenuDisplay){
-      console.log("Laboratory Menu Display = ", LaboratoryMenuDisplay)
-      removeEventListener('keydown', LaboratoryMenu)
-    } else {
-      console.log("Laboratory Menu Display = ", LaboratoryMenuDisplay)
-      removeEventListener('keydown', LaboratoryMenu)
-    }
-    removeEventListener('keydown', LaboratoryMenu)
-  }
-
-  //------------------------------------------------------------------------------
   ButtonDay.addEventListener("click", function(){
     SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.0 });
   });
@@ -586,7 +578,7 @@ async function InitApp() {
   });
   ButtonMidnight.addEventListener("click", function(){
     SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.75 });
-  }); 
+  });
   ButtonCheckbox.addEventListener("click", function(){
     CheckboxChecked = true;
     CheckboxUnchecked = false;
@@ -606,10 +598,29 @@ async function InitApp() {
   SDK3DVerse.engineAPI.onEnterTrigger(async (emitterEntity, triggerEntity) =>
   {
     let emitterEntityParent = emitterEntity.getParent();
-    let getCamTrigger = await triggerEntity.getParent();
-    console.log(getCamTrigger);
-    entities = await getCamTrigger.getParent();
-    console.log('enter ',emitterEntity.getName()," ", triggerEntity.getName());
+    let triggerEntityParent = triggerEntity.getParent();
+    console.log("triggerEntityParent:", triggerEntityParent);
+    if(!triggerEntityParent.isAttached('camera'))
+    {
+      // if it's not a camera then it's not the player'camera that we expect to be
+      // the parent of the player's InteractZone entity.
+      return;
+    }
+
+    const firstPersonControllerEntity = triggerEntityParent.getParent();
+    const playerEntity = firstPersonControllerEntity.getParent();
+    const playerClientUUID = playerEntity.getName().split('_')[1];
+    console.log("!!!!!!!!", playerEntity, playerClientUUID);
+    if(playerClientUUID !== SDK3DVerse.getClientUUID())
+    {
+      // it's the entity of another player, so we don't care about it!
+      return;
+    }
+
+    currentPlayerController = firstPersonControllerEntity;
+    console.log("We entered an interaction area player controller:", currentPlayerController);
+    console.log('The interaction area is:', emitterEntity.getName());
+
     if (emitterEntity == InsideHubDoorToOutside[0]){
       console.log('press E to exit');
       document.querySelector("#cross").style.visibility = "hidden";
@@ -617,7 +628,7 @@ async function InitApp() {
       tpPoint = await emitterEntity;
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
-      
+
     }
     else if (emitterEntity == OutsideHubDoorToInside[0]){
       outsideTrigger = true;
@@ -644,16 +655,6 @@ async function InitApp() {
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
     }
-    else if (emitterEntity == Couch[0]) {
-      console.log('press E to pass the night');
-      document.removeEventListener('keydown', PassTheNightMenu);
-      document.addEventListener('keydown', PassTheNightMenu);
-    }
-    else if (emitterEntity == Laboratory[0]) {
-      console.log('press E to open the laboratory Menu');
-      document.removeEventListener('keydown', LaboratoryMenu);
-      document.addEventListener('keydown', LaboratoryMenu);
-    }
     else if (emitterEntity.getParent().getName() == "Plantations"){
       console.log("press E");
       zone = await emitterEntity.getChildren();
@@ -669,19 +670,16 @@ async function InitApp() {
       document.removeEventListener('keypress', checkPlantCoral);
       document.addEventListener('keypress', checkPlantCoral);
     }
+    else if (emitterEntity  == Couch[0]) {
+      console.log('press E to pass the night');
+      document.removeEventListener('keydown', PassTheNightMenu);
+      document.addEventListener('keydown', PassTheNightMenu);
+    }
   });
-  
+
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
     console.log("exit trigger");
-    console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
-    outsideTrigger = false;
-    console.log(outsideTrigger);
-    document.removeEventListener('keydown', checkPlantCoral);
-    document.removeEventListener('keydown', PassTheNightMenu);
-    document.removeEventListener('keydown', LaboratoryMenu);
-    document.removeEventListener('click', teleport);
-    
     if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0] || emitterEntity.getParent().getName() === "Plantations"){
       console.log("cursor hidden, exit trigger");
       document.querySelector("#door").style.visibility = "hidden";
@@ -689,6 +687,13 @@ async function InitApp() {
       document.querySelector("#take").style.visibility = "hidden";
       document.querySelector("#cross").style.visibility = "visible";
     }
+
+    console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
+    outsideTrigger = false;
+    console.log(outsideTrigger);
+    document.removeEventListener('keydown', checkPlantCoral);
+    document.removeEventListener('keydown', PassTheNightMenu);
+    document.removeEventListener('click', teleport);
   });
 }
 //##############################################################################
@@ -701,7 +706,7 @@ async function InitApp() {
 
 //------------------------------------------------------------------------------
 async function setFPSCameraController(canvas){
-  // Remove the required click for the LOOK_LEFT, LOOK_RIGHT, LOOK_UP, and 
+  // Remove the required click for the LOOK_LEFT, LOOK_RIGHT, LOOK_UP, and
   // LOOK_DOWN actions.
   SDK3DVerse.actionMap.values["LOOK_LEFT"][0] = ["MOUSE_AXIS_X_POS"];
   SDK3DVerse.actionMap.values["LOOK_RIGHT"][0] = ["MOUSE_AXIS_X_NEG"];
@@ -712,8 +717,8 @@ async function setFPSCameraController(canvas){
 
   // Lock the mouse pointer.
   canvas.requestPointerLock = (
-    canvas.requestPointerLock 
-    || canvas.mozRequestPointerLock 
+    canvas.requestPointerLock
+    || canvas.mozRequestPointerLock
     || canvas.webkitPointerLockElement
   );
   canvas.requestPointerLock();
@@ -761,13 +766,10 @@ async function InitFirstPersonController(charCtlSceneUUID) {
   // Note that an entity template can be instantiated multiple times.
   // Each instantiation results in a new entity.
   const playerSceneEntity = await playerTemplate.instantiateTransientEntity(
-    "Player",
+    "Player_" + SDK3DVerse.getClientUUID(),
     parentEntity,
     deleteOnClientDisconnection
   );
-  const light = await SDK3DVerse.engineAPI.findEntitiesByEUID('f95f32ec-fa18-410a-967d-7be768c539d1');
-  light[0].setVisibility(false);
-
 
   // The character controller scene is setup as having a single entity at its
   // root which is the first person controller itself.
@@ -782,11 +784,11 @@ async function InitFirstPersonController(charCtlSceneUUID) {
   // script which is attached to the firstPersonController entity.
   // This allows the script to know which client inputs it should read.
   SDK3DVerse.engineAPI.assignClientToScripts(firstPersonController);
-  
+
   // Finally set the first person camera as the main camera.
   SDK3DVerse.setMainCamera(firstPersonCamera);
   return firstPersonController;
-  
+
 };
 //##############################################################################
 
@@ -825,7 +827,7 @@ async function SplinesForFishes()
       continue;
     }
 
-    fishes[fish.getID()] = { 
+    fishes[fish.getID()] = {
       travelling: true,
       fish,
       fishMesh,
