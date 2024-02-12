@@ -240,12 +240,14 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   var TimeSetMenuDisplay = false;
+  var LaboratoryMenuDisplay = false;
   var CheckboxChecked = false;
   var CheckboxUnchecked = true;
   var tpPoint;
   let coral_list=[];
 
   const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
+  const Laboratory_computer = await SDK3DVerse.engineAPI.findEntitiesByEUID('7eb18798-4822-4fe9-a3ec-766fa63d31a4');
   const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
   const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
   const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
@@ -567,6 +569,22 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
+  function LaboratoryMenu(event) {
+    if (event.key === 'e') {
+      LaboratoryMenuDisplay = !LaboratoryMenuDisplay;
+    }
+
+    if (LaboratoryMenuDisplay){
+      console.log("Laboratory Menu = ", LaboratoryMenuDisplay);
+      removeEventListener('keydown', LaboratoryMenu);
+    } else {
+      console.log("Laboratory Menu = ", LaboratoryMenuDisplay);
+      removeEventListener('keydown', LaboratoryMenu);
+    }
+    removeEventListener('keydown', LaboratoryMenu);
+  }
+
+  //------------------------------------------------------------------------------
   ButtonDay.addEventListener("click", function(){
     SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.0 });
   });
@@ -640,7 +658,7 @@ async function InitApp() {
       document.addEventListener('click',teleport);
     }
     else if (emitterEntity == ToLaboratoryDoor[0]){
-      console.log('press E to loaboratory');
+      console.log('press E to laboratory');
       document.querySelector("#cross").style.visibility = "hidden";
       document.querySelector("#door").style.visibility = "visible";
       tpPoint = await emitterEntity;
@@ -654,6 +672,16 @@ async function InitApp() {
       tpPoint = await emitterEntity;
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
+    }
+    else if (emitterEntity  == Couch[0]) {
+      console.log('press E to pass the night');
+      document.removeEventListener('keydown', PassTheNightMenu);
+      document.addEventListener('keydown', PassTheNightMenu);
+    }
+    else if (emitterEntity  == Laboratory_computer[0]) {
+      console.log('press E to open the menu');
+      document.removeEventListener('keydown', LaboratoryMenu);
+      document.addEventListener('keydown', LaboratoryMenu);
     }
     else if (emitterEntity.getParent().getName() == "Plantations"){
       console.log("press E");
@@ -670,16 +698,19 @@ async function InitApp() {
       document.removeEventListener('keypress', checkPlantCoral);
       document.addEventListener('keypress', checkPlantCoral);
     }
-    else if (emitterEntity  == Couch[0]) {
-      console.log('press E to pass the night');
-      document.removeEventListener('keydown', PassTheNightMenu);
-      document.addEventListener('keydown', PassTheNightMenu);
-    }
   });
 
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
     console.log("exit trigger");
+    console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
+    outsideTrigger = false;
+    console.log(outsideTrigger);
+    document.removeEventListener('keydown', checkPlantCoral);
+    document.removeEventListener('keydown', PassTheNightMenu);
+    document.removeEventListener('keydown', LaboratoryMenu);
+    document.removeEventListener('click', teleport);
+    
     if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0] || emitterEntity.getParent().getName() === "Plantations"){
       console.log("cursor hidden, exit trigger");
       document.querySelector("#door").style.visibility = "hidden";
@@ -687,13 +718,6 @@ async function InitApp() {
       document.querySelector("#take").style.visibility = "hidden";
       document.querySelector("#cross").style.visibility = "visible";
     }
-
-    console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
-    outsideTrigger = false;
-    console.log(outsideTrigger);
-    document.removeEventListener('keydown', checkPlantCoral);
-    document.removeEventListener('keydown', PassTheNightMenu);
-    document.removeEventListener('click', teleport);
   });
 }
 //##############################################################################
