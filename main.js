@@ -242,9 +242,11 @@ async function InitApp() {
   });
 
   //------------------------------------------------------------------------------
-  var TimeSetMenuDisplay = false;
+  var TimeSetMenuDisplay    = false;
   var LaboratoryMenuDisplay = false;
-  var CheckboxChecked = false;
+  var Merger                = true;
+  var Analyser              = false;
+  var CheckboxChecked       = false;
   var CheckboxUnchecked = true;
   var tpPoint;
   let coral_list=[];
@@ -256,6 +258,7 @@ async function InitApp() {
   const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
   const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
   const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
+  
   const zoneName = await CoralZone[0].getChildren();
   const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
   console.log(GlobalPlantation[0]);
@@ -275,12 +278,14 @@ async function InitApp() {
     null    : Zone_map["ZonePlace_1"]
   };
 
-  const ButtonDay = document.querySelector("#time-set-day");
-  const ButtonMidday = document.querySelector("#time-set-midday");
-  const ButtonNight = document.querySelector("#time-set-night");
-  const ButtonMidnight = document.querySelector("#time-set-midnight");
-  const ButtonCheckbox = document.querySelector("#unchecked");
+  const ButtonDay        = document.querySelector("#time-set-day");
+  const ButtonMidday     = document.querySelector("#time-set-midday");
+  const ButtonNight      = document.querySelector("#time-set-night");
+  const ButtonMidnight   = document.querySelector("#time-set-midnight");
+  const ButtonCheckbox   = document.querySelector("#unchecked");
   const ButtonUncheckbox = document.querySelector("#checked");
+  const ButtonMerger     = document.querySelector("#laboratory-menubar-title-merger");
+  const ButtonAnalyser   = document.querySelector("#laboratory-menubar-title-analyser");
 
   //------------------------------------------------------------------------------
   let zone;
@@ -578,13 +583,29 @@ async function InitApp() {
 
     if (LaboratoryMenuDisplay){
       console.log("Laboratory Menu = ", LaboratoryMenuDisplay);
+      document.querySelector("#laboratory-menu").style.visibility = "visible";
+      document.querySelector("#laboratory-bloc-merger").style.visibility = Merger ? "visible" : "hidden";
+      document.querySelector("#laboratory-bloc-analyser").style.visibility = Analyser ? "visible" : "hidden";
       removeEventListener('keydown', LaboratoryMenu);
+      resetFPSCameraController(canvas);
     } else {
       console.log("Laboratory Menu = ", LaboratoryMenuDisplay);
+      document.querySelector("#laboratory-menu").style.visibility = "hidden";
+      document.querySelector("#laboratory-bloc-merger").style.visibility = "hidden";
+      document.querySelector("#laboratory-bloc-analyser").style.visibility = "hidden";
       removeEventListener('keydown', LaboratoryMenu);
+      setFPSCameraController(canvas);
     }
     removeEventListener('keydown', LaboratoryMenu);
   }
+
+  function toggleLaboratorySection() {
+    ButtonMerger.classList.toggle("selected_title", Merger);
+    ButtonAnalyser.classList.toggle("selected_title", Analyser);
+
+    document.querySelector("#laboratory-bloc-merger").style.visibility = Merger ? "visible" : "hidden";
+    document.querySelector("#laboratory-bloc-analyser").style.visibility = Analyser ? "visible" : "hidden";
+  };
 
   //------------------------------------------------------------------------------
   ButtonDay.addEventListener("click", function(){
@@ -612,6 +633,16 @@ async function InitApp() {
     // console.log("unchecked", CheckboxUnchecked);
     SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID);
     ToggleCheckbox();
+  });
+  ButtonMerger.addEventListener("click", function(){
+    Merger = true;
+    Analyser = false;
+    toggleLaboratorySection();
+  });
+  ButtonAnalyser.addEventListener("click", function(){
+    Analyser = true;
+    Merger = false;
+    toggleLaboratorySection();
   });
 
   //------------------------------------------------------------------------------

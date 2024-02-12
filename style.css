@@ -72,6 +72,17 @@ body {
   border-radius: 40px;
   visibility: hidden;
 }
+
+#laboratory-menu {
+  z-index: 200;
+  position: absolute;
+  top: 25vw;
+  left: 20vh;
+  width: 60vw;
+  height: 65vh;
+  background: linear-gradient(to left, #bed4ffcc, #deffebcc);
+  visibility: hidden;
+}
 /*------------------------------------------------------------*/
 
 
@@ -222,7 +233,7 @@ body {
   left: 1%;
 }
 
-#time-set-checkbox{
+#time-set-checkbox {
   position: absolute;
   display: grid;
   visibility: hidden;
@@ -231,22 +242,22 @@ body {
   align-items: center;
 }
 
-.checkbox{
+.checkbox {
   position: absolute;
   cursor: pointer;
 }
 
-#checked{
+#checked {
   visibility: hidden;
   height: 100%;
 }
 
-#unchecked{
+#unchecked {
   visibility: hidden;
   height: 100%;
 }
 
-.time-set-checkbox-text{
+.time-set-checkbox-text {
   text-align: right;
   color: #000;  
   position: absolute;
@@ -255,9 +266,42 @@ body {
 }
 /*------------------------------------------------------------*/
 
+/*LABORATORY MENU*/
+#laboratory-menubar {
+  position: inherit;
+  width: 60vw;
+  height: 15vh;
+  left: 20vw;
+  top: 10vh;
+  background-color: #63b5c9;
+  border-radius: 40px;
+}
+
+#laboratory-menubar-title-merger {
+  position: inherit;
+  width: 40%;
+  height: 100%;
+  left: 1%;
+}
+
+#laboratory-menubar-title-analyser {
+  position: inherit;
+  width: 40%;
+  height: 100%;
+  left: 42%;
+}
+
+#laboratory-bloc-merger {
+  visibility: hidden;
+}
+
+#laboratory-bloc-analyser {
+  visibility: hidden;
+}
+
 
 /*LOADING PAGE*/
-#loading-page{
+#loading-page {
   z-index: 3000;
   position: absolute;
   height: 100%;
@@ -272,7 +316,7 @@ body {
   background-size: cover;
 }
 
-#loading-txt{
+#loading-txt {
   height: 10%;
   width: 100%;
   position: inherit;
@@ -288,7 +332,7 @@ body {
 
 
 /*CURSOR*/
-#cursor{
+#cursor {
   position: absolute;
   z-index: 1;
   left: 50%;
@@ -299,27 +343,27 @@ body {
   visibility: visible;
 }
 
-#cross{
+#cross {
   visibility: hidden;
   height: 100%;
 }
 
-#door{
+#door {
   visibility: hidden;
   height: 100%;
 }
 
-#put{
+#put {
   visibility: hidden;
   height: 100%;
 }
 
-#take{
+#take {
   visibility: hidden;
   height: 100%;
 }
 
-.cursor-pos{
+.cursor-pos {
   position: absolute;
 }
 /*------------------------------------------------------------*/
