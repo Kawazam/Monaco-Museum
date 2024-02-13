@@ -74,13 +74,14 @@ body {
 }
 
 #laboratory-menu {
-  z-index: 200;
+  z-index: 2;
   position: absolute;
-  top: 25vw;
-  left: 20vh;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 60vw;
-  height: 65vh;
-  background: linear-gradient(to left, #bed4ffcc, #deffebcc);
+  height: 80vh;
+  /* background: linear-gradient(to left, #bed4ffcc, #deffebcc); */
   visibility: hidden;
 }
 /*------------------------------------------------------------*/
@@ -271,8 +272,8 @@ body {
   position: inherit;
   width: 60vw;
   height: 15vh;
-  left: 20vw;
-  top: 10vh;
+  left: 0vw;
+  top: 0vh;
   background-color: #63b5c9;
   border-radius: 40px;
 }
@@ -289,6 +290,16 @@ body {
   width: 40%;
   height: 100%;
   left: 42%;
+}
+
+#laboratory-bloc {
+  position: inherit;
+  width: 60vw;
+  height: 65vh;
+  left: 0vw;
+  top: 15vh;
+  background: linear-gradient(to left, #bed4ffcc, #deffebcc);
+  border-radius: 40px;
 }
 
 #laboratory-bloc-merger {
