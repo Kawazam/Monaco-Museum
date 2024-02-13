@@ -223,22 +223,22 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   document.addEventListener('keydown', function(event) {
-  // Vérifie si la touche pressée est 't'
-  if (event.key === 't') {
-      // Vérifie si islampvisible est true
-      if (islampvisible === true) {
-        lamp.setVisibility(!islampvisible);
-        console.log("lamp allumé")
-          // Change la valeur de islampvisible à false
-          islampvisible = false;
-      }
-      else if (islampvisible === false) {
-        lamp.setVisibility(!islampvisible);
-          // Change la valeur de islampvisible à false
-          islampvisible = true;
-          console.log("lampe éteinte")
-      }
-  }
+    // Vérifie si la touche pressée est 't'
+    if (event.key === 't') {
+        // Vérifie si islampvisible est true
+        if (islampvisible === true) {
+          lamp.setVisibility(!islampvisible);
+          console.log("lamp allumé")
+            // Change la valeur de islampvisible à false
+            islampvisible = false;
+        }
+        else if (islampvisible === false) {
+          lamp.setVisibility(!islampvisible);
+            // Change la valeur de islampvisible à false
+            islampvisible = true;
+            console.log("lampe éteinte")
+        }
+    }
   });
 
   //------------------------------------------------------------------------------
@@ -920,9 +920,9 @@ function findTravellingSplineFromEntity(entity) {
 //##############################################################################
 //#                                  TERMINAL                                  #
 //##############################################################################
-
+/*
 //------------------------------------------------------------------------------
-/*function afficherModale() {
+function afficherModale() {
     const modal = document.getElementById('maModal');
     const body = document.body;
     modal.style.display = 'block';
@@ -930,10 +930,10 @@ function findTravellingSplineFromEntity(entity) {
     setTimeout(() => {
         modal.classList.add('show');
     }, 1000); // Delay the addition of 'show' class for the animation to take effect
-}*/
+  };
 
 //------------------------------------------------------------------------------
-/*function fermerModale() {
+function fermerModale() {
     const modal = document.getElementById('maModal');
     const body = document.body;
     modal.classList.remove('show');
@@ -941,19 +941,19 @@ function findTravellingSplineFromEntity(entity) {
         modal.style.display = 'none';
         body.classList.remove('body-overlay');
     }, 1000); // Delay the removal of 'show' class for the animation to take effect
-};*/
+};
 
 //------------------------------------------------------------------------------
-/*window.onclick = function (event) {
+window.onclick = function (event) {
     const modal = document.getElementById('maModal');
     const body = document.body;
     if (event.target === modal) {
         fermerModale();
     }
-};*/
+};
 
 //------------------------------------------------------------------------------
-/*function validerModal() {
+function validerModal() {
     const nom = document.getElementById('nom').value;
     const message = document.getElementById('message').value;
 
@@ -963,7 +963,7 @@ function findTravellingSplineFromEntity(entity) {
 
     // Fermer la fen�tre modale apr�s validation
     fermerModale();
-}*/
+}
+*/
 //##############################################################################
-
 
