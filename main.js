@@ -597,7 +597,7 @@ async function InitApp() {
         defaultControllerType:SDK3DVerse.cameraControllerType.none,
         defaultTransform:viewports[0].getGlobalTransform(),
         onCameraCreation:function(cameraEntity){
-          const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+          const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0].getTransform();
           console.log("Camera bloup", cameraEntity, viewports)
           SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], [-69,20.3,1], [0, -0.7071067690849304, 0, 0.7071067690849304], 1);
         }
