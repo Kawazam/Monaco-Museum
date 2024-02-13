@@ -268,6 +268,8 @@ async function InitApp() {
   const ButtonUncheckbox    = document.querySelector("#checked");
   const ButtonMerger        = document.querySelector("#laboratory-menubar-title-merger");
   const ButtonAnalyser      = document.querySelector("#laboratory-menubar-title-analyser");
+  const ButtonArrow1        = document.querySelector("#laboratory-menubar-title-arrow-1");
+  const ButtonArrow2        = document.querySelector("#laboratory-menubar-title-arrow-2");
 
   // Robin's define
   var tpPoint;
@@ -580,13 +582,16 @@ async function InitApp() {
     document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
   };
 
+  // const viewport = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+
   //------------------------------------------------------------------------------
-  function laboratoryMenu(event) {
+  async function laboratoryMenu(event) {
     if (event.key === 'e') {
       laboratoryMenuDisplay = !laboratoryMenuDisplay;
     }
-
+    
     if (laboratoryMenuDisplay){
+      // SDK3DVerse.engineAPI.cameraAPI.travel(viewport[0], [-68,20.3,1], [0,0,0,1], 1);
       console.log("Laboratory Menu = ", laboratoryMenuDisplay);
       document.querySelector("#laboratory-menu").style.visibility = "visible";
       document.querySelector("#laboratory-bloc-merger").style.visibility = Merger ? "visible" : "hidden";
@@ -647,6 +652,16 @@ async function InitApp() {
   ButtonAnalyser.addEventListener("click", function(){
     Analyser = true;
     Merger = false;
+    toggleLaboratorySection();
+  });
+  ButtonArrow1.addEventListener("click", function(){
+    Analyser = !Analyser;
+    Merger = !Merger;
+    toggleLaboratorySection();
+  });
+  ButtonArrow2.addEventListener("click", function(){
+    Analyser = !Analyser;
+    Merger = !Merger;
     toggleLaboratorySection();
   });
 

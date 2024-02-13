@@ -267,6 +267,7 @@ body {
 }
 /*------------------------------------------------------------*/
 
+
 /*LABORATORY MENU*/
 #laboratory-menubar {
   position: inherit;
@@ -278,18 +279,32 @@ body {
   border-radius: 40px;
 }
 
+#laboratory-menubar-title-arrow-1 {
+  position: inherit;
+  width: 10%;
+  height: 100%;
+  left: 0%;
+}
+
 #laboratory-menubar-title-merger {
   position: inherit;
-  width: 40%;
+  width: 38%;
   height: 100%;
-  left: 1%;
+  left: 11%;
 }
 
 #laboratory-menubar-title-analyser {
   position: inherit;
-  width: 40%;
+  width: 38%;
   height: 100%;
-  left: 42%;
+  left: 51%;
+}
+
+#laboratory-menubar-title-arrow-2 {
+  position: inherit;
+  width: 10%;
+  height: 100%;
+  left: 90%;
 }
 
 #laboratory-bloc {
@@ -309,6 +324,7 @@ body {
 #laboratory-bloc-analyser {
   visibility: hidden;
 }
+/*------------------------------------------------------------*/
 
 
 /*LOADING PAGE*/
@@ -477,3 +493,4 @@ body {
 .modal-content button:hover {
     background-color: #45a049;
 }
+/*------------------------------------------------------------*/
