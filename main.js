@@ -252,7 +252,7 @@ async function InitApp() {
 
   // UUID item define
   const Couch                     = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
-  const Laboratory_computer       = await SDK3DVerse.engineAPI.findEntitiesByEUID('7eb18798-4822-4fe9-a3ec-766fa63d31a4');
+  const Laboratory_computer       = await SDK3DVerse.engineAPI.findEntitiesByEUID('b02b546a-db22-4469-ac9f-4bd13867b469');
   const InsideHubDoorToOutside    = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
   const OutsideHubDoorToInside    = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
   const ToLaboratoryDoor          = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
@@ -582,8 +582,7 @@ async function InitApp() {
     document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
   };
 
-  // const viewport = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
-
+  
   //------------------------------------------------------------------------------
   async function laboratoryMenu(event) {
     if (event.key === 'e') {
@@ -591,7 +590,18 @@ async function InitApp() {
     }
     
     if (laboratoryMenuDisplay){
-      // SDK3DVerse.engineAPI.cameraAPI.travel(viewport[0], [-68,20.3,1], [0,0,0,1], 1);
+      const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+      const camera = viewports[0].getCamera()
+      await SDK3DVerse.engineAPI.cameraAPI.setViewports([{
+        id:1, top:0, left:0, width:1, height:1, 
+        defaultControllerType:SDK3DVerse.cameraControllerType.none,
+        defaultTransform:viewports[0].getGlobalTransform(),
+        onCameraCreation:function(cameraEntity){
+          const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+          console.log("Camera bloup", cameraEntity, viewports)
+          SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], [-69,20.3,1], [0, -0.7071067690849304, 0, 0.7071067690849304], 1);
+        }
+      }])
       console.log("Laboratory Menu = ", laboratoryMenuDisplay);
       document.querySelector("#laboratory-menu").style.visibility = "visible";
       document.querySelector("#laboratory-bloc-merger").style.visibility = Merger ? "visible" : "hidden";
@@ -600,6 +610,14 @@ async function InitApp() {
       resetFPSCameraController(canvas);
     } else {
       console.log("Laboratory Menu = ", laboratoryMenuDisplay);
+      // // TODO: this when quit the computer
+      // await SDK3DVerse.engineAPI.cameraAPI.setViewports([{
+      //   id:0, top:0, left:0, width:1, height:1, 
+      //   defaultControllerType:SDK3DVerse.cameraControllerType.none, 
+      //   onCameraCreation:function(cameraEntity){
+      //     SDK3DVerse.setMainCamera(cameraEntity);
+      //   }
+      // }])
       document.querySelector("#laboratory-menu").style.visibility = "hidden";
       document.querySelector("#laboratory-bloc-merger").style.visibility = "hidden";
       document.querySelector("#laboratory-bloc-analyser").style.visibility = "hidden";
