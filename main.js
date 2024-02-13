@@ -15,7 +15,7 @@ import {
 
 //------------------------------------------------------------------------------
 import {
-  coral_map,
+  Coral_map,
   Coral_1,
   Coral_2,
   Coral_3,
@@ -210,10 +210,10 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   if(isSessionCreator) {
-    await SplinesForFishes();
+    await splinesForFishes();
   }
 
-  //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
+  //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID, { playbackSpeed : 1.0 });
   SDK3DVerse.engineAPI.playAnimationSequence(butterflyFish2UUID, { playbackSpeed : 1.0 });
 
@@ -242,23 +242,37 @@ async function InitApp() {
   });
 
   //------------------------------------------------------------------------------
-  var TimeSetMenuDisplay    = false;
-  var LaboratoryMenuDisplay = false;
-  var Merger                = true;
-  var Analyser              = false;
-  var CheckboxChecked       = false;
-  var CheckboxUnchecked = true;
+  // Menu define
+  var TimeSetMenuDisplay       = false;
+  var laboratoryMenuDisplay    = false;
+  var Merger                   = true;
+  var Analyser                 = false;
+  var CheckboxChecked          = false;
+  var CheckboxUnchecked        = true;
+
+  // UUID item define
+  const Couch                     = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
+  const Laboratory_computer       = await SDK3DVerse.engineAPI.findEntitiesByEUID('7eb18798-4822-4fe9-a3ec-766fa63d31a4');
+  const InsideHubDoorToOutside    = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
+  const OutsideHubDoorToInside    = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
+  const ToLaboratoryDoor          = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
+  const ToHubDoor                 = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
+  const CoralZone                 = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
+
+  // Menu button define
+  const ButtonDay           = document.querySelector("#time-set-day");
+  const ButtonMidday        = document.querySelector("#time-set-midday");
+  const ButtonNight         = document.querySelector("#time-set-night");
+  const ButtonMidnight      = document.querySelector("#time-set-midnight");
+  const ButtonCheckbox      = document.querySelector("#unchecked");
+  const ButtonUncheckbox    = document.querySelector("#checked");
+  const ButtonMerger        = document.querySelector("#laboratory-menubar-title-merger");
+  const ButtonAnalyser      = document.querySelector("#laboratory-menubar-title-analyser");
+
+  // Robin's define
   var tpPoint;
   let coral_list=[];
 
-  const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
-  const Laboratory_computer = await SDK3DVerse.engineAPI.findEntitiesByEUID('7eb18798-4822-4fe9-a3ec-766fa63d31a4');
-  const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
-  const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
-  const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
-  const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
-  const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
-  
   const zoneName = await CoralZone[0].getChildren();
   const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
   console.log(GlobalPlantation[0]);
@@ -276,22 +290,13 @@ async function InitApp() {
     Coral_7 : Zone_map["ZonePlace_7"],
     Coral_8 : Zone_map["ZonePlace_7"],
     null    : Zone_map["ZonePlace_1"]
-  };
-
-  const ButtonDay        = document.querySelector("#time-set-day");
-  const ButtonMidday     = document.querySelector("#time-set-midday");
-  const ButtonNight      = document.querySelector("#time-set-night");
-  const ButtonMidnight   = document.querySelector("#time-set-midnight");
-  const ButtonCheckbox   = document.querySelector("#unchecked");
-  const ButtonUncheckbox = document.querySelector("#checked");
-  const ButtonMerger     = document.querySelector("#laboratory-menubar-title-merger");
-  const ButtonAnalyser   = document.querySelector("#laboratory-menubar-title-analyser");
+  };  
 
   //------------------------------------------------------------------------------
   let zone;
   let currentPlayerController;
   let outsideTrigger = false;
-  await CheckCoralList();
+  await checkCoralList();
 
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
@@ -304,7 +309,7 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  async function CheckCoralList(){
+  async function checkCoralList(){
     coral_list = [];
     for (var i = 0; i < GlobalPlantationChildrenLenght; i++){
       console.log(i);
@@ -313,28 +318,28 @@ async function InitApp() {
       console.log(GlobalPlantationChildren[i].getName());
       let coralSceneRef = coralPlanted[0].getComponent('scene_ref').value;
       console.log(coralSceneRef);
-      if (coralSceneRef == coral_map["coral_1"]){
+      if (coralSceneRef == Coral_map["coral_1"]){
         coral_list.push(Coral_1.name);
       }
-      if (coralSceneRef == coral_map["coral_2"]){
+      if (coralSceneRef == Coral_map["coral_2"]){
         coral_list.push(Coral_2.name);
       }
-      if (coralSceneRef == coral_map["coral_3"]){
+      if (coralSceneRef == Coral_map["coral_3"]){
         coral_list.push(Coral_3.name);
       }
-      if (coralSceneRef == coral_map["coral_4"]){
+      if (coralSceneRef == Coral_map["coral_4"]){
         coral_list.push(Coral_4.name);
       }
-      if (coralSceneRef == coral_map["coral_5"]){
+      if (coralSceneRef == Coral_map["coral_5"]){
         coral_list.push(Coral_5.name);
       }
-      if (coralSceneRef == coral_map["coral_6"]){
+      if (coralSceneRef == Coral_map["coral_6"]){
         coral_list.push(Coral_6.name);
       }
-      if (coralSceneRef == coral_map["coral_7"]){
+      if (coralSceneRef == Coral_map["coral_7"]){
         coral_list.push(Coral_7.name);
       }
-      if (coralSceneRef == coral_map["coral_8"]){
+      if (coralSceneRef == Coral_map["coral_8"]){
         coral_list.push(Coral_8.name);
       }
     }
@@ -352,15 +357,15 @@ async function InitApp() {
     const currentCoralValue = zone[0].getComponent('scene_ref').value;
     console.log("pressed E = ",event.key);
       // if a plantions is empty call placeCoral() to place a coral
-    if (currentCoralValue == coral_map["empty_zone"]){
+    if (currentCoralValue == Coral_map["empty_zone"]){
       document.removeEventListener('keypress', checkPlantCoral);
-      document.removeEventListener('keypress',PlaceCoral);
-      document.addEventListener('keypress',PlaceCoral);
+      document.removeEventListener('keypress',placeCoral);
+      document.addEventListener('keypress',placeCoral);
       return;
     }
 
-    for (const coralKey in coral_map) {
-      if (currentCoralValue === coral_map[coralKey]) {
+    for (const coralKey in Coral_map) {
+      if (currentCoralValue === Coral_map[coralKey]) {
           const coralIndex = coral_list.indexOf(coralKey);
           if (coralIndex !== -1) {
               console.log(`coral = ${coralKey.replace("coral_", "")}`);
@@ -373,9 +378,9 @@ async function InitApp() {
       }
     }
 
-    zone[0].setComponent('scene_ref',{value : coral_map["empty_zone"], maxRecursionCount: 1});
+    zone[0].setComponent('scene_ref',{value : Coral_map["empty_zone"], maxRecursionCount: 1});
     zone[0].save()
-    CheckCoralList();
+    checkCoralList();
   };
 
   //------------------------------------------------------------------------------
@@ -493,7 +498,7 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  async function PlaceCoral(event) {
+  async function placeCoral(event) {
     console.log("pressed to place =", event.key);
     const coralIndex = parseInt(event.key);
     if (coralIndex >= 1 && coralIndex <= 8) {
@@ -501,11 +506,11 @@ async function InitApp() {
       console.log(inventory[coralKey]);
       if (inventory[coralKey] > 0){
         console.log(event.key);
-        zone[0].setComponent('scene_ref', { value: coral_map[coralKey], maxRecursionCount: 1 });
+        zone[0].setComponent('scene_ref', { value: Coral_map[coralKey], maxRecursionCount: 1 });
         zone[0].save()
         inventory[coralKey] -= 1;
         console.log("inventory",inventory);
-        await CheckCoralList();
+        await checkCoralList();
         console.log(coral_list);
         let adjustedLengths = adjustCoralList(coral_list, nbZones);
         console.log(adjustedLengths);
@@ -526,11 +531,11 @@ async function InitApp() {
 
     //get the occurrences and adapt them to the number of decorztion zone
     }
-    document.removeEventListener('keypress', PlaceCoral);
+    document.removeEventListener('keypress', placeCoral);
   };
 
   //------------------------------------------------------------------------------
-  function PassTheNightMenu(event){
+  function passNightMenu(event){
     if (event.key === 'e'){
       TimeSetMenuDisplay = !TimeSetMenuDisplay;
       // console.log(TimeSetMenuDisplay);
@@ -549,7 +554,7 @@ async function InitApp() {
       document.querySelector("#time-set-checkbox").style.visibility = "visible";
       document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
       document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
-      removeEventListener('keydown', PassTheNightMenu);
+      removeEventListener('keydown', passNightMenu);
       resetFPSCameraController(canvas);
     }else{
       document.querySelector("#time-set-menu").style.visibility = "hidden";
@@ -560,14 +565,14 @@ async function InitApp() {
       document.querySelector("#time-set-checkbox").style.visibility = "hidden";
       document.querySelector("#checked").style.visibility = "hidden";
       document.querySelector("#unchecked").style.visibility = "hidden";
-      removeEventListener('keydown', PassTheNightMenu);
+      removeEventListener('keydown', passNightMenu);
       setFPSCameraController(canvas);
     }
-    removeEventListener('keydown', PassTheNightMenu);
+    removeEventListener('keydown', passNightMenu);
   };
 
   //------------------------------------------------------------------------------
-  function ToggleCheckbox() {
+  function toggleCheckbox() {
     // console.log("toggle checkbox")
     // console.log("CheckboxChecked:", CheckboxChecked);
     // console.log("CheckboxUnchecked:", CheckboxUnchecked);
@@ -576,27 +581,27 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  function LaboratoryMenu(event) {
+  function laboratoryMenu(event) {
     if (event.key === 'e') {
-      LaboratoryMenuDisplay = !LaboratoryMenuDisplay;
+      laboratoryMenuDisplay = !laboratoryMenuDisplay;
     }
 
-    if (LaboratoryMenuDisplay){
-      console.log("Laboratory Menu = ", LaboratoryMenuDisplay);
+    if (laboratoryMenuDisplay){
+      console.log("Laboratory Menu = ", laboratoryMenuDisplay);
       document.querySelector("#laboratory-menu").style.visibility = "visible";
       document.querySelector("#laboratory-bloc-merger").style.visibility = Merger ? "visible" : "hidden";
       document.querySelector("#laboratory-bloc-analyser").style.visibility = Analyser ? "visible" : "hidden";
-      removeEventListener('keydown', LaboratoryMenu);
+      removeEventListener('keydown', laboratoryMenu);
       resetFPSCameraController(canvas);
     } else {
-      console.log("Laboratory Menu = ", LaboratoryMenuDisplay);
+      console.log("Laboratory Menu = ", laboratoryMenuDisplay);
       document.querySelector("#laboratory-menu").style.visibility = "hidden";
       document.querySelector("#laboratory-bloc-merger").style.visibility = "hidden";
       document.querySelector("#laboratory-bloc-analyser").style.visibility = "hidden";
-      removeEventListener('keydown', LaboratoryMenu);
+      removeEventListener('keydown', laboratoryMenu);
       setFPSCameraController(canvas);
     }
-    removeEventListener('keydown', LaboratoryMenu);
+    removeEventListener('keydown', laboratoryMenu);
   }
 
   function toggleLaboratorySection() {
@@ -625,14 +630,14 @@ async function InitApp() {
     CheckboxUnchecked = false;
     // console.log("checked", CheckboxChecked);
     SDK3DVerse.engineAPI.pauseAnimationSequence(moonSunAnimUUID);
-    ToggleCheckbox();
+    toggleCheckbox();
   });
   ButtonUncheckbox.addEventListener("click", function(){
     CheckboxChecked = false;
     CheckboxUnchecked = true;
     // console.log("unchecked", CheckboxUnchecked);
     SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID);
-    ToggleCheckbox();
+    toggleCheckbox();
   });
   ButtonMerger.addEventListener("click", function(){
     Merger = true;
@@ -708,18 +713,18 @@ async function InitApp() {
     }
     else if (emitterEntity  == Couch[0]) {
       console.log('press E to pass the night');
-      document.removeEventListener('keydown', PassTheNightMenu);
-      document.addEventListener('keydown', PassTheNightMenu);
+      document.removeEventListener('keydown', passNightMenu);
+      document.addEventListener('keydown', passNightMenu);
     }
     else if (emitterEntity  == Laboratory_computer[0]) {
       console.log('press E to open the menu');
-      document.removeEventListener('keydown', LaboratoryMenu);
-      document.addEventListener('keydown', LaboratoryMenu);
+      document.removeEventListener('keydown', laboratoryMenu);
+      document.addEventListener('keydown', laboratoryMenu);
     }
     else if (emitterEntity.getParent().getName() == "Plantations"){
       console.log("press E");
       zone = await emitterEntity.getChildren();
-      if (zone[0].getComponent('scene_ref').value == coral_map["empty_zone"]){
+      if (zone[0].getComponent('scene_ref').value == Coral_map["empty_zone"]){
         document.querySelector("#cross").style.visibility = "hidden";
         document.querySelector("#put").style.visibility = "visible";
       } else {
@@ -740,8 +745,8 @@ async function InitApp() {
     outsideTrigger = false;
     console.log(outsideTrigger);
     document.removeEventListener('keydown', checkPlantCoral);
-    document.removeEventListener('keydown', PassTheNightMenu);
-    document.removeEventListener('keydown', LaboratoryMenu);
+    document.removeEventListener('keydown', passNightMenu);
+    document.removeEventListener('keydown', laboratoryMenu);
     document.removeEventListener('click', teleport);
     
     if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0] || emitterEntity.getParent().getName() === "Plantations"){
@@ -860,7 +865,7 @@ const anim = new TravelAnimation();
 
 //------------------------------------------------------------------------------
 window.fishes = {};
-async function SplinesForFishes()
+async function splinesForFishes()
 {
   await anim.init();
   //const cube = (await SDK3DVerse.engineAPI.findEntitiesByEUID('51efcfcc-4888-45a9-8b39-736769f0f60a'))[0];
@@ -928,7 +933,7 @@ function findTravellingSplineFromEntity(entity) {
 }*/
 
 //------------------------------------------------------------------------------
-function fermerModale() {
+/*function fermerModale() {
     const modal = document.getElementById('maModal');
     const body = document.body;
     modal.classList.remove('show');
@@ -936,16 +941,16 @@ function fermerModale() {
         modal.style.display = 'none';
         body.classList.remove('body-overlay');
     }, 1000); // Delay the removal of 'show' class for the animation to take effect
-};
+};*/
 
 //------------------------------------------------------------------------------
-window.onclick = function (event) {
+/*window.onclick = function (event) {
     const modal = document.getElementById('maModal');
     const body = document.body;
     if (event.target === modal) {
         fermerModale();
     }
-};
+};*/
 
 //------------------------------------------------------------------------------
 /*function validerModal() {

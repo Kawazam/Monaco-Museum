@@ -1,3 +1,4 @@
+//-----------------------------------CLASS-----------------------------------
 class Zone_1 {
     constructor() {
         this.Mesh_specs();
@@ -68,6 +69,9 @@ class Zone_7 {
     }
 }
 
+
+//---------------------------------INSTANCES---------------------------------
+// Create instances of classes
 const zone1 = new Zone_1();
 const zone2 = new Zone_2();
 const zone3 = new Zone_3();
@@ -76,6 +80,9 @@ const zone5 = new Zone_5();
 const zone6 = new Zone_6();
 const zone7 = new Zone_7();
 
+
+//------------------------------------MAP------------------------------------
+//Create the map of corals
 const Zone_map = {
     ZonePlace_1: zone1.ZoneMesh1,
     ZonePlace_2: zone2.ZoneMesh2,
@@ -86,6 +93,8 @@ const Zone_map = {
     ZonePlace_7: zone7.ZoneMesh7,
 };
 
+
+//-----------------------------------EXPORT----------------------------------
 export {
     Zone_map,
     Zone_1,

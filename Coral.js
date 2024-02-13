@@ -115,7 +115,7 @@ const emptyZone = new Empty_zone();
 
 //------------------------------------MAP------------------------------------
 //Create the map of corals
-const coral_map = {
+const Coral_map = {
     coral_1: coral1.coralMesh1,
     coral_2: coral2.coralMesh2,
     coral_3: coral3.coralMesh3,
@@ -130,7 +130,7 @@ const coral_map = {
 
 //-----------------------------------EXPORT----------------------------------
 export {
-    coral_map,
+    Coral_map,
     Coral_1,
     Coral_2,
     Coral_3,
