@@ -588,17 +588,19 @@ async function InitApp() {
     if (event.key === 'e') {
       laboratoryMenuDisplay = !laboratoryMenuDisplay;
     }
+
+    const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+    const posBeforeTravellingToScreen = viewports[0].getTransform().position;
+    const orientationBeforeTravellingToScreen = viewports[0].getTransform().orientation;
     
     if (laboratoryMenuDisplay){
-      const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
-      const camera = viewports[0].getCamera()
+      
       await SDK3DVerse.engineAPI.cameraAPI.setViewports([{
-        id:1, top:0, left:0, width:1, height:1, 
-        defaultControllerType:SDK3DVerse.cameraControllerType.none,
-        defaultTransform:viewports[0].getTransform(),
-        onCameraCreation:function(cameraEntity){
-          const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0].getTransform();
-          console.log("Camera bloup", cameraEntity, viewports)
+        id: 1, top: 0, left: 0, width: 1, height: 1, 
+        defaultControllerType: SDK3DVerse.cameraControllerType.none,
+        defaultTransform: viewports[0].getTransform(),
+        onCameraCreation: function(cameraEntity){
+          const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
           SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], [-69,20.3,1], [0, -0.7071067690849304, 0, 0.7071067690849304], 1);
         }
       }])
@@ -606,21 +608,37 @@ async function InitApp() {
       document.querySelector("#laboratory-menu").style.visibility = "visible";
       document.querySelector("#laboratory-bloc-merger").style.visibility = Merger ? "visible" : "hidden";
       document.querySelector("#laboratory-bloc-analyser").style.visibility = Analyser ? "visible" : "hidden";
+      SDK3DVerse.disableInputs();
       removeEventListener('keydown', laboratoryMenu);
       resetFPSCameraController(canvas);
     } else {
       console.log("Laboratory Menu = ", laboratoryMenuDisplay);
-      // // TODO: this when quit the computer
-      // await SDK3DVerse.engineAPI.cameraAPI.setViewports([{
-      //   id:0, top:0, left:0, width:1, height:1, 
-      //   defaultControllerType:SDK3DVerse.cameraControllerType.none, 
-      //   onCameraCreation:function(cameraEntity){
-      //     SDK3DVerse.setMainCamera(cameraEntity);
-      //   }
-      // }])
+      // TODO: this when quit the computer
+      const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0];
+      if(viewport.getId() === 1) {
+          // restore the character controller viewport
+          const children = await characterController.getChildren();
+          const firstPersonCamera = children.find((child) => child.isAttached("camera"));
+          const viewports = [
+              {
+                  id: 0, left: 0, top: 0, width: 1, height: 1,
+                  camera: firstPersonCamera,
+                  // Try this if you saved the viewport.getTransform().position and viewport.getTransform().orientation as
+                  // as posBeforeTravellingToScreen and orientationBeforeTravellingToScreen for the viewport of id=0 (character controller viewport)
+                  // before opening the laboratory menu and making the camera of the viewport id=1 to travel to the screen
+                  defaultCameraTransform: viewport.getTransform(),
+                  onCameraCreation: cameraEntity => {
+                      const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0];
+                      SDK3DVerse.engineAPI.cameraAPI.travel(viewport[1], posBeforeTravellingToScreen, orientationBeforeTravellingToScreen, 1);
+                  }
+              },
+          ];
+          await SDK3DVerse.engineAPI.cameraAPI.setViewports(viewports);
+      }
       document.querySelector("#laboratory-menu").style.visibility = "hidden";
       document.querySelector("#laboratory-bloc-merger").style.visibility = "hidden";
       document.querySelector("#laboratory-bloc-analyser").style.visibility = "hidden";
+      SDK3DVerse.enableInputs();
       removeEventListener('keydown', laboratoryMenu);
       setFPSCameraController(canvas);
     }
