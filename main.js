@@ -613,27 +613,20 @@ async function InitApp() {
       resetFPSCameraController(canvas);
     } else {
       console.log("Laboratory Menu = ", laboratoryMenuDisplay);
-      // TODO: this when quit the computer
       const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0];
       if(viewport.getId() === 1) {
-          // restore the character controller viewport
-          const children = await characterController.getChildren();
-          const firstPersonCamera = children.find((child) => child.isAttached("camera"));
-          const viewports = [
-              {
-                  id: 0, left: 0, top: 0, width: 1, height: 1,
-                  camera: firstPersonCamera,
-                  // Try this if you saved the viewport.getTransform().position and viewport.getTransform().orientation as
-                  // as posBeforeTravellingToScreen and orientationBeforeTravellingToScreen for the viewport of id=0 (character controller viewport)
-                  // before opening the laboratory menu and making the camera of the viewport id=1 to travel to the screen
-                  defaultCameraTransform: viewport.getTransform(),
-                  onCameraCreation: cameraEntity => {
-                      const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0];
-                      SDK3DVerse.engineAPI.cameraAPI.travel(viewport[1], posBeforeTravellingToScreen, orientationBeforeTravellingToScreen, 1);
-                  }
-              },
-          ];
-          await SDK3DVerse.engineAPI.cameraAPI.setViewports(viewports);
+        const children = await characterController.getChildren();
+        const firstPersonCamera = children.find((child) => child.isAttached("camera"));
+        const viewports = [{
+          id: 0, left: 0, top: 0, width: 1, height: 1,
+          camera: firstPersonCamera,
+          defaultCameraTransform: viewport.getTransform(),
+          onCameraCreation: cameraEntity => {
+            const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0];
+            SDK3DVerse.engineAPI.cameraAPI.travel(viewport[1], posBeforeTravellingToScreen, orientationBeforeTravellingToScreen, 1);
+          }
+        }];
+        await SDK3DVerse.engineAPI.cameraAPI.setViewports(viewports);
       }
       document.querySelector("#laboratory-menu").style.visibility = "hidden";
       document.querySelector("#laboratory-bloc-merger").style.visibility = "hidden";
