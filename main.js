@@ -601,7 +601,7 @@ async function InitApp() {
         defaultTransform: viewports[0].getTransform(),
         onCameraCreation: function(cameraEntity){
           const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
-          SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], [-69,20.3,1], [0, -0.7071067690849304, 0, 0.7071067690849304], 1);
+          SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], [-68.5,20.3,1], [0, -0.7071067690849304, 0, 0.7071067690849304], 1);
         }
       }])
       console.log("Laboratory Menu = ", laboratoryMenuDisplay);
@@ -623,7 +623,7 @@ async function InitApp() {
           defaultCameraTransform: viewport.getTransform(),
           onCameraCreation: cameraEntity => {
             const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0];
-            SDK3DVerse.engineAPI.cameraAPI.travel(viewport[1], posBeforeTravellingToScreen, orientationBeforeTravellingToScreen, 1);
+            SDK3DVerse.engineAPI.cameraAPI.travel(viewport[0], posBeforeTravellingToScreen, orientationBeforeTravellingToScreen, 1);
           }
         }];
         await SDK3DVerse.engineAPI.cameraAPI.setViewports(viewports);
