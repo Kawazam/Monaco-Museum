@@ -595,7 +595,7 @@ async function InitApp() {
       await SDK3DVerse.engineAPI.cameraAPI.setViewports([{
         id:1, top:0, left:0, width:1, height:1, 
         defaultControllerType:SDK3DVerse.cameraControllerType.none,
-        defaultTransform:viewports[0].getGlobalTransform(),
+        defaultTransform:viewports[0].getTransform(),
         onCameraCreation:function(cameraEntity){
           const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0].getTransform();
           console.log("Camera bloup", cameraEntity, viewports)
