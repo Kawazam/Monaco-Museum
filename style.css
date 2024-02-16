@@ -288,16 +288,16 @@ body {
 
 #laboratory-menubar-title-merger {
   position: inherit;
-  width: 38%;
+  width: 78%;
   height: 100%;
   left: 11%;
 }
 
 #laboratory-menubar-title-analyser {
   position: inherit;
-  width: 38%;
+  width: 78%;
   height: 100%;
-  left: 51%;
+  left: 11%;
 }
 
 #laboratory-menubar-title-arrow-2 {

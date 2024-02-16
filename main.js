@@ -582,7 +582,6 @@ async function InitApp() {
     document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
   };
 
-  
   //------------------------------------------------------------------------------
   async function laboratoryMenu(event) {
     if (event.key === 'e') {
@@ -606,6 +605,8 @@ async function InitApp() {
       }])
       console.log("Laboratory Menu = ", laboratoryMenuDisplay);
       document.querySelector("#laboratory-menu").style.visibility = "visible";
+      document.querySelector("#laboratory-menubar-title-merger").style.visibility = Merger ? "visible" : "hidden";
+      document.querySelector("#laboratory-menubar-title-analyser").style.visibility = Analyser ? "visible" : "hidden";
       document.querySelector("#laboratory-bloc-merger").style.visibility = Merger ? "visible" : "hidden";
       document.querySelector("#laboratory-bloc-analyser").style.visibility = Analyser ? "visible" : "hidden";
       SDK3DVerse.disableInputs();
@@ -629,6 +630,8 @@ async function InitApp() {
         await SDK3DVerse.engineAPI.cameraAPI.setViewports(viewports);
       }
       document.querySelector("#laboratory-menu").style.visibility = "hidden";
+      document.querySelector("#laboratory-menubar-title-merger").style.visibility = "hidden";
+      document.querySelector("#laboratory-menubar-title-analyser").style.visibility = "hidden";
       document.querySelector("#laboratory-bloc-merger").style.visibility = "hidden";
       document.querySelector("#laboratory-bloc-analyser").style.visibility = "hidden";
       SDK3DVerse.enableInputs();
@@ -639,8 +642,11 @@ async function InitApp() {
   }
 
   function toggleLaboratorySection() {
-    ButtonMerger.classList.toggle("selected_title", Merger);
-    ButtonAnalyser.classList.toggle("selected_title", Analyser);
+    // ButtonMerger.classList.toggle("selected_title", Merger);
+    // ButtonAnalyser.classList.toggle("selected_title", Analyser);
+
+    document.querySelector("#laboratory-menubar-title-merger").style.visibility = Merger ? "visible" : "hidden";
+    document.querySelector("#laboratory-menubar-title-analyser").style.visibility = Analyser ? "visible" : "hidden";
 
     document.querySelector("#laboratory-bloc-merger").style.visibility = Merger ? "visible" : "hidden";
     document.querySelector("#laboratory-bloc-analyser").style.visibility = Analyser ? "visible" : "hidden";
@@ -673,16 +679,16 @@ async function InitApp() {
     SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID);
     toggleCheckbox();
   });
-  ButtonMerger.addEventListener("click", function(){
-    Merger = true;
-    Analyser = false;
-    toggleLaboratorySection();
-  });
-  ButtonAnalyser.addEventListener("click", function(){
-    Analyser = true;
-    Merger = false;
-    toggleLaboratorySection();
-  });
+  // ButtonMerger.addEventListener("click", function(){
+  //   Merger = true;
+  //   Analyser = false;
+  //   toggleLaboratorySection();
+  // });
+  // ButtonAnalyser.addEventListener("click", function(){
+  //   Analyser = true;
+  //   Merger = false;
+  //   toggleLaboratorySection();
+  // });
   ButtonArrow1.addEventListener("click", function(){
     Analyser = !Analyser;
     Merger = !Merger;
