@@ -750,7 +750,7 @@ async function InitApp() {
   async function add_coral_DNA_Token(){
     let a = 0;
     for (let i = 0; coral_list.length - 1; i++){
-      a += coral_drop[coral_liste[i]];
+      a += coral_drop[coral_list[i]];
     }
     inventory["DNA_token"] += a;
     console.log("DNA_Token =",inventory["DNA_token"])
