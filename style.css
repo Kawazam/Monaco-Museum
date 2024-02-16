@@ -344,14 +344,14 @@ body {
 }
 
 #loading-txt {
-  height: 10%;
+  height: 100%;
   width: 100%;
   position: inherit;
   display: grid;
   align-items: end;
   text-align: center;
   font-size: 4em;
-  color: #000;
+  color: #13a1a1;
   /* background-color: #fff;
   backdrop-filter: blur(10px); */
 }
