@@ -13,15 +13,17 @@ import {
 //------------------------------------------------------------------------------
 import {
   coral_map,
-  Coral_1,
-  Coral_2,
-  Coral_3,
-  Coral_4,
-  Coral_5,
-  Coral_6,
-  Coral_7,
-  Coral_8,
-} from "./Coral.js";
+  coral_drop,
+  coral_cleaning,
+  coral_1,
+  coral_2,
+  coral_3,
+  coral_4,
+  coral_5,
+  coral_6,
+  coral_7,
+  coral_8,
+} from "./coral.js";
 
 //------------------------------------------------------------------------------
 import {
@@ -162,6 +164,12 @@ window.addEventListener("load", InitApp);
 let canvas;
 let characterController;
 let lamp;
+let percent = 0;
+const color_100_percent_pollution = [6, 73, 27];
+const color_0_percent_pollution = [4,76,138];
+const night_fog  = '0,0,0';
+
+
 
 //------------------------------------------------------------------------------
 async function InitApp() {
@@ -184,18 +192,55 @@ async function InitApp() {
   });
 
   //------------------------------------------------------------------------------
+  let seconds = 0;
+  let newfogColor;
   characterController = await InitFirstPersonController(characterControllerSceneUUID);
-  const getCam = await characterController.getChildren();
+  const getCam = await characterController.firstPersonController.getChildren();
   console.log("getcam = ",getCam);
+  const camera = getCam[1];
+  var dataJSON = camera.getComponent('camera').dataJSON;
   const getCamChildren = await getCam[1].getChildren();
   lamp = await getCamChildren[0];
+
+  console.log("debug_anim", characterController.playerSceneEntity);
+  //SDK3DVerse.engineAPI.playAnimationSequence('ba7a979b-8238-4f45-a8c8-151b5c0474e0', {playbackSpeed : /*5*/ 5}, characterController.playerSceneEntity);
 
   //------------------------------------------------------------------------------
   if (lamp.getName()!= "camLamp") {
     lamp = await getCamChildren[1];
   };
 
-  //------------------------------------------------------------------------------
+  async function change_fog_on_percent_change(pollution){
+    const rgb1 = color_100_percent_pollution;
+    const rgb2 = color_0_percent_pollution;
+  
+    const diff1R = rgb2[0] - rgb1[0];
+    const diff1G = rgb2[1] - rgb1[1];
+    const diff1B = rgb2[2] - rgb1[2];
+  
+    let newR, newG, newB;
+  
+    newR = Math.round(rgb1[0] + (diff1R * pollution));
+    newG = Math.round(rgb1[1] + (diff1G * pollution));
+    newB = Math.round(rgb1[2] + (diff1B * pollution));
+    const cam = getCam[1];
+    newfogColor = [newR/255, newG/255, newB/255];
+    const cam_compo = cam.getComponent('camera');
+    const dataJSON = { ...cam_compo.dataJSON };
+    dataJSON.fogColor=newfogColor;
+    dataJSON.fogDistanceDensity = 0.015;
+    dataJSON.fogExtinction = [0.2,0.2,0.2];
+    dataJSON.fogHeightDensity = 2.5;
+    dataJSON.fogInterScattering = [0.2, 0.2, 0.2];
+    dataJSON.fogZeroHeight = 200.777161
+    cam.setComponent('camera', {dataJSON});
+    console.log("newcolor = ",newfogColor);
+  }
+  // Fonction pour l'interpolation entre la couleur renvoyée par la fonction précédente et la couleur noire
+
+
+  
+  //----------------------------------------------------------------------s--------
   console.log("lamp =",lamp.getName());
   console.log("lamp children = ", getCamChildren)
   lamp.setVisibility(false);
@@ -213,6 +258,7 @@ async function InitApp() {
   //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
   SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0 }); //'moon-sun-animation'
   SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
+  
 
   //hide loading page-------------------------------------------------------------
   document.querySelector("#loading-page").style.visibility = "hidden";
@@ -250,23 +296,23 @@ async function InitApp() {
   const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
   const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
   const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
-  const CoralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
-  const zoneName = await CoralZone[0].getChildren();
+  const coralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
+  const zoneName = await coralZone[0].getChildren();
   const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
   console.log(GlobalPlantation[0]);
   const GlobalPlantationChildren = await GlobalPlantation[0].getChildren();
   const GlobalPlantationChildrenLenght = await GlobalPlantationChildren.length;
   const nbZones = GlobalPlantationChildrenLenght;
 
-  const zoneCoralPlace = {
-    Coral_1 : Zone_map["ZonePlace_2"],
-    Coral_2 : Zone_map["ZonePlace_3"],
-    Coral_3 : Zone_map["ZonePlace_4"],
-    Coral_4 : Zone_map["ZonePlace_5"],
-    Coral_5 : Zone_map["ZonePlace_6"],
-    Coral_6 : Zone_map["ZonePlace_7"],
-    Coral_7 : Zone_map["ZonePlace_7"],
-    Coral_8 : Zone_map["ZonePlace_7"],
+  const zonecoralPlace = {
+    coral_1 : Zone_map["ZonePlace_2"],
+    coral_2 : Zone_map["ZonePlace_3"],
+    coral_3 : Zone_map["ZonePlace_4"],
+    coral_4 : Zone_map["ZonePlace_5"],
+    coral_5 : Zone_map["ZonePlace_6"],
+    coral_6 : Zone_map["ZonePlace_7"],
+    coral_7 : Zone_map["ZonePlace_7"],
+    coral_8 : Zone_map["ZonePlace_7"],
     null    : Zone_map["ZonePlace_1"]
   };
 
@@ -281,7 +327,7 @@ async function InitApp() {
   let zone;
   let currentPlayerController;
   let outsideTrigger = false;
-  await CheckCoralList();
+  await CheckcoralList();
 
   //------------------------------------------------------------------------------
   const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
@@ -295,7 +341,7 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  async function CheckCoralList(){
+  async function CheckcoralList(){
     coral_list = [];
     for (var i = 0; i < GlobalPlantationChildrenLenght; i++){
       console.log(i);
@@ -305,53 +351,53 @@ async function InitApp() {
       let coralSceneRef = coralPlanted[0].getComponent('scene_ref').value;
       console.log(coralSceneRef);
       if (coralSceneRef == coral_map["coral_1"]){
-        coral_list.push(Coral_1.name);
+        coral_list.push(coral_1.name);
       }
       if (coralSceneRef == coral_map["coral_2"]){
-        coral_list.push(Coral_2.name);
+        coral_list.push(coral_2.name);
       }
       if (coralSceneRef == coral_map["coral_3"]){
-        coral_list.push(Coral_3.name);
+        coral_list.push(coral_3.name);
       }
       if (coralSceneRef == coral_map["coral_4"]){
-        coral_list.push(Coral_4.name);
+        coral_list.push(coral_4.name);
       }
       if (coralSceneRef == coral_map["coral_5"]){
-        coral_list.push(Coral_5.name);
+        coral_list.push(coral_5.name);
       }
       if (coralSceneRef == coral_map["coral_6"]){
-        coral_list.push(Coral_6.name);
+        coral_list.push(coral_6.name);
       }
       if (coralSceneRef == coral_map["coral_7"]){
-        coral_list.push(Coral_7.name);
+        coral_list.push(coral_7.name);
       }
       if (coralSceneRef == coral_map["coral_8"]){
-        coral_list.push(Coral_8.name);
+        coral_list.push(coral_8.name);
       }
     }
-    console.log("checkCoralList = ",coral_list.length,coral_list);
+    console.log("checkcoralList = ",coral_list.length,coral_list);
     return coral_list;
   }
-  console.log(CoralZone);
+  console.log(coralZone);
   console.log(zoneName);
 
   //------------------------------------------------------------------------------
-  async function checkPlantCoral(event) {
+  async function checkPlantcoral(event) {
     if (event.key != 'e'){
       return;
     }
-    const currentCoralValue = zone[0].getComponent('scene_ref').value;
+    const currentcoralValue = zone[0].getComponent('scene_ref').value;
     console.log("pressed E = ",event.key);
-      // if a plantions is empty call placeCoral() to place a coral
-    if (currentCoralValue == coral_map["empty_zone"]){
-      document.removeEventListener('keypress', checkPlantCoral);
-      document.removeEventListener('keypress',PlaceCoral);
-      document.addEventListener('keypress',PlaceCoral);
+      // if a plantions is empty call placecoral() to place a coral
+    if (currentcoralValue == coral_map["empty_zone"]){
+      document.removeEventListener('keypress', checkPlantcoral);
+      document.removeEventListener('keypress',Placecoral);
+      document.addEventListener('keypress',Placecoral);
       return;
     }
 
     for (const coralKey in coral_map) {
-      if (currentCoralValue === coral_map[coralKey]) {
+      if (currentcoralValue === coral_map[coralKey]) {
           const coralIndex = coral_list.indexOf(coralKey);
           if (coralIndex !== -1) {
               console.log(`coral = ${coralKey.replace("coral_", "")}`);
@@ -366,9 +412,9 @@ async function InitApp() {
 
     zone[0].setComponent('scene_ref',{value : coral_map["empty_zone"], maxRecursionCount: 1});
     zone[0].save()
-    CheckCoralList();
+    CheckcoralList();
   };
-
+  
   //------------------------------------------------------------------------------
   async function teleport(){
     document.querySelector("#loading-page").style.visibility = "visible";
@@ -419,7 +465,7 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  function adjustCoralList() {
+  function adjustcoralList() {
     const totalCount = coral_list.length;
     console.log("longueur =",coral_list.length);
     console.log("coral-list = ",typeof coral_list,coral_list,Array.isArray(coral_list));
@@ -455,36 +501,37 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  function getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones) {
+  function getRandomcoralAndDecrement(adjustedLengths, coral_list, nbZones) {
     console.log("adjustedLengths:", adjustedLengths);
     // Si la longueur de coral_list est supérieure à nbZones, sélectionner un corail directement
     if (coral_list.length > nbZones) {
-        const availableCoralTypes = coral_list.filter(coralType => adjustedLengths[coralType] > 0);
-        if (availableCoralTypes.length === 0) {
+        const availablecoralTypes = coral_list.filter(coralType => adjustedLengths[coralType] > 0);
+        if (availablecoralTypes.length === 0) {
             // Aucun type de corail disponible, retourner null ou traiter en conséquence
             return null;
         }
-        const randomCoralType = availableCoralTypes[Math.floor(Math.random() * availableCoralTypes.length)];
-        adjustedLengths[randomCoralType]--;
-        return randomCoralType;
+        const randomcoralType = availablecoralTypes[Math.floor(Math.random() * availablecoralTypes.length)];
+        adjustedLengths[randomcoralType]--;
+        return randomcoralType;
     }
 
     // Si la longueur de coral_list est inférieure ou égale à nbZones, continuer avec la logique précédente
-    const availableCoralTypes = Object.keys(adjustedLengths).filter(coralType => adjustedLengths[coralType] > 0);
+    const availablecoralTypes = Object.keys(adjustedLengths).filter(coralType => adjustedLengths[coralType] > 0);
 
-    if (availableCoralTypes.length === 0) {
+    if (availablecoralTypes.length === 0) {
         // Aucun type de corail disponible, retourner null ou traiter en conséquence
         return null;
     }
 
-    const randomCoralType = availableCoralTypes[Math.floor(Math.random() * availableCoralTypes.length)];
-    adjustedLengths[randomCoralType]--;
+    const randomcoralType = availablecoralTypes[Math.floor(Math.random() * availablecoralTypes.length)];
+    adjustedLengths[randomcoralType]--;
 
-    return randomCoralType;
+    return randomcoralType;
   };
 
+
   //------------------------------------------------------------------------------
-  async function PlaceCoral(event) {
+  async function Placecoral(event) {
     console.log("pressed to place =", event.key);
     const coralIndex = parseInt(event.key);
     if (coralIndex >= 1 && coralIndex <= 8) {
@@ -496,28 +543,29 @@ async function InitApp() {
         zone[0].save()
         inventory[coralKey] -= 1;
         console.log("inventory",inventory);
-        await CheckCoralList();
+        await CheckcoralList();
         console.log(coral_list);
-        let adjustedLengths = adjustCoralList(coral_list, nbZones);
+        let adjustedLengths = adjustcoralList(coral_list, nbZones);
         console.log(adjustedLengths);
         for (let i = 0; i < nbZones; i++) {
           // Get a random coral type and decrement its count
-          let randomCoral = getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones);
-          console.log("voici",CoralZone[0].getName());
+          let randomcoral = getRandomcoralAndDecrement(adjustedLengths, coral_list, nbZones);
+          console.log("voici",coralZone[0].getName());
           console.log(zoneName[i].getName());
-          console.log(randomCoral);
-          console.log("this = ",zoneCoralPlace[randomCoral])
-          zoneName[i].setComponent('scene_ref',{value : zoneCoralPlace[randomCoral], maxRecursionCount: 0});
-          zoneName[i].setGlobalTransform(CoralZone[0]);
-          console.log(`Zone ${i + 1}: ${randomCoral}`);
+          console.log(randomcoral);
+          console.log("this = ",zonecoralPlace[randomcoral])
+          zoneName[i].setComponent('scene_ref',{value : zonecoralPlace[randomcoral], maxRecursionCount: 0});
+          zoneName[i].setGlobalTransform(coralZone[0]);
+          console.log(`Zone ${i + 1}: ${randomcoral}`);
         }
       }else{
         console.log("not enough coral :\n", inventory);
       }
+      inventory.save();
 
     //get the occurrences and adapt them to the number of decorztion zone
     }
-    document.removeEventListener('keypress', PlaceCoral);
+    document.removeEventListener('keypress', Placecoral);
   };
 
   //------------------------------------------------------------------------------
@@ -590,7 +638,7 @@ async function InitApp() {
     CheckboxChecked = false;
     CheckboxUnchecked = true;
     // console.log("unchecked", CheckboxUnchecked);
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
+    
     ToggleCheckbox();
   });
 
@@ -667,8 +715,8 @@ async function InitApp() {
       }
       console.log(zone[0].getName());
       console.log(emitterEntity," ",emitterEntity.getName()," ",emitterEntityParent," ",zone);
-      document.removeEventListener('keypress', checkPlantCoral);
-      document.addEventListener('keypress', checkPlantCoral);
+      document.removeEventListener('keypress', checkPlantcoral);
+      document.addEventListener('keypress', checkPlantcoral);
     }
     else if (emitterEntity  == Couch[0]) {
       console.log('press E to pass the night');
@@ -691,12 +739,42 @@ async function InitApp() {
     console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
     outsideTrigger = false;
     console.log(outsideTrigger);
-    document.removeEventListener('keydown', checkPlantCoral);
+    document.removeEventListener('keydown', checkPlantcoral);
     document.removeEventListener('keydown', PassTheNightMenu);
     document.removeEventListener('click', teleport);
   });
+  console.log(coral_drop['coral_1']);
+  await add_coral_DNA_Token();
+  setInterval(add_coral_DNA_Token, 1000);
+  async function add_coral_DNA_Token(){
+    let a = 0;
+    for (let i = 0; coral_list.length - 1; i++){
+      a += coral_drop[coral_liste[i]];
+    }
+    inventory["DNA_token"] += a;
+    console.log("DNA_Token =",inventory["DNA_token"])
+    inventory.save();
+  }
+  async function coral_clean(){
+    let b = 0;
+    for(let i = 0; i <= coral_list.length-1; i++){
+      console.log(coral_list[i]);
+      b += coral_cleaning[coral_list[i]]
+    }
+    if (b > 100){
+      b=100;
+    }
+    await change_fog_on_percent_change(b/100);
+    console.log("b =",b);
+    console.log(newfogColor);
+  }
+  await coral_clean();
+  setInterval(coral_clean,100)
 }
 //##############################################################################
+
+
+
 
 
 
@@ -787,11 +865,10 @@ async function InitFirstPersonController(charCtlSceneUUID) {
 
   // Finally set the first person camera as the main camera.
   SDK3DVerse.setMainCamera(firstPersonCamera);
-  return firstPersonController;
+  return {firstPersonController, playerSceneEntity};
 
 };
 //##############################################################################
-
 
 
 //##############################################################################
