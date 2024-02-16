@@ -746,7 +746,7 @@ async function InitApp() {
   });
   console.log(coral_drop['coral_1']);
   await add_coral_DNA_Token();
-  setInterval(add_coral_DNA_Token, 1000);
+  setInterval(add_coral_DNA_Token, 300000);
   async function add_coral_DNA_Token(){
     let a = 0;
     for (let i = 0; coral_list.length - 1; i++){
