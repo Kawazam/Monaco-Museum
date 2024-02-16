@@ -770,7 +770,7 @@ async function InitApp() {
     console.log(newfogColor);
   }
   await coral_clean();
-  setInterval(coral_clean,100)
+  setInterval(coral_clean,10000)
 }
 //##############################################################################
 
