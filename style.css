@@ -17,7 +17,7 @@ body {
   /* background-color: black; */
   margin: 0;
   display: flex;
-  font-family: "Gagalin";
+  font-family: "Quicksand";
   overflow: hidden;
 }
 
@@ -350,8 +350,8 @@ body {
   display: grid;
   align-items: end;
   text-align: center;
-  font-size: 4em;
-  color: #13a1a1;
+  font-size: 3em;
+  color: #092c2c;
   /* background-color: #fff;
   backdrop-filter: blur(10px); */
 }

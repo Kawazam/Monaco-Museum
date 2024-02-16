@@ -39,6 +39,10 @@ import {
 } from "./Zone.js";
 
 import { inventory } from "./inventory.js";
+for (let i = 0; i < inventory.length - 1; i++){
+  const index = `coral_${i}`;
+  inventory[index] = 5;
+}
 
 //------------------------------------------------------------------------------
 import TravelAnimation from "./travelAnimation.js";
@@ -68,11 +72,54 @@ const ButtonMap             = document.querySelector("#menu-menubar-title-map");
 const DisplayInventory      = document.querySelector("#menu-bloc-inventory");
 
 //------------------------------------------------------------------------------
-for(let i = 1; i < 7; i++) {
-  for(let j = 1; j < 5; j++) {
-    InventoryTable += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
+document.addEventListener("DOMContentLoaded", function(){
+  const cells = document.querySelectorAll('.menu-bloc-inventory-cell');
+  cells.forEach(cell => {
+    cell.addEventListener('click', function() {
+      addContentToCell(cell.id);
+    });
+  });
+});
+
+//------------------------------------------------------------------------------
+// function addContentToCell(cellID) {
+//   const cell = document.getElementById(cellID);
+//   const content = prompt("Ajouter du contenu dans la cellule");
+//   if (content !== null) {
+//     cell.innerHTML = content;
+//   }
+// }
+
+//------------------------------------------------------------------------------
+let cell_index = 0;
+
+for (let i = 1; i < 7; i++) {
+  for (let j = 1; j < 5; j++) {
+    const cellID = `inventory-cell-${cell_index}`;
+    
+    const leftPosition = ((i - 1) * 15 + i * 1.4) + '%';
+    const topPosition = ((j - 1) * 20 + j * 4) + '%';
+
+    InventoryTable += `<div class="menu-bloc-inventory-cell" id="${cellID}" style="left: ${leftPosition}; top: ${topPosition};"></div>`;
+
+    const cell = document.getElementById(cellID);
+    // Vérifier si la cellule existe avant de manipuler son contenu
+    if (cell) {
+      if (cell_index <= 7) {
+        const a = inventory[`coral_${cell_index+1}`];
+        console.log(a);
+        cell.innerHTML = a;
+      }
+    }
+    cell_index++;
   }
-};
+}
+
+// for(let i = 1; i < 7; i++) {
+//   for(let j = 1; j < 5; j++) {
+//     InventoryTable += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
+//   }
+// };
 
 //------------------------------------------------------------------------------
 DisplayInventory.innerHTML = InventoryTable;
@@ -102,30 +149,30 @@ ButtonMap.addEventListener("click", function(){
 
 //------------------------------------------------------------------------------
 function checkMenueToggle(event){
-  const key = event.key;
-  if (key==='i') {
+  if (event.key === 'i') {
     console.log("I been pressed");
     MenuDisplay = !MenuDisplay;
-    if (MenuDisplay) {
-      console.log(MenuDisplay);
-      console.log("display menue");
-      document.querySelector("#menu").style.visibility = "visible";
-      document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
-      for (let element of canvas.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
-      document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
-      document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
-      resetFPSCameraController(canvas);
-    } else {
-      document.querySelector("#menu").style.visibility = "hidden";
-      document.querySelector("#menu-bloc-inventory").style.visibility = "hidden";
-      for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = "hidden";
-      document.querySelector("#menu-bloc-stats").style.visibility = "hidden";
-      document.querySelector("#menu-bloc-map").style.visibility = "hidden";
-      document.querySelector("#display-canvas").focus();
-      setFPSCameraController(canvas);
-    }
-    console.log('menue out');
   }
+
+  if (MenuDisplay) {
+    console.log(MenuDisplay);
+    console.log("display menue");
+    document.querySelector("#menu").style.visibility = "visible";
+    document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
+    for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
+    document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
+    document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
+    resetFPSCameraController(canvas);
+  } else {
+    document.querySelector("#menu").style.visibility = "hidden";
+    document.querySelector("#menu-bloc-inventory").style.visibility = "hidden";
+    for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = "hidden";
+    document.querySelector("#menu-bloc-stats").style.visibility = "hidden";
+    document.querySelector("#menu-bloc-map").style.visibility = "hidden";
+    document.querySelector("#display-canvas").focus();
+    setFPSCameraController(canvas);
+  }
+  console.log('menue out');
 };
 
 
@@ -136,7 +183,7 @@ function toggleMenuSection() {
   ButtonMap.classList.toggle("selected_title", Map);
 
   document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
-  for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
+  for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
   document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
   document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
 };
@@ -266,8 +313,8 @@ async function InitApp() {
   const ButtonMidnight      = document.querySelector("#time-set-midnight");
   const ButtonCheckbox      = document.querySelector("#unchecked");
   const ButtonUncheckbox    = document.querySelector("#checked");
-  const ButtonMerger        = document.querySelector("#laboratory-menubar-title-merger");
-  const ButtonAnalyser      = document.querySelector("#laboratory-menubar-title-analyser");
+  // const ButtonMerger        = document.querySelector("#laboratory-menubar-title-merger");
+  // const ButtonAnalyser      = document.querySelector("#laboratory-menubar-title-analyser");
   const ButtonArrow1        = document.querySelector("#laboratory-menubar-title-arrow-1");
   const ButtonArrow2        = document.querySelector("#laboratory-menubar-title-arrow-2");
 
@@ -583,17 +630,20 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
+  let posBeforeTravellingToScreen;
+  let orientationBeforeTravellingToScreen;
   async function laboratoryMenu(event) {
     if (event.key === 'e') {
       laboratoryMenuDisplay = !laboratoryMenuDisplay;
     }
-
+    
     const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
-    const posBeforeTravellingToScreen = viewports[0].getTransform().position;
-    const orientationBeforeTravellingToScreen = viewports[0].getTransform().orientation;
+    
+    
     
     if (laboratoryMenuDisplay){
-      
+      posBeforeTravellingToScreen = SDK3DVerse.utils.clone(viewports[0].getTransform().position);
+      orientationBeforeTravellingToScreen = SDK3DVerse.utils.clone(viewports[0].getTransform().orientation);
       await SDK3DVerse.engineAPI.cameraAPI.setViewports([{
         id: 1, top: 0, left: 0, width: 1, height: 1, 
         defaultControllerType: SDK3DVerse.cameraControllerType.none,
@@ -616,18 +666,21 @@ async function InitApp() {
       console.log("Laboratory Menu = ", laboratoryMenuDisplay);
       const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0];
       if(viewport.getId() === 1) {
+        await SDK3DVerse.engineAPI.cameraAPI.travel(viewport, posBeforeTravellingToScreen, orientationBeforeTravellingToScreen, 1);
+
         const children = await characterController.getChildren();
         const firstPersonCamera = children.find((child) => child.isAttached("camera"));
-        const viewports = [{
-          id: 0, left: 0, top: 0, width: 1, height: 1,
-          camera: firstPersonCamera,
-          defaultCameraTransform: viewport.getTransform(),
-          onCameraCreation: cameraEntity => {
-            const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0];
-            SDK3DVerse.engineAPI.cameraAPI.travel(viewport[0], posBeforeTravellingToScreen, orientationBeforeTravellingToScreen, 1);
-          }
-        }];
-        await SDK3DVerse.engineAPI.cameraAPI.setViewports(viewports);
+        SDK3DVerse.setMainCamera() = firstPersonCamera;
+        // const viewports = [{
+          //   id: 0, left: 0, top: 0, width: 1, height: 1,
+          //   camera: firstPersonCamera,
+          //   defaultCameraTransform: viewport.getTransform(),
+          //   onCameraCreation: cameraEntity => {
+            //     const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0];
+            //     SDK3DVerse.engineAPI.cameraAPI.travel(viewport, posBeforeTravellingToScreen, orientationBeforeTravellingToScreen, 1);
+        //   }
+        // }];
+        // await SDK3DVerse.engineAPI.cameraAPI.setViewports(viewports);
       }
       document.querySelector("#laboratory-menu").style.visibility = "hidden";
       document.querySelector("#laboratory-menubar-title-merger").style.visibility = "hidden";
