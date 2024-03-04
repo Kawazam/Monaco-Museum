@@ -562,11 +562,11 @@ async function InitApp() {
       }else{
         console.log("not enough coral :\n", inventory);
       }
-      inventory.save();
 
     //get the occurrences and adapt them to the number of decorztion zone
     }
     document.removeEventListener('keypress', Placecoral);
+    await coral_clean();
   };
 
   //------------------------------------------------------------------------------
@@ -745,11 +745,10 @@ async function InitApp() {
     document.removeEventListener('click', teleport);
   });
   console.log(coral_drop['coral_1']);
-  await add_coral_DNA_Token();
-  setInterval(add_coral_DNA_Token, 300000);
+  
   async function add_coral_DNA_Token(){
     let a = 0;
-    for (let i = 0; coral_list.length - 1; i++){
+    for (let i = 0; i <= coral_list.length - 1; i++){
       a += coral_drop[coral_list[i]];
     }
     inventory["DNA_token"] += a;
@@ -769,8 +768,8 @@ async function InitApp() {
     console.log("b =",b);
     console.log(newfogColor);
   }
-  await coral_clean();
-  setInterval(coral_clean,10000)
+  setInterval(add_coral_DNA_Token, 10000);
+
 }
 //##############################################################################
 
@@ -949,24 +948,24 @@ function findTravellingSplineFromEntity(entity) {
 }*/
 
 //------------------------------------------------------------------------------
-function fermerModale() {
-    const modal = document.getElementById('maModal');
-    const body = document.body;
-    modal.classList.remove('show');
-    setTimeout(() => {
-        modal.style.display = 'none';
-        body.classList.remove('body-overlay');
-    }, 1000); // Delay the removal of 'show' class for the animation to take effect
-};
+// function fermerModale() {
+//     const modal = document.getElementById('maModal');
+//     const body = document.body;
+//     modal.classList.remove('show');
+//     setTimeout(() => {
+//         modal.style.display = 'none';
+//         body.classList.remove('body-overlay');
+//     }, 1000); // Delay the removal of 'show' class for the animation to take effect
+// };
 
-//------------------------------------------------------------------------------
-window.onclick = function (event) {
-    const modal = document.getElementById('maModal');
-    const body = document.body;
-    if (event.target === modal) {
-        fermerModale();
-    }
-};
+// //------------------------------------------------------------------------------
+// window.onclick = function (event) {
+//     const modal = document.getElementById('maModal');
+//     const body = document.body;
+//     if (event.target === modal) {
+//         fermerModale();
+//     }
+// };
 
 //------------------------------------------------------------------------------
 /*function validerModal() {
