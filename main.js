@@ -18,7 +18,7 @@ import {
 import {
   Coral_map,
   Coral_drop,
-  CoralCleaning,
+  coralCleaning,
   Coral_1,
   Coral_2,
   Coral_3,
@@ -926,7 +926,7 @@ async function InitApp() {
     let b = 0;
     for(let i = 0; i <= Coral_list.length-1; i++){
       console.log(Coral_list[i]);
-      b += CoralCleaning[Coral_list[i]]
+      b += coralCleaning[Coral_list[i]]
     }
     if (b > 100){
       b=100;
