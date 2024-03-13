@@ -8,21 +8,25 @@ import {
   mainSceneUUID,
   characterControllerSceneUUID,
   //inventorySceneUUID,
+  moonSunAnimUUID,
+  butterflyFish2UUID,
+  engineOutputEventUUID,
+  characterControllerUUID,
 } from "./config.js";
 
 //------------------------------------------------------------------------------
 import {
-  coral_map,
-  coral_drop,
-  coral_cleaning,
-  coral_1,
-  coral_2,
-  coral_3,
-  coral_4,
-  coral_5,
-  coral_6,
-  coral_7,
-  coral_8,
+  Coral_map,
+  Coral_drop,
+  coralCleaning,
+  Coral_1,
+  Coral_2,
+  Coral_3,
+  Coral_4,
+  Coral_5,
+  Coral_6,
+  Coral_7,
+  Coral_8,
 } from "./Coral.js";
 
 //------------------------------------------------------------------------------
@@ -39,6 +43,10 @@ import {
 
 //------------------------------------------------------------------------------
 import { inventory } from "./inventory.js";
+for (let i = 0; i < inventory.length - 1; i++){
+  const index = `coral_${i}`;
+  inventory[index] = 5;
+}
 
 //------------------------------------------------------------------------------
 import TravelAnimation from "./travelAnimation.js";
@@ -68,11 +76,55 @@ const ButtonMap             = document.querySelector("#menu-menubar-title-map");
 const DisplayInventory      = document.querySelector("#menu-bloc-inventory");
 
 //------------------------------------------------------------------------------
-for(let i = 1; i < 7; i++) {
-  for(let j = 1; j < 5; j++) {
-    InventoryTable += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
+document.addEventListener("DOMContentLoaded", function(){
+  const cells = document.querySelectorAll('.menu-bloc-inventory-cell');
+  cells.forEach(cell => {
+    cell.addEventListener('click', function() {
+      addContentToCell(cell.id);
+    });
+  });
+});
+
+//------------------------------------------------------------------------------
+// function addContentToCell(cellID) {
+//   const cell = document.getElementById(cellID);
+//   const content = prompt("Ajouter du contenu dans la cellule");
+//   if (content !== null) {
+//     cell.innerHTML = content;
+//   }
+// }
+
+
+//------------------------------------------------------------------------------
+let cell_index = 0;
+
+for (let i = 1; i < 7; i++) {
+  for (let j = 1; j < 5; j++) {
+    const cellID = `inventory-cell-${cell_index}`;
+    
+    const leftPosition = ((i - 1) * 15 + i * 1.4) + '%';
+    const topPosition = ((j - 1) * 20 + j * 4) + '%';
+
+    InventoryTable += `<div class="menu-bloc-inventory-cell" id="${cellID}" style="left: ${leftPosition}; top: ${topPosition};"></div>`;
+
+    const cell = document.getElementById(cellID);
+    // Vérifier si la cellule existe avant de manipuler son contenu
+    if (cell) {
+      if (cell_index <= 7) {
+        const a = inventory[`coral_${cell_index+1}`];
+        console.log(a);
+        cell.innerHTML = a;
+      }
+    }
+    cell_index++;
   }
-};
+}
+
+// for(let i = 1; i < 7; i++) {
+//   for(let j = 1; j < 5; j++) {
+//     InventoryTable += '<div class="menu-bloc-inventory-cell" id="inventory-cell'+i*j+'" style="left: '+((i-1)*15+i*1.4)+'%; top: '+((j-1)*20+j*4)+'%;"></div>';
+//   }
+// };
 
 //------------------------------------------------------------------------------
 DisplayInventory.innerHTML = InventoryTable;
@@ -212,7 +264,7 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  async function change_fog_on_percent_change(pollution){
+  async function changeFogOnPercentChange(pollution){
     // Fonction pour l'interpolation entre la couleur renvoyée par la fonction précédente et la couleur noire
     const rgb1 = color_100_percent_pollution;
     const rgb2 = color_0_percent_pollution;
@@ -255,10 +307,9 @@ async function InitApp() {
     await SplinesForFishes();
   }
 
-  //star animation 'moon-sun-anim' and 'butterfly-fish-2'-------------------------
-  SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0 }); //'moon-sun-animation'
-  SDK3DVerse.engineAPI.playAnimationSequence('1d3f545a-afbd-4c31-af06-8737b012b5bd', { playbackSpeed : 1.0 }); //'butterfly-fish-2'
-  
+  //------------------------------------------------------------------------------
+  SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID, { playbackSpeed : 1.0 });
+  SDK3DVerse.engineAPI.playAnimationSequence(butterflyFish2UUID, { playbackSpeed : 1.0 });
 
   //hide loading page-------------------------------------------------------------
   document.querySelector("#loading-page").style.visibility = "hidden";
@@ -285,53 +336,65 @@ async function InitApp() {
   });
 
   //------------------------------------------------------------------------------
-  var TimeSetMenuDisplay  = false;
-  var CheckboxChecked     = false;
-  var CheckboxUnchecked   = true;
+  // Menu define
+  var TimeSetMenuDisplay       = false;
+  var laboratoryMenuDisplay    = false;
+  var Merger                   = true;
+  var Analyser                 = false;
+  var CheckboxChecked          = false;
+  var CheckboxUnchecked        = true;
+  
+  // UUID item define
+  const Couch                     = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
+  const Laboratory_computer       = await SDK3DVerse.engineAPI.findEntitiesByEUID('b02b546a-db22-4469-ac9f-4bd13867b469');
+  const InsideHubDoorToOutside    = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
+  const OutsideHubDoorToInside    = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
+  const ToLaboratoryDoor          = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
+  const ToHubDoor                 = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
+  const CoralZone                 = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
+
+  // Menu button define
+  const ButtonDay           = document.querySelector("#time-set-day");
+  const ButtonMidday        = document.querySelector("#time-set-midday");
+  const ButtonNight         = document.querySelector("#time-set-night");
+  const ButtonMidnight      = document.querySelector("#time-set-midnight");
+  const ButtonCheckbox      = document.querySelector("#unchecked");
+  const ButtonUncheckbox    = document.querySelector("#checked");
+  // const ButtonMerger        = document.querySelector("#laboratory-menubar-title-merger");
+  // const ButtonAnalyser      = document.querySelector("#laboratory-menubar-title-analyser");
+  const ButtonArrow1        = document.querySelector("#laboratory-menubar-title-arrow-1");
+  const ButtonArrow2        = document.querySelector("#laboratory-menubar-title-arrow-2");
+
+  //Robin's define
   var tpPoint;
-  let coral_list=[];
-
-  const Couch                   = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
-  const InsideHubDoorToOutside  = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
-  const OutsideHubDoorToInside  = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
-  const ToLaboratoryDoor        = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
-  const ToHubDoor               = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
-  const coralZone               = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
-
-  const zoneName = await coralZone[0].getChildren();
+  let Coral_list=[];
+  
+  const zoneName = await CoralZone[0].getChildren();
   const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
   console.log(GlobalPlantation[0]);
   const GlobalPlantationChildren = await GlobalPlantation[0].getChildren();
   const GlobalPlantationChildrenLenght = await GlobalPlantationChildren.length;
   const nbZones = GlobalPlantationChildrenLenght;
-
-  const zonecoralPlace = {
-    coral_1 : Zone_map["ZonePlace_2"],
-    coral_2 : Zone_map["ZonePlace_3"],
-    coral_3 : Zone_map["ZonePlace_4"],
-    coral_4 : Zone_map["ZonePlace_5"],
-    coral_5 : Zone_map["ZonePlace_6"],
-    coral_6 : Zone_map["ZonePlace_7"],
-    coral_7 : Zone_map["ZonePlace_7"],
-    coral_8 : Zone_map["ZonePlace_7"],
+  
+  const zoneCoralPlace = {
+    Coral_1 : Zone_map["ZonePlace_2"],
+    Coral_2 : Zone_map["ZonePlace_3"],
+    Coral_3 : Zone_map["ZonePlace_4"],
+    Coral_4 : Zone_map["ZonePlace_5"],
+    Coral_5 : Zone_map["ZonePlace_6"],
+    Coral_6 : Zone_map["ZonePlace_7"],
+    Coral_7 : Zone_map["ZonePlace_7"],
+    Coral_8 : Zone_map["ZonePlace_7"],
     null    : Zone_map["ZonePlace_1"]
   };
-
-  const ButtonDay = document.querySelector("#time-set-day");
-  const ButtonMidday = document.querySelector("#time-set-midday");
-  const ButtonNight = document.querySelector("#time-set-night");
-  const ButtonMidnight = document.querySelector("#time-set-midnight");
-  const ButtonCheckbox = document.querySelector("#unchecked");
-  const ButtonUncheckbox = document.querySelector("#checked");
 
   //------------------------------------------------------------------------------
   let zone;
   let currentPlayerController;
   let outsideTrigger = false;
-  await CheckcoralList();
+  await checkCoralList();
 
   //------------------------------------------------------------------------------
-  const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
 
   //------------------------------------------------------------------------------
@@ -342,78 +405,78 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  async function CheckcoralList(){
-    coral_list = [];
+  async function checkCoralList(){
+    Coral_list = [];
     for (var i = 0; i < GlobalPlantationChildrenLenght; i++){
       console.log(i);
-      const coralPlanted = await GlobalPlantationChildren[i].getChildren();
-      console.log("coral planted = ",coralPlanted[0].getName());
+      const CoralPlanted = await GlobalPlantationChildren[i].getChildren();
+      console.log("Coral planted = ",CoralPlanted[0].getName());
       console.log(GlobalPlantationChildren[i].getName());
-      let coralSceneRef = coralPlanted[0].getComponent('scene_ref').value;
-      console.log(coralSceneRef);
-      if (coralSceneRef == coral_map["coral_1"]){
-        coral_list.push(coral_1.name);
+      let CoralSceneRef = CoralPlanted[0].getComponent('scene_ref').value;
+      console.log(CoralSceneRef);
+      if (CoralSceneRef == Coral_map["Coral_1"]){
+        Coral_list.push(Coral_1.name);
       }
-      if (coralSceneRef == coral_map["coral_2"]){
-        coral_list.push(coral_2.name);
+      if (CoralSceneRef == Coral_map["Coral_2"]){
+        Coral_list.push(Coral_2.name);
       }
-      if (coralSceneRef == coral_map["coral_3"]){
-        coral_list.push(coral_3.name);
+      if (CoralSceneRef == Coral_map["Coral_3"]){
+        Coral_list.push(Coral_3.name);
       }
-      if (coralSceneRef == coral_map["coral_4"]){
-        coral_list.push(coral_4.name);
+      if (CoralSceneRef == Coral_map["Coral_4"]){
+        Coral_list.push(Coral_4.name);
       }
-      if (coralSceneRef == coral_map["coral_5"]){
-        coral_list.push(coral_5.name);
+      if (CoralSceneRef == Coral_map["Coral_5"]){
+        Coral_list.push(Coral_5.name);
       }
-      if (coralSceneRef == coral_map["coral_6"]){
-        coral_list.push(coral_6.name);
+      if (CoralSceneRef == Coral_map["Coral_6"]){
+        Coral_list.push(Coral_6.name);
       }
-      if (coralSceneRef == coral_map["coral_7"]){
-        coral_list.push(coral_7.name);
+      if (CoralSceneRef == Coral_map["Coral_7"]){
+        Coral_list.push(Coral_7.name);
       }
-      if (coralSceneRef == coral_map["coral_8"]){
-        coral_list.push(coral_8.name);
+      if (CoralSceneRef == Coral_map["Coral_8"]){
+        Coral_list.push(Coral_8.name);
       }
     }
-    console.log("checkcoralList = ",coral_list.length,coral_list);
-    return coral_list;
+    console.log("checkCoralList = ",Coral_list.length,Coral_list);
+    return Coral_list;
   }
-  console.log(coralZone);
+  console.log(CoralZone);
   console.log(zoneName);
 
   //------------------------------------------------------------------------------
-  async function checkPlantcoral(event) {
+  async function checkPlantCoral(event) {
     if (event.key != 'e'){
       return;
     }
-    const currentcoralValue = zone[0].getComponent('scene_ref').value;
+    const currentCoralValue = zone[0].getComponent('scene_ref').value;
     console.log("pressed E = ",event.key);
-      // if a plantions is empty call placecoral() to place a coral
-    if (currentcoralValue == coral_map["empty_zone"]){
-      document.removeEventListener('keypress', checkPlantcoral);
-      document.removeEventListener('keypress',Placecoral);
-      document.addEventListener('keypress',Placecoral);
+      // if a plantions is empty call placeCoral() to place a Coral
+    if (currentCoralValue == Coral_map["empty_zone"]){
+      document.removeEventListener('keypress', checkPlantCoral);
+      document.removeEventListener('keypress',placeCoral);
+      document.addEventListener('keypress',placeCoral);
       return;
     }
 
-    for (const coralKey in coral_map) {
-      if (currentcoralValue === coral_map[coralKey]) {
-          const coralIndex = coral_list.indexOf(coralKey);
-          if (coralIndex !== -1) {
-              console.log(`coral = ${coralKey.replace("coral_", "")}`);
-              console.log(coralIndex);
-              coral_list.splice(coralIndex, 1);
-              inventory[`coral_${coralKey}`] += 1;
+    for (const CoralKey in Coral_map) {
+      if (currentCoralValue === Coral_map[CoralKey]) {
+          const CoralIndex = Coral_list.indexOf(CoralKey);
+          if (CoralIndex !== -1) {
+              console.log(`Coral = ${CoralKey.replace("Coral_", "")}`);
+              console.log(CoralIndex);
+              Coral_list.splice(CoralIndex, 1);
+              inventory[`Coral_${CoralKey}`] += 1;
               console.log("inventory =",inventory)
           }
           break; // Sortir de la boucle dès qu'on trouve le corail
       }
     }
 
-    zone[0].setComponent('scene_ref',{value : coral_map["empty_zone"], maxRecursionCount: 1});
+    zone[0].setComponent('scene_ref',{value : Coral_map["empty_zone"], maxRecursionCount: 1});
     zone[0].save()
-    CheckcoralList();
+    checkCoralList();
   };
   
   //------------------------------------------------------------------------------
@@ -424,15 +487,15 @@ async function InitApp() {
     let scriptComponent = currentPlayerController.getComponent("script_map");
     currentPlayerController.setGlobalTransform(tpPointPos);
     console.log(tpPoint.getName());
-    console.log("swim = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"]);
+    console.log("swim = ",scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"]);
     console.log(InsideHubDoorToOutside[0].getName());
     if (tpPoint.getName() == InsideHubDoorToOutside[0].getName()){
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 1;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 1.5;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["runSpeed"] = 5;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 0.2;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = 90.0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"] = 1;
+      scriptComponent.elements[characterControllerUUID].dataJSON["walkSpeed"] = 1.5;
+      scriptComponent.elements[characterControllerUUID].dataJSON["runSpeed"] = 5;
+      scriptComponent.elements[characterControllerUUID].dataJSON["gravityValue"] = 0.2;
+      scriptComponent.elements[characterControllerUUID].dataJSON["pitch"] = 0.0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["yaw"] = 90.0;
       currentPlayerController.setComponent("script_map", scriptComponent);
       setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
 
@@ -440,22 +503,22 @@ async function InitApp() {
       document.removeEventListener('click', teleport);
     }
     else if (tpPoint.getName() == ToHubDoor[0].getName()){
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 2;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["runSpeed"] = 6;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 9.8;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = 90.0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"] = 0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["walkSpeed"] = 2;
+      scriptComponent.elements[characterControllerUUID].dataJSON["runSpeed"] = 6;
+      scriptComponent.elements[characterControllerUUID].dataJSON["gravityValue"] = 9.8;
+      scriptComponent.elements[characterControllerUUID].dataJSON["pitch"] = 0.0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["yaw"] = 90.0;
       currentPlayerController.setComponent("script_map", scriptComponent);
       setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
       document.removeEventListener('click', teleport);
     } else {
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 2;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["runSpeed"] = 6;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 9.8;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = -90.0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"] = 0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["walkSpeed"] = 2;
+      scriptComponent.elements[characterControllerUUID].dataJSON["runSpeed"] = 6;
+      scriptComponent.elements[characterControllerUUID].dataJSON["gravityValue"] = 9.8;
+      scriptComponent.elements[characterControllerUUID].dataJSON["pitch"] = 0.0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["yaw"] = -90.0;
       currentPlayerController.setComponent("script_map", scriptComponent);
       setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
       document.removeEventListener('click', teleport);
@@ -466,15 +529,15 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  function adjustcoralList() {
-    const totalCount = coral_list.length;
-    console.log("longueur =",coral_list.length);
-    console.log("coral-list = ",typeof coral_list,coral_list,Array.isArray(coral_list));
+  function adjustCoralList() {
+    const totalCount = Coral_list.length;
+    console.log("longueur =",Coral_list.length);
+    console.log("Coral-list = ",typeof Coral_list,Coral_list,Array.isArray(Coral_list));
 
     // Si le nombre total de coraux est inférieur à nbZones, retourner les occurences
     if (totalCount < nbZones) {
-        const adjustedCounts = coral_list.reduce((counts, coralType) => {
-            counts[coralType] = (counts[coralType] || 0) + 1;
+        const adjustedCounts = Coral_list.reduce((counts, CoralType) => {
+            counts[CoralType] = (counts[CoralType] || 0) + 1;
             return counts;
         }, {});
         console.log("adjustedCounts =",adjustedCounts);
@@ -482,19 +545,19 @@ async function InitApp() {
     } else {
 
       // Le reste du code reste inchangé...
-      const proportionalCounts = coral_list.reduce((counts, coralType) => {
-          counts[coralType] = (counts[coralType] || 0) + 1;
+      const proportionalCounts = Coral_list.reduce((counts, CoralType) => {
+          counts[CoralType] = (counts[CoralType] || 0) + 1;
           return counts;
       }, {});
 
       const adjustedProportionalCounts = {};
-      for (const coralType in proportionalCounts) {
-          adjustedProportionalCounts[coralType] = Math.round((proportionalCounts[coralType] / totalCount) * nbZones);
+      for (const CoralType in proportionalCounts) {
+          adjustedProportionalCounts[CoralType] = Math.round((proportionalCounts[CoralType] / totalCount) * nbZones);
       }
 
       const adjustedLengths = {};
-      for (const coralType in adjustedProportionalCounts) {
-          adjustedLengths[coralType] = adjustedProportionalCounts[coralType];
+      for (const CoralType in adjustedProportionalCounts) {
+          adjustedLengths[CoralType] = adjustedProportionalCounts[CoralType];
       }
       console.log("adjusted lenghts", adjustedLengths, adjustedProportionalCounts);
       return adjustedLengths;
@@ -502,75 +565,75 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  function getRandomcoralAndDecrement(adjustedLengths, coral_list, nbZones) {
+  function getRandomCoralAndDecrement(adjustedLengths, Coral_list, nbZones) {
     console.log("adjustedLengths:", adjustedLengths);
-    // Si la longueur de coral_list est supérieure à nbZones, sélectionner un corail directement
-    if (coral_list.length > nbZones) {
-        const availablecoralTypes = coral_list.filter(coralType => adjustedLengths[coralType] > 0);
-        if (availablecoralTypes.length === 0) {
+    // Si la longueur de Coral_list est supérieure à nbZones, sélectionner un corail directement
+    if (Coral_list.length > nbZones) {
+        const availableCoralTypes = Coral_list.filter(CoralType => adjustedLengths[CoralType] > 0);
+        if (availableCoralTypes.length === 0) {
             // Aucun type de corail disponible, retourner null ou traiter en conséquence
             return null;
         }
-        const randomcoralType = availablecoralTypes[Math.floor(Math.random() * availablecoralTypes.length)];
-        adjustedLengths[randomcoralType]--;
-        return randomcoralType;
+        const randomCoralType = availableCoralTypes[Math.floor(Math.random() * availableCoralTypes.length)];
+        adjustedLengths[randomCoralType]--;
+        return randomCoralType;
     }
 
-    // Si la longueur de coral_list est inférieure ou égale à nbZones, continuer avec la logique précédente
-    const availablecoralTypes = Object.keys(adjustedLengths).filter(coralType => adjustedLengths[coralType] > 0);
+    // Si la longueur de Coral_list est inférieure ou égale à nbZones, continuer avec la logique précédente
+    const availableCoralTypes = Object.keys(adjustedLengths).filter(CoralType => adjustedLengths[CoralType] > 0);
 
-    if (availablecoralTypes.length === 0) {
+    if (availableCoralTypes.length === 0) {
         // Aucun type de corail disponible, retourner null ou traiter en conséquence
         return null;
     }
 
-    const randomcoralType = availablecoralTypes[Math.floor(Math.random() * availablecoralTypes.length)];
-    adjustedLengths[randomcoralType]--;
+    const randomCoralType = availableCoralTypes[Math.floor(Math.random() * availableCoralTypes.length)];
+    adjustedLengths[randomCoralType]--;
 
-    return randomcoralType;
+    return randomCoralType;
   };
 
 
   //------------------------------------------------------------------------------
-  async function Placecoral(event) {
+  async function placeCoral(event) {
     console.log("pressed to place =", event.key);
-    const coralIndex = parseInt(event.key);
-    if (coralIndex >= 1 && coralIndex <= 8) {
-      const coralKey = `coral_${coralIndex}`;
-      console.log(inventory[coralKey]);
-      if (inventory[coralKey] > 0){
+    const CoralIndex = parseInt(event.key);
+    if (CoralIndex >= 1 && CoralIndex <= 8) {
+      const CoralKey = `Coral_${CoralIndex}`;
+      console.log(inventory[CoralKey]);
+      if (inventory[CoralKey] > 0){
         console.log(event.key);
-        zone[0].setComponent('scene_ref', { value: coral_map[coralKey], maxRecursionCount: 1 });
+        zone[0].setComponent('scene_ref', { value: Coral_map[CoralKey], maxRecursionCount: 1 });
         zone[0].save()
-        inventory[coralKey] -= 1;
+        inventory[CoralKey] -= 1;
         console.log("inventory",inventory);
-        await CheckcoralList();
-        console.log(coral_list);
-        let adjustedLengths = adjustcoralList(coral_list, nbZones);
+        await checkCoralList();
+        console.log(Coral_list);
+        let adjustedLengths = adjustCoralList(Coral_list, nbZones);
         console.log(adjustedLengths);
         for (let i = 0; i < nbZones; i++) {
-          // Get a random coral type and decrement its count
-          let randomcoral = getRandomcoralAndDecrement(adjustedLengths, coral_list, nbZones);
-          console.log("voici",coralZone[0].getName());
+          // Get a random Coral type and decrement its count
+          let randomCoral = getRandomCoralAndDecrement(adjustedLengths, Coral_list, nbZones);
+          console.log("voici",CoralZone[0].getName());
           console.log(zoneName[i].getName());
-          console.log(randomcoral);
-          console.log("this = ",zonecoralPlace[randomcoral])
-          zoneName[i].setComponent('scene_ref',{value : zonecoralPlace[randomcoral], maxRecursionCount: 0});
-          zoneName[i].setGlobalTransform(coralZone[0]);
-          console.log(`Zone ${i + 1}: ${randomcoral}`);
+          console.log(randomCoral);
+          console.log("this = ",zoneCoralPlace[randomCoral])
+          zoneName[i].setComponent('scene_ref',{value : zoneCoralPlace[randomCoral], maxRecursionCount: 0});
+          zoneName[i].setGlobalTransform(CoralZone[0]);
+          console.log(`Zone ${i + 1}: ${randomCoral}`);
         }
       }else{
-        console.log("not enough coral :\n", inventory);
+        console.log("not enough Coral :\n", inventory);
       }
 
     //get the occurrences and adapt them to the number of decorztion zone
     }
-    document.removeEventListener('keypress', Placecoral);
-    await coral_clean();
+    document.removeEventListener('keypress', placeCoral);
+    await coralClean();
   };
 
   //------------------------------------------------------------------------------
-  function PassTheNightMenu(event){
+  function passNightMenu(event){
     if (event.key === 'e'){
       TimeSetMenuDisplay = !TimeSetMenuDisplay;
       // console.log(TimeSetMenuDisplay);
@@ -589,7 +652,7 @@ async function InitApp() {
       document.querySelector("#time-set-checkbox").style.visibility = "visible";
       document.querySelector("#checked").style.visibility = CheckboxChecked ? "visible" : "hidden";
       document.querySelector("#unchecked").style.visibility = CheckboxUnchecked ? "visible" : "hidden";
-      removeEventListener('keydown', PassTheNightMenu);
+      removeEventListener('keydown', passNightMenu);
       resetFPSCameraController(canvas);
     }else{
       document.querySelector("#time-set-menu").style.visibility = "hidden";
@@ -600,14 +663,14 @@ async function InitApp() {
       document.querySelector("#time-set-checkbox").style.visibility = "hidden";
       document.querySelector("#checked").style.visibility = "hidden";
       document.querySelector("#unchecked").style.visibility = "hidden";
-      removeEventListener('keydown', PassTheNightMenu);
+      removeEventListener('keydown', passNightMenu);
       setFPSCameraController(canvas);
     }
-    removeEventListener('keydown', PassTheNightMenu);
+    removeEventListener('keydown', passNightMenu);
   };
 
   //------------------------------------------------------------------------------
-  function ToggleCheckbox() {
+  function toggleCheckbox() {
     // console.log("toggle checkbox")
     // console.log("CheckboxChecked:", CheckboxChecked);
     // console.log("CheckboxUnchecked:", CheckboxUnchecked);
@@ -616,31 +679,128 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
+  let posBeforeTravellingToScreen;
+  let orientationBeforeTravellingToScreen;
+  async function laboratoryMenu(event) {
+    if (event.key === 'e') {
+      laboratoryMenuDisplay = !laboratoryMenuDisplay;
+    }
+    
+    const viewports = await SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+    
+    
+    
+    if (laboratoryMenuDisplay){
+      posBeforeTravellingToScreen = SDK3DVerse.utils.clone(viewports[0].getTransform().position);
+      orientationBeforeTravellingToScreen = SDK3DVerse.utils.clone(viewports[0].getTransform().orientation);
+      await SDK3DVerse.engineAPI.cameraAPI.setViewports([{
+        id: 1, top: 0, left: 0, width: 1, height: 1, 
+        defaultControllerType: SDK3DVerse.cameraControllerType.none,
+        defaultTransform: viewports[0].getTransform(),
+        onCameraCreation: function(cameraEntity){
+          const viewports = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports();
+          SDK3DVerse.engineAPI.cameraAPI.travel(viewports[0], [-68.5,20.3,1], [0, -0.7071067690849304, 0, 0.7071067690849304], 1);
+        }
+      }])
+      console.log("Laboratory Menu = ", laboratoryMenuDisplay);
+      document.querySelector("#laboratory-menu").style.visibility = "visible";
+      document.querySelector("#laboratory-menubar-title-merger").style.visibility = Merger ? "visible" : "hidden";
+      document.querySelector("#laboratory-menubar-title-analyser").style.visibility = Analyser ? "visible" : "hidden";
+      document.querySelector("#laboratory-bloc-merger").style.visibility = Merger ? "visible" : "hidden";
+      document.querySelector("#laboratory-bloc-analyser").style.visibility = Analyser ? "visible" : "hidden";
+      SDK3DVerse.disableInputs();
+      removeEventListener('keydown', laboratoryMenu);
+      resetFPSCameraController(canvas);
+    } else {
+      console.log("Laboratory Menu = ", laboratoryMenuDisplay);
+      const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0];
+      if(viewport.getId() === 1) {
+        await SDK3DVerse.engineAPI.cameraAPI.travel(viewport, posBeforeTravellingToScreen, orientationBeforeTravellingToScreen, 1);
+
+        const children = await characterController.getChildren();
+        const firstPersonCamera = children.find((child) => child.isAttached("camera"));
+        SDK3DVerse.setMainCamera() = firstPersonCamera;
+        // const viewports = [{
+          //   id: 0, left: 0, top: 0, width: 1, height: 1,
+          //   camera: firstPersonCamera,
+          //   defaultCameraTransform: viewport.getTransform(),
+          //   onCameraCreation: cameraEntity => {
+            //     const viewport = SDK3DVerse.engineAPI.cameraAPI.getActiveViewports()[0];
+            //     SDK3DVerse.engineAPI.cameraAPI.travel(viewport, posBeforeTravellingToScreen, orientationBeforeTravellingToScreen, 1);
+        //   }
+        // }];
+        // await SDK3DVerse.engineAPI.cameraAPI.setViewports(viewports);
+      }
+      document.querySelector("#laboratory-menu").style.visibility = "hidden";
+      document.querySelector("#laboratory-menubar-title-merger").style.visibility = "hidden";
+      document.querySelector("#laboratory-menubar-title-analyser").style.visibility = "hidden";
+      document.querySelector("#laboratory-bloc-merger").style.visibility = "hidden";
+      document.querySelector("#laboratory-bloc-analyser").style.visibility = "hidden";
+      SDK3DVerse.enableInputs();
+      removeEventListener('keydown', laboratoryMenu);
+      setFPSCameraController(canvas);
+    }
+    removeEventListener('keydown', laboratoryMenu);
+  }
+
+  //------------------------------------------------------------------------------
+  function toggleLaboratorySection() {
+    // ButtonMerger.classList.toggle("selected_title", Merger);
+    // ButtonAnalyser.classList.toggle("selected_title", Analyser);
+
+    document.querySelector("#laboratory-menubar-title-merger").style.visibility = Merger ? "visible" : "hidden";
+    document.querySelector("#laboratory-menubar-title-analyser").style.visibility = Analyser ? "visible" : "hidden";
+
+    document.querySelector("#laboratory-bloc-merger").style.visibility = Merger ? "visible" : "hidden";
+    document.querySelector("#laboratory-bloc-analyser").style.visibility = Analyser ? "visible" : "hidden";
+  };
+
+  //------------------------------------------------------------------------------
   ButtonDay.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.0 });
+    SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID, { playbackSpeed : 1.0, seekOffset : 0.0 });
   });
   ButtonMidday.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.25 });
+    SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID, { playbackSpeed : 1.0, seekOffset : 0.25 });
   });
   ButtonNight.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.5 });
+    SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID, { playbackSpeed : 1.0, seekOffset : 0.5 });
   });
   ButtonMidnight.addEventListener("click", function(){
-    SDK3DVerse.engineAPI.playAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8', { playbackSpeed : 1.0, seekOffset : 0.75 });
+    SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID, { playbackSpeed : 1.0, seekOffset : 0.75 });
   });
   ButtonCheckbox.addEventListener("click", function(){
     CheckboxChecked = true;
     CheckboxUnchecked = false;
     // console.log("checked", CheckboxChecked);
-    SDK3DVerse.engineAPI.pauseAnimationSequence('26eef687-a9c6-4afd-9602-26c5f74c62f8');
-    ToggleCheckbox();
+    SDK3DVerse.engineAPI.pauseAnimationSequence(moonSunAnimUUID);
+    toggleCheckbox();
   });
   ButtonUncheckbox.addEventListener("click", function(){
     CheckboxChecked = false;
     CheckboxUnchecked = true;
     // console.log("unchecked", CheckboxUnchecked);
-    
-    ToggleCheckbox();
+    SDK3DVerse.engineAPI.playAnimationSequence(moonSunAnimUUID);
+    toggleCheckbox();
+  });
+  // ButtonMerger.addEventListener("click", function(){
+  //   Merger = true;
+  //   Analyser = false;
+  //   toggleLaboratorySection();
+  // });
+  // ButtonAnalyser.addEventListener("click", function(){
+  //   Analyser = true;
+  //   Merger = false;
+  //   toggleLaboratorySection();
+  // });
+  ButtonArrow1.addEventListener("click", function(){
+    Analyser = !Analyser;
+    Merger = !Merger;
+    toggleLaboratorySection();
+  });
+  ButtonArrow2.addEventListener("click", function(){
+    Analyser = !Analyser;
+    Merger = !Merger;
+    toggleLaboratorySection();
   });
 
   //------------------------------------------------------------------------------
@@ -689,7 +849,7 @@ async function InitApp() {
       document.addEventListener('click',teleport);
     }
     else if (emitterEntity == ToLaboratoryDoor[0]){
-      console.log('press E to loaboratory');
+      console.log('press E to laboratory');
       document.querySelector("#cross").style.visibility = "hidden";
       document.querySelector("#door").style.visibility = "visible";
       tpPoint = await emitterEntity;
@@ -704,10 +864,20 @@ async function InitApp() {
       document.removeEventListener('click', teleport);
       document.addEventListener('click',teleport);
     }
+    else if (emitterEntity  == Couch[0]) {
+      console.log('press E to pass the night');
+      document.removeEventListener('keydown', passNightMenu);
+      document.addEventListener('keydown', passNightMenu);
+    }
+    else if (emitterEntity  == Laboratory_computer[0]) {
+      console.log('press E to open the menu');
+      document.removeEventListener('keydown', laboratoryMenu);
+      document.addEventListener('keydown', laboratoryMenu);
+    }
     else if (emitterEntity.getParent().getName() == "Plantations"){
       console.log("press E");
       zone = await emitterEntity.getChildren();
-      if (zone[0].getComponent('scene_ref').value == coral_map["empty_zone"]){
+      if (zone[0].getComponent('scene_ref').value == Coral_map["empty_zone"]){
         document.querySelector("#cross").style.visibility = "hidden";
         document.querySelector("#put").style.visibility = "visible";
       } else {
@@ -716,13 +886,8 @@ async function InitApp() {
       }
       console.log(zone[0].getName());
       console.log(emitterEntity," ",emitterEntity.getName()," ",emitterEntityParent," ",zone);
-      document.removeEventListener('keypress', checkPlantcoral);
-      document.addEventListener('keypress', checkPlantcoral);
-    }
-    else if (emitterEntity  == Couch[0]) {
-      console.log('press E to pass the night');
-      document.removeEventListener('keydown', PassTheNightMenu);
-      document.addEventListener('keydown', PassTheNightMenu);
+      document.removeEventListener('keypress', checkPlantCoral);
+      document.addEventListener('keypress', checkPlantCoral);
     }
   });
 
@@ -740,42 +905,40 @@ async function InitApp() {
     console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
     outsideTrigger = false;
     console.log(outsideTrigger);
-    document.removeEventListener('keydown', checkPlantcoral);
-    document.removeEventListener('keydown', PassTheNightMenu);
+    document.removeEventListener('keydown', checkPlantCoral);
+    document.removeEventListener('keydown', passNightMenu);
     document.removeEventListener('click', teleport);
   });
-  console.log(coral_drop['coral_1']);
-  
-  async function add_coral_DNA_Token(){
+  console.log(Coral_drop['Coral_1']);
+
+  //------------------------------------------------------------------------------
+  async function addCoralDNAToken(){
     let a = 0;
-    for (let i = 0; i <= coral_list.length - 1; i++){
-      a += coral_drop[coral_list[i]];
+    for (let i = 0; i <= Coral_list.length - 1; i++){
+      a += Coral_drop[Coral_list[i]];
     }
     inventory["DNA_token"] += a;
     console.log("DNA_Token =",inventory["DNA_token"])
-    inventory.save();
   }
-  async function coral_clean(){
+
+  //------------------------------------------------------------------------------
+  async function coralClean(){
     let b = 0;
-    for(let i = 0; i <= coral_list.length-1; i++){
-      console.log(coral_list[i]);
-      b += coral_cleaning[coral_list[i]]
+    for(let i = 0; i <= Coral_list.length-1; i++){
+      console.log(Coral_list[i]);
+      b += coralCleaning[Coral_list[i]]
     }
     if (b > 100){
       b=100;
     }
-    await change_fog_on_percent_change(b/100);
+    await changeFogOnPercentChange(b/100);
     console.log("b =",b);
     console.log(newfogColor);
   }
-  setInterval(add_coral_DNA_Token, 10000);
+  setInterval(addCoralDNAToken, 10000);
 
 }
 //##############################################################################
-
-
-
-
 
 
 //##############################################################################
