@@ -12,6 +12,8 @@ export const moonSunAnimUUID = "26eef687-a9c6-4afd-9602-26c5f74c62f8";
 export const butterflyFish2UUID = "1d3f545a-afbd-4c31-af06-8737b012b5bd";
 // Set ID of Engine Output Event
 export const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
+// Set ID of Character Controller
+export const characterControllerUUID = "f8789590-4a8c-444a-b0f6-362c93762d3e";
 
 
 // anciennes UUID : 02/02/2024
@@ -29,3 +31,4 @@ export const engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
 // moonSunAnimUUID = "26eef687-a9c6-4afd-9602-26c5f74c62f8";
 // butterflyFish2 = "1d3f545a-afbd-4c31-af06-8737b012b5bd";
 // engineOutputEventUUID = "42830dc6-ca1e-4f4c-9f2a-ede6d436a964";
+// characterControllerUUID = "f8789590-4a8c-444a-b0f6-362c93762d3e";

@@ -11,11 +11,14 @@ import {
   moonSunAnimUUID,
   butterflyFish2UUID,
   engineOutputEventUUID,
+  characterControllerUUID,
 } from "./config.js";
 
 //------------------------------------------------------------------------------
 import {
   Coral_map,
+  Coral_drop,
+  coralCleaning,
   Coral_1,
   Coral_2,
   Coral_3,
@@ -38,6 +41,7 @@ import {
   Zone_7,
 } from "./Zone.js";
 
+//------------------------------------------------------------------------------
 import { inventory } from "./inventory.js";
 for (let i = 0; i < inventory.length - 1; i++){
   const index = `coral_${i}`;
@@ -89,6 +93,7 @@ document.addEventListener("DOMContentLoaded", function(){
 //     cell.innerHTML = content;
 //   }
 // }
+
 
 //------------------------------------------------------------------------------
 let cell_index = 0;
@@ -149,30 +154,30 @@ ButtonMap.addEventListener("click", function(){
 
 //------------------------------------------------------------------------------
 function checkMenueToggle(event){
-  if (event.key === 'i') {
+  const key = event.key;
+  if (key==='i') {
     console.log("I been pressed");
     MenuDisplay = !MenuDisplay;
+    if (MenuDisplay) {
+      console.log(MenuDisplay);
+      console.log("display menue");
+      document.querySelector("#menu").style.visibility = "visible";
+      document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
+      for (let element of canvas.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
+      document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
+      document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
+      resetFPSCameraController(canvas);
+    } else {
+      document.querySelector("#menu").style.visibility = "hidden";
+      document.querySelector("#menu-bloc-inventory").style.visibility = "hidden";
+      for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = "hidden";
+      document.querySelector("#menu-bloc-stats").style.visibility = "hidden";
+      document.querySelector("#menu-bloc-map").style.visibility = "hidden";
+      document.querySelector("#display-canvas").focus();
+      setFPSCameraController(canvas);
+    }
+    console.log('menue out');
   }
-
-  if (MenuDisplay) {
-    console.log(MenuDisplay);
-    console.log("display menue");
-    document.querySelector("#menu").style.visibility = "visible";
-    document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
-    for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
-    document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
-    document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
-    resetFPSCameraController(canvas);
-  } else {
-    document.querySelector("#menu").style.visibility = "hidden";
-    document.querySelector("#menu-bloc-inventory").style.visibility = "hidden";
-    for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = "hidden";
-    document.querySelector("#menu-bloc-stats").style.visibility = "hidden";
-    document.querySelector("#menu-bloc-map").style.visibility = "hidden";
-    document.querySelector("#display-canvas").focus();
-    setFPSCameraController(canvas);
-  }
-  console.log('menue out');
 };
 
 
@@ -183,7 +188,7 @@ function toggleMenuSection() {
   ButtonMap.classList.toggle("selected_title", Map);
 
   document.querySelector("#menu-bloc-inventory").style.visibility = Inventory ? "visible" : "hidden";
-  for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = Inventory ? "visible" : "hidden";
+  for (let element of document.querySelectorAll(".menu-bloc-inventory-cell")) element.style.visibility = inventory ? "visible" : "hidden";
   document.querySelector("#menu-bloc-stats").style.visibility = Stats ? "visible" : "hidden";
   document.querySelector("#menu-bloc-map").style.visibility = Map ? "visible" : "hidden";
 };
@@ -212,6 +217,12 @@ window.addEventListener("load", InitApp);
 let canvas;
 let characterController;
 let lamp;
+let percent = 0;
+const color_100_percent_pollution = [6, 73, 27];
+const color_0_percent_pollution = [4,76,138];
+const night_fog  = '0,0,0';
+
+
 
 //------------------------------------------------------------------------------
 async function InitApp() {
@@ -234,16 +245,52 @@ async function InitApp() {
   });
 
   //------------------------------------------------------------------------------
+  let seconds = 0;
+  let newfogColor;
   characterController = await InitFirstPersonController(characterControllerSceneUUID);
-  const getCam = await characterController.getChildren();
+  const getCam = await characterController.firstPersonController.getChildren();
   console.log("getcam = ",getCam);
+  const camera = getCam[1];
+  var dataJSON = camera.getComponent('camera').dataJSON;
   const getCamChildren = await getCam[1].getChildren();
   lamp = await getCamChildren[0];
+
+  console.log("debug_anim", characterController.playerSceneEntity);
+  //SDK3DVerse.engineAPI.playAnimationSequence('ba7a979b-8238-4f45-a8c8-151b5c0474e0', {playbackSpeed : /*5*/ 5}, characterController.playerSceneEntity);
 
   //------------------------------------------------------------------------------
   if (lamp.getName()!= "camLamp") {
     lamp = await getCamChildren[1];
   };
+
+  //------------------------------------------------------------------------------
+  async function changeFogOnPercentChange(pollution){
+    // Fonction pour l'interpolation entre la couleur renvoyée par la fonction précédente et la couleur noire
+    const rgb1 = color_100_percent_pollution;
+    const rgb2 = color_0_percent_pollution;
+  
+    const diff1R = rgb2[0] - rgb1[0];
+    const diff1G = rgb2[1] - rgb1[1];
+    const diff1B = rgb2[2] - rgb1[2];
+  
+    let newR, newG, newB;
+  
+    newR = Math.round(rgb1[0] + (diff1R * pollution));
+    newG = Math.round(rgb1[1] + (diff1G * pollution));
+    newB = Math.round(rgb1[2] + (diff1B * pollution));
+    const cam = getCam[1];
+    newfogColor = [newR/255, newG/255, newB/255];
+    const cam_compo = cam.getComponent('camera');
+    const dataJSON = { ...cam_compo.dataJSON };
+    dataJSON.fogColor=newfogColor;
+    dataJSON.fogDistanceDensity = 0.015;
+    dataJSON.fogExtinction = [0.2,0.2,0.2];
+    dataJSON.fogHeightDensity = 2.5;
+    dataJSON.fogInterScattering = [0.2, 0.2, 0.2];
+    dataJSON.fogZeroHeight = 200.777161
+    cam.setComponent('camera', {dataJSON});
+    console.log("newcolor = ",newfogColor);
+  }
 
   //------------------------------------------------------------------------------
   console.log("lamp =",lamp.getName());
@@ -257,7 +304,7 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   if(isSessionCreator) {
-    await splinesForFishes();
+    await SplinesForFishes();
   }
 
   //------------------------------------------------------------------------------
@@ -270,22 +317,22 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   document.addEventListener('keydown', function(event) {
-    // Vérifie si la touche pressée est 't'
-    if (event.key === 't') {
-        // Vérifie si islampvisible est true
-        if (islampvisible === true) {
-          lamp.setVisibility(!islampvisible);
-          console.log("lamp allumé")
-            // Change la valeur de islampvisible à false
-            islampvisible = false;
-        }
-        else if (islampvisible === false) {
-          lamp.setVisibility(!islampvisible);
-            // Change la valeur de islampvisible à false
-            islampvisible = true;
-            console.log("lampe éteinte")
-        }
-    }
+  // Vérifie si la touche pressée est 't'
+  if (event.key === 't') {
+      // Vérifie si islampvisible est true
+      if (islampvisible === true) {
+        lamp.setVisibility(!islampvisible);
+        console.log("lamp allumé")
+          // Change la valeur de islampvisible à false
+          islampvisible = false;
+      }
+      else if (islampvisible === false) {
+        lamp.setVisibility(!islampvisible);
+          // Change la valeur de islampvisible à false
+          islampvisible = true;
+          console.log("lampe éteinte")
+      }
+  }
   });
 
   //------------------------------------------------------------------------------
@@ -296,7 +343,7 @@ async function InitApp() {
   var Analyser                 = false;
   var CheckboxChecked          = false;
   var CheckboxUnchecked        = true;
-
+  
   // UUID item define
   const Couch                     = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
   const Laboratory_computer       = await SDK3DVerse.engineAPI.findEntitiesByEUID('b02b546a-db22-4469-ac9f-4bd13867b469');
@@ -318,17 +365,17 @@ async function InitApp() {
   const ButtonArrow1        = document.querySelector("#laboratory-menubar-title-arrow-1");
   const ButtonArrow2        = document.querySelector("#laboratory-menubar-title-arrow-2");
 
-  // Robin's define
+  //Robin's define
   var tpPoint;
-  let coral_list=[];
-
+  let Coral_list=[];
+  
   const zoneName = await CoralZone[0].getChildren();
   const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
   console.log(GlobalPlantation[0]);
   const GlobalPlantationChildren = await GlobalPlantation[0].getChildren();
   const GlobalPlantationChildrenLenght = await GlobalPlantationChildren.length;
   const nbZones = GlobalPlantationChildrenLenght;
-
+  
   const zoneCoralPlace = {
     Coral_1 : Zone_map["ZonePlace_2"],
     Coral_2 : Zone_map["ZonePlace_3"],
@@ -339,7 +386,7 @@ async function InitApp() {
     Coral_7 : Zone_map["ZonePlace_7"],
     Coral_8 : Zone_map["ZonePlace_7"],
     null    : Zone_map["ZonePlace_1"]
-  };  
+  };
 
   //------------------------------------------------------------------------------
   let zone;
@@ -359,41 +406,41 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   async function checkCoralList(){
-    coral_list = [];
+    Coral_list = [];
     for (var i = 0; i < GlobalPlantationChildrenLenght; i++){
       console.log(i);
-      const coralPlanted = await GlobalPlantationChildren[i].getChildren();
-      console.log("coral planted = ",coralPlanted[0].getName());
+      const CoralPlanted = await GlobalPlantationChildren[i].getChildren();
+      console.log("Coral planted = ",CoralPlanted[0].getName());
       console.log(GlobalPlantationChildren[i].getName());
-      let coralSceneRef = coralPlanted[0].getComponent('scene_ref').value;
-      console.log(coralSceneRef);
-      if (coralSceneRef == Coral_map["coral_1"]){
-        coral_list.push(Coral_1.name);
+      let CoralSceneRef = CoralPlanted[0].getComponent('scene_ref').value;
+      console.log(CoralSceneRef);
+      if (CoralSceneRef == Coral_map["Coral_1"]){
+        Coral_list.push(Coral_1.name);
       }
-      if (coralSceneRef == Coral_map["coral_2"]){
-        coral_list.push(Coral_2.name);
+      if (CoralSceneRef == Coral_map["Coral_2"]){
+        Coral_list.push(Coral_2.name);
       }
-      if (coralSceneRef == Coral_map["coral_3"]){
-        coral_list.push(Coral_3.name);
+      if (CoralSceneRef == Coral_map["Coral_3"]){
+        Coral_list.push(Coral_3.name);
       }
-      if (coralSceneRef == Coral_map["coral_4"]){
-        coral_list.push(Coral_4.name);
+      if (CoralSceneRef == Coral_map["Coral_4"]){
+        Coral_list.push(Coral_4.name);
       }
-      if (coralSceneRef == Coral_map["coral_5"]){
-        coral_list.push(Coral_5.name);
+      if (CoralSceneRef == Coral_map["Coral_5"]){
+        Coral_list.push(Coral_5.name);
       }
-      if (coralSceneRef == Coral_map["coral_6"]){
-        coral_list.push(Coral_6.name);
+      if (CoralSceneRef == Coral_map["Coral_6"]){
+        Coral_list.push(Coral_6.name);
       }
-      if (coralSceneRef == Coral_map["coral_7"]){
-        coral_list.push(Coral_7.name);
+      if (CoralSceneRef == Coral_map["Coral_7"]){
+        Coral_list.push(Coral_7.name);
       }
-      if (coralSceneRef == Coral_map["coral_8"]){
-        coral_list.push(Coral_8.name);
+      if (CoralSceneRef == Coral_map["Coral_8"]){
+        Coral_list.push(Coral_8.name);
       }
     }
-    console.log("checkCoralList = ",coral_list.length,coral_list);
-    return coral_list;
+    console.log("checkCoralList = ",Coral_list.length,Coral_list);
+    return Coral_list;
   }
   console.log(CoralZone);
   console.log(zoneName);
@@ -405,7 +452,7 @@ async function InitApp() {
     }
     const currentCoralValue = zone[0].getComponent('scene_ref').value;
     console.log("pressed E = ",event.key);
-      // if a plantions is empty call placeCoral() to place a coral
+      // if a plantions is empty call placeCoral() to place a Coral
     if (currentCoralValue == Coral_map["empty_zone"]){
       document.removeEventListener('keypress', checkPlantCoral);
       document.removeEventListener('keypress',placeCoral);
@@ -413,14 +460,14 @@ async function InitApp() {
       return;
     }
 
-    for (const coralKey in Coral_map) {
-      if (currentCoralValue === Coral_map[coralKey]) {
-          const coralIndex = coral_list.indexOf(coralKey);
-          if (coralIndex !== -1) {
-              console.log(`coral = ${coralKey.replace("coral_", "")}`);
-              console.log(coralIndex);
-              coral_list.splice(coralIndex, 1);
-              inventory[`coral_${coralKey}`] += 1;
+    for (const CoralKey in Coral_map) {
+      if (currentCoralValue === Coral_map[CoralKey]) {
+          const CoralIndex = Coral_list.indexOf(CoralKey);
+          if (CoralIndex !== -1) {
+              console.log(`Coral = ${CoralKey.replace("Coral_", "")}`);
+              console.log(CoralIndex);
+              Coral_list.splice(CoralIndex, 1);
+              inventory[`Coral_${CoralKey}`] += 1;
               console.log("inventory =",inventory)
           }
           break; // Sortir de la boucle dès qu'on trouve le corail
@@ -431,7 +478,7 @@ async function InitApp() {
     zone[0].save()
     checkCoralList();
   };
-
+  
   //------------------------------------------------------------------------------
   async function teleport(){
     document.querySelector("#loading-page").style.visibility = "visible";
@@ -440,15 +487,15 @@ async function InitApp() {
     let scriptComponent = currentPlayerController.getComponent("script_map");
     currentPlayerController.setGlobalTransform(tpPointPos);
     console.log(tpPoint.getName());
-    console.log("swim = ",scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"]);
+    console.log("swim = ",scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"]);
     console.log(InsideHubDoorToOutside[0].getName());
     if (tpPoint.getName() == InsideHubDoorToOutside[0].getName()){
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 1;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 1.5;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["runSpeed"] = 5;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 0.2;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = 90.0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"] = 1;
+      scriptComponent.elements[characterControllerUUID].dataJSON["walkSpeed"] = 1.5;
+      scriptComponent.elements[characterControllerUUID].dataJSON["runSpeed"] = 5;
+      scriptComponent.elements[characterControllerUUID].dataJSON["gravityValue"] = 0.2;
+      scriptComponent.elements[characterControllerUUID].dataJSON["pitch"] = 0.0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["yaw"] = 90.0;
       currentPlayerController.setComponent("script_map", scriptComponent);
       setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
 
@@ -456,22 +503,22 @@ async function InitApp() {
       document.removeEventListener('click', teleport);
     }
     else if (tpPoint.getName() == ToHubDoor[0].getName()){
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 2;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["runSpeed"] = 6;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 9.8;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = 90.0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"] = 0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["walkSpeed"] = 2;
+      scriptComponent.elements[characterControllerUUID].dataJSON["runSpeed"] = 6;
+      scriptComponent.elements[characterControllerUUID].dataJSON["gravityValue"] = 9.8;
+      scriptComponent.elements[characterControllerUUID].dataJSON["pitch"] = 0.0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["yaw"] = 90.0;
       currentPlayerController.setComponent("script_map", scriptComponent);
       setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
       document.removeEventListener('click', teleport);
     } else {
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["isSwimming"] = 0;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["walkSpeed"] = 2;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["runSpeed"] = 6;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["gravityValue"] = 9.8;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["pitch"] = 0.0;
-      scriptComponent.elements["f8789590-4a8c-444a-b0f6-362c93762d3e"].dataJSON["yaw"] = -90.0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"] = 0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["walkSpeed"] = 2;
+      scriptComponent.elements[characterControllerUUID].dataJSON["runSpeed"] = 6;
+      scriptComponent.elements[characterControllerUUID].dataJSON["gravityValue"] = 9.8;
+      scriptComponent.elements[characterControllerUUID].dataJSON["pitch"] = 0.0;
+      scriptComponent.elements[characterControllerUUID].dataJSON["yaw"] = -90.0;
       currentPlayerController.setComponent("script_map", scriptComponent);
       setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
       document.removeEventListener('click', teleport);
@@ -483,14 +530,14 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   function adjustCoralList() {
-    const totalCount = coral_list.length;
-    console.log("longueur =",coral_list.length);
-    console.log("coral-list = ",typeof coral_list,coral_list,Array.isArray(coral_list));
+    const totalCount = Coral_list.length;
+    console.log("longueur =",Coral_list.length);
+    console.log("Coral-list = ",typeof Coral_list,Coral_list,Array.isArray(Coral_list));
 
     // Si le nombre total de coraux est inférieur à nbZones, retourner les occurences
     if (totalCount < nbZones) {
-        const adjustedCounts = coral_list.reduce((counts, coralType) => {
-            counts[coralType] = (counts[coralType] || 0) + 1;
+        const adjustedCounts = Coral_list.reduce((counts, CoralType) => {
+            counts[CoralType] = (counts[CoralType] || 0) + 1;
             return counts;
         }, {});
         console.log("adjustedCounts =",adjustedCounts);
@@ -498,19 +545,19 @@ async function InitApp() {
     } else {
 
       // Le reste du code reste inchangé...
-      const proportionalCounts = coral_list.reduce((counts, coralType) => {
-          counts[coralType] = (counts[coralType] || 0) + 1;
+      const proportionalCounts = Coral_list.reduce((counts, CoralType) => {
+          counts[CoralType] = (counts[CoralType] || 0) + 1;
           return counts;
       }, {});
 
       const adjustedProportionalCounts = {};
-      for (const coralType in proportionalCounts) {
-          adjustedProportionalCounts[coralType] = Math.round((proportionalCounts[coralType] / totalCount) * nbZones);
+      for (const CoralType in proportionalCounts) {
+          adjustedProportionalCounts[CoralType] = Math.round((proportionalCounts[CoralType] / totalCount) * nbZones);
       }
 
       const adjustedLengths = {};
-      for (const coralType in adjustedProportionalCounts) {
-          adjustedLengths[coralType] = adjustedProportionalCounts[coralType];
+      for (const CoralType in adjustedProportionalCounts) {
+          adjustedLengths[CoralType] = adjustedProportionalCounts[CoralType];
       }
       console.log("adjusted lenghts", adjustedLengths, adjustedProportionalCounts);
       return adjustedLengths;
@@ -518,11 +565,11 @@ async function InitApp() {
   };
 
   //------------------------------------------------------------------------------
-  function getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones) {
+  function getRandomCoralAndDecrement(adjustedLengths, Coral_list, nbZones) {
     console.log("adjustedLengths:", adjustedLengths);
-    // Si la longueur de coral_list est supérieure à nbZones, sélectionner un corail directement
-    if (coral_list.length > nbZones) {
-        const availableCoralTypes = coral_list.filter(coralType => adjustedLengths[coralType] > 0);
+    // Si la longueur de Coral_list est supérieure à nbZones, sélectionner un corail directement
+    if (Coral_list.length > nbZones) {
+        const availableCoralTypes = Coral_list.filter(CoralType => adjustedLengths[CoralType] > 0);
         if (availableCoralTypes.length === 0) {
             // Aucun type de corail disponible, retourner null ou traiter en conséquence
             return null;
@@ -532,8 +579,8 @@ async function InitApp() {
         return randomCoralType;
     }
 
-    // Si la longueur de coral_list est inférieure ou égale à nbZones, continuer avec la logique précédente
-    const availableCoralTypes = Object.keys(adjustedLengths).filter(coralType => adjustedLengths[coralType] > 0);
+    // Si la longueur de Coral_list est inférieure ou égale à nbZones, continuer avec la logique précédente
+    const availableCoralTypes = Object.keys(adjustedLengths).filter(CoralType => adjustedLengths[CoralType] > 0);
 
     if (availableCoralTypes.length === 0) {
         // Aucun type de corail disponible, retourner null ou traiter en conséquence
@@ -546,26 +593,27 @@ async function InitApp() {
     return randomCoralType;
   };
 
+
   //------------------------------------------------------------------------------
   async function placeCoral(event) {
     console.log("pressed to place =", event.key);
-    const coralIndex = parseInt(event.key);
-    if (coralIndex >= 1 && coralIndex <= 8) {
-      const coralKey = `coral_${coralIndex}`;
-      console.log(inventory[coralKey]);
-      if (inventory[coralKey] > 0){
+    const CoralIndex = parseInt(event.key);
+    if (CoralIndex >= 1 && CoralIndex <= 8) {
+      const CoralKey = `Coral_${CoralIndex}`;
+      console.log(inventory[CoralKey]);
+      if (inventory[CoralKey] > 0){
         console.log(event.key);
-        zone[0].setComponent('scene_ref', { value: Coral_map[coralKey], maxRecursionCount: 1 });
+        zone[0].setComponent('scene_ref', { value: Coral_map[CoralKey], maxRecursionCount: 1 });
         zone[0].save()
-        inventory[coralKey] -= 1;
+        inventory[CoralKey] -= 1;
         console.log("inventory",inventory);
         await checkCoralList();
-        console.log(coral_list);
-        let adjustedLengths = adjustCoralList(coral_list, nbZones);
+        console.log(Coral_list);
+        let adjustedLengths = adjustCoralList(Coral_list, nbZones);
         console.log(adjustedLengths);
         for (let i = 0; i < nbZones; i++) {
-          // Get a random coral type and decrement its count
-          let randomCoral = getRandomCoralAndDecrement(adjustedLengths, coral_list, nbZones);
+          // Get a random Coral type and decrement its count
+          let randomCoral = getRandomCoralAndDecrement(adjustedLengths, Coral_list, nbZones);
           console.log("voici",CoralZone[0].getName());
           console.log(zoneName[i].getName());
           console.log(randomCoral);
@@ -575,12 +623,13 @@ async function InitApp() {
           console.log(`Zone ${i + 1}: ${randomCoral}`);
         }
       }else{
-        console.log("not enough coral :\n", inventory);
+        console.log("not enough Coral :\n", inventory);
       }
 
     //get the occurrences and adapt them to the number of decorztion zone
     }
     document.removeEventListener('keypress', placeCoral);
+    await coralClean();
   };
 
   //------------------------------------------------------------------------------
@@ -694,6 +743,7 @@ async function InitApp() {
     removeEventListener('keydown', laboratoryMenu);
   }
 
+  //------------------------------------------------------------------------------
   function toggleLaboratorySection() {
     // ButtonMerger.classList.toggle("selected_title", Merger);
     // ButtonAnalyser.classList.toggle("selected_title", Analyser);
@@ -844,14 +894,6 @@ async function InitApp() {
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.onExitTrigger((emitterEntity, triggerEntity) => {
     console.log("exit trigger");
-    console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
-    outsideTrigger = false;
-    console.log(outsideTrigger);
-    document.removeEventListener('keydown', checkPlantCoral);
-    document.removeEventListener('keydown', passNightMenu);
-    document.removeEventListener('keydown', laboratoryMenu);
-    document.removeEventListener('click', teleport);
-    
     if (emitterEntity === ToHubDoor[0] || emitterEntity === ToLaboratoryDoor[0] || emitterEntity === OutsideHubDoorToInside[0] || emitterEntity === InsideHubDoorToOutside[0] || emitterEntity.getParent().getName() === "Plantations"){
       console.log("cursor hidden, exit trigger");
       document.querySelector("#door").style.visibility = "hidden";
@@ -859,10 +901,44 @@ async function InitApp() {
       document.querySelector("#take").style.visibility = "hidden";
       document.querySelector("#cross").style.visibility = "visible";
     }
+
+    console.log(emitterEntity.getName()," exit ", triggerEntity.getName());
+    outsideTrigger = false;
+    console.log(outsideTrigger);
+    document.removeEventListener('keydown', checkPlantCoral);
+    document.removeEventListener('keydown', passNightMenu);
+    document.removeEventListener('click', teleport);
   });
+  console.log(Coral_drop['Coral_1']);
+
+  //------------------------------------------------------------------------------
+  async function addCoralDNAToken(){
+    let a = 0;
+    for (let i = 0; i <= Coral_list.length - 1; i++){
+      a += Coral_drop[Coral_list[i]];
+    }
+    inventory["DNA_token"] += a;
+    console.log("DNA_Token =",inventory["DNA_token"])
+  }
+
+  //------------------------------------------------------------------------------
+  async function coralClean(){
+    let b = 0;
+    for(let i = 0; i <= Coral_list.length-1; i++){
+      console.log(Coral_list[i]);
+      b += coralCleaning[Coral_list[i]]
+    }
+    if (b > 100){
+      b=100;
+    }
+    await changeFogOnPercentChange(b/100);
+    console.log("b =",b);
+    console.log(newfogColor);
+  }
+  setInterval(addCoralDNAToken, 10000);
+
 }
 //##############################################################################
-
 
 
 //##############################################################################
@@ -952,11 +1028,10 @@ async function InitFirstPersonController(charCtlSceneUUID) {
 
   // Finally set the first person camera as the main camera.
   SDK3DVerse.setMainCamera(firstPersonCamera);
-  return firstPersonController;
+  return {firstPersonController, playerSceneEntity};
 
 };
 //##############################################################################
-
 
 
 //##############################################################################
@@ -968,7 +1043,7 @@ const anim = new TravelAnimation();
 
 //------------------------------------------------------------------------------
 window.fishes = {};
-async function splinesForFishes()
+async function SplinesForFishes()
 {
   await anim.init();
   //const cube = (await SDK3DVerse.engineAPI.findEntitiesByEUID('51efcfcc-4888-45a9-8b39-736769f0f60a'))[0];
@@ -1023,9 +1098,9 @@ function findTravellingSplineFromEntity(entity) {
 //##############################################################################
 //#                                  TERMINAL                                  #
 //##############################################################################
-/*
+
 //------------------------------------------------------------------------------
-function afficherModale() {
+/*function afficherModale() {
     const modal = document.getElementById('maModal');
     const body = document.body;
     modal.style.display = 'block';
@@ -1033,30 +1108,30 @@ function afficherModale() {
     setTimeout(() => {
         modal.classList.add('show');
     }, 1000); // Delay the addition of 'show' class for the animation to take effect
-  };
+}*/
 
 //------------------------------------------------------------------------------
-function fermerModale() {
-    const modal = document.getElementById('maModal');
-    const body = document.body;
-    modal.classList.remove('show');
-    setTimeout(() => {
-        modal.style.display = 'none';
-        body.classList.remove('body-overlay');
-    }, 1000); // Delay the removal of 'show' class for the animation to take effect
-};
+// function fermerModale() {
+//     const modal = document.getElementById('maModal');
+//     const body = document.body;
+//     modal.classList.remove('show');
+//     setTimeout(() => {
+//         modal.style.display = 'none';
+//         body.classList.remove('body-overlay');
+//     }, 1000); // Delay the removal of 'show' class for the animation to take effect
+// };
+
+// //------------------------------------------------------------------------------
+// window.onclick = function (event) {
+//     const modal = document.getElementById('maModal');
+//     const body = document.body;
+//     if (event.target === modal) {
+//         fermerModale();
+//     }
+// };
 
 //------------------------------------------------------------------------------
-window.onclick = function (event) {
-    const modal = document.getElementById('maModal');
-    const body = document.body;
-    if (event.target === modal) {
-        fermerModale();
-    }
-};
-
-//------------------------------------------------------------------------------
-function validerModal() {
+/*function validerModal() {
     const nom = document.getElementById('nom').value;
     const message = document.getElementById('message').value;
 
@@ -1066,7 +1141,7 @@ function validerModal() {
 
     // Fermer la fen�tre modale apr�s validation
     fermerModale();
-}
-*/
+}*/
 //##############################################################################
+
 
