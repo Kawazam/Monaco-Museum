@@ -211,7 +211,9 @@ async function InitApp() {
     lamp = await getCamChildren[1];
   };
 
+  //------------------------------------------------------------------------------
   async function change_fog_on_percent_change(pollution){
+    // Fonction pour l'interpolation entre la couleur renvoyée par la fonction précédente et la couleur noire
     const rgb1 = color_100_percent_pollution;
     const rgb2 = color_0_percent_pollution;
   
@@ -237,11 +239,8 @@ async function InitApp() {
     cam.setComponent('camera', {dataJSON});
     console.log("newcolor = ",newfogColor);
   }
-  // Fonction pour l'interpolation entre la couleur renvoyée par la fonction précédente et la couleur noire
 
-
-  
-  //----------------------------------------------------------------------s--------
+  //------------------------------------------------------------------------------
   console.log("lamp =",lamp.getName());
   console.log("lamp children = ", getCamChildren)
   lamp.setVisibility(false);
@@ -286,18 +285,19 @@ async function InitApp() {
   });
 
   //------------------------------------------------------------------------------
-  var TimeSetMenuDisplay = false;
-  var CheckboxChecked = false;
-  var CheckboxUnchecked = true;
+  var TimeSetMenuDisplay  = false;
+  var CheckboxChecked     = false;
+  var CheckboxUnchecked   = true;
   var tpPoint;
   let coral_list=[];
 
-  const Couch = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
-  const InsideHubDoorToOutside = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
-  const OutsideHubDoorToInside = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
-  const ToLaboratoryDoor = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
-  const ToHubDoor  = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
-  const coralZone = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
+  const Couch                   = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
+  const InsideHubDoorToOutside  = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
+  const OutsideHubDoorToInside  = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
+  const ToLaboratoryDoor        = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
+  const ToHubDoor               = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
+  const coralZone               = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
+
   const zoneName = await coralZone[0].getChildren();
   const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
   console.log(GlobalPlantation[0]);
