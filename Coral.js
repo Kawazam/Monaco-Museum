@@ -157,7 +157,7 @@ const Coral_drop = {
     empty_zone: emptyZone.drop0
 };
 
-const Coral_cleaning = {
+const CoralCleaning = {
     Coral_1: Coral1.cleaning1,
     Coral_2: Coral2.cleaning2,
     Coral_3: Coral3.cleaning3,
@@ -173,7 +173,7 @@ const Coral_cleaning = {
 export {
     Coral_map,
     Coral_drop,
-    Coral_cleaning,
+    CoralCleaning,
     Coral_1,
     Coral_2,
     Coral_3,

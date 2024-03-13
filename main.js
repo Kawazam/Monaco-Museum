@@ -18,7 +18,7 @@ import {
 import {
   Coral_map,
   Coral_drop,
-  coralCleaning,
+  CoralCleaning,
   Coral_1,
   Coral_2,
   Coral_3,
@@ -346,11 +346,11 @@ async function InitApp() {
   
   // UUID item define
   const Couch                     = await SDK3DVerse.engineAPI.findEntitiesByEUID('63c4825f-10b6-4635-a479-7234dc1229d3');
-  const Laboratory_computer       = await SDK3DVerse.engineAPI.findEntitiesByEUID('b02b546a-db22-4469-ac9f-4bd13867b469');
+  const Laboratory_computer       = await SDK3DVerse.engineAPI.findEntitiesByEUID('8dce73e1-36a9-4481-a987-592995605d40');
   const InsideHubDoorToOutside    = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
   const OutsideHubDoorToInside    = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
   const ToLaboratoryDoor          = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
-  const ToHubDoor                 = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
+  const ToHubDoor                 = await SDK3DVerse.engineAPI.findEntitiesByEUID('822ae584-b1e5-4926-9971-adb6b53a3a27');
   const CoralZone                 = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
 
   // Menu button define
@@ -926,7 +926,7 @@ async function InitApp() {
     let b = 0;
     for(let i = 0; i <= Coral_list.length-1; i++){
       console.log(Coral_list[i]);
-      b += coralCleaning[Coral_list[i]]
+      b += CoralCleaning[Coral_list[i]]
     }
     if (b > 100){
       b=100;
