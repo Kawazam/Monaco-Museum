@@ -265,7 +265,6 @@ async function InitApp() {
 
   //------------------------------------------------------------------------------
   async function changeFogOnPercentChange(pollution){
-    // Fonction pour l'interpolation entre la couleur renvoyée par la fonction précédente et la couleur noire
     const rgb1 = color_100_percent_pollution;
     const rgb2 = color_0_percent_pollution;
   
@@ -278,18 +277,21 @@ async function InitApp() {
     newR = Math.round(rgb1[0] + (diff1R * pollution));
     newG = Math.round(rgb1[1] + (diff1G * pollution));
     newB = Math.round(rgb1[2] + (diff1B * pollution));
-    const cam = getCam[1];
     newfogColor = [newR/255, newG/255, newB/255];
-    const cam_compo = cam.getComponent('camera');
-    const dataJSON = { ...cam_compo.dataJSON };
-    dataJSON.fogColor=newfogColor;
-    dataJSON.fogDistanceDensity = 0.015;
-    dataJSON.fogExtinction = [0.2,0.2,0.2];
-    dataJSON.fogHeightDensity = 2.5;
-    dataJSON.fogInterScattering = [0.2, 0.2, 0.2];
-    dataJSON.fogZeroHeight = 200.777161
-    cam.setComponent('camera', {dataJSON});
-    console.log("newcolor = ",newfogColor);
+    let camList = await SDK3DVerse.engineAPI.findEntitiesByEUID('fc449291-c863-4052-bd19-bccfd61032a3');
+    for (let i = 0; i <= camList.length - 1; i++){
+      let cam = camList[i];
+      const cam_compo = cam.getComponent('camera');
+      const dataJSON = { ...cam_compo.dataJSON };
+      dataJSON.fogColor=newfogColor;
+      dataJSON.fogDistanceDensity = 0.015;
+      dataJSON.fogExtinction = [0.2,0.2,0.2];
+      dataJSON.fogHeightDensity = 2.5;
+      dataJSON.fogInterScattering = [0.2, 0.2, 0.2];
+      dataJSON.fogZeroHeight = 200.777161
+      cam.setComponent('camera', {dataJSON});
+      console.log("newcolor = ",newfogColor);
+    }
   }
 
   //------------------------------------------------------------------------------
@@ -482,13 +484,8 @@ async function InitApp() {
   //------------------------------------------------------------------------------
   async function teleport(){
     document.querySelector("#loading-page").style.visibility = "visible";
-    let tpPointChildren = await tpPoint.getChildren()
-    let tpPointPos = tpPointChildren[0].getGlobalTransform();
+    let tpPointPos;
     let scriptComponent = currentPlayerController.getComponent("script_map");
-    currentPlayerController.setGlobalTransform(tpPointPos);
-    console.log(tpPoint.getName());
-    console.log("swim = ",scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"]);
-    console.log(InsideHubDoorToOutside[0].getName());
     if (tpPoint.getName() == InsideHubDoorToOutside[0].getName()){
       scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"] = 1;
       scriptComponent.elements[characterControllerUUID].dataJSON["walkSpeed"] = 1.5;
@@ -523,6 +520,18 @@ async function InitApp() {
       setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
       document.removeEventListener('click', teleport);
     }
+
+    if (tpPoint.hasChildren()){
+      let tpPointChildren = await tpPoint.getChildren()
+      tpPointPos = tpPointChildren[0].getGlobalTransform();
+    } else {
+      tpPoint = await SDK3DVerse.engineAPI.findEntitiesByEUID('433f4a2d-80fe-48c2-b997-bee1ef0828a7');
+      tpPointPos = tpPoint[0].getGlobalTransform();
+    }
+    
+    currentPlayerController.setGlobalTransform(tpPointPos);
+    console.log("swim = ",scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"]);
+    console.log(InsideHubDoorToOutside[0].getName());
     await delay(2000);
     document.querySelector("#loading-page").style.visibility = "hidden";
     document.removeEventListener('click', teleport);
