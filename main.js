@@ -18,7 +18,7 @@ import {
 import {
   Coral_map,
   Coral_drop,
-  coralCleaning,
+  Coral_cleaning,
   Coral_1,
   Coral_2,
   Coral_3,
@@ -42,14 +42,14 @@ import {
 } from "./Zone.js";
 
 //------------------------------------------------------------------------------
+import TravelAnimation from "./travelAnimation.js";
+
+//------------------------------------------------------------------------------
 import { inventory } from "./inventory.js";
 for (let i = 0; i < inventory.length - 1; i++){
   const index = `coral_${i}`;
   inventory[index] = 5;
 }
-
-//------------------------------------------------------------------------------
-import TravelAnimation from "./travelAnimation.js";
 //##############################################################################
 
 
@@ -350,7 +350,7 @@ async function InitApp() {
   const InsideHubDoorToOutside    = await SDK3DVerse.engineAPI.findEntitiesByEUID('27675405-d3b0-4b14-ac55-cdd78aa43d1d');
   const OutsideHubDoorToInside    = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
   const ToLaboratoryDoor          = await SDK3DVerse.engineAPI.findEntitiesByEUID('922e09b1-b9a9-43af-a8a7-7f49bb59dd53');
-  const ToHubDoor                 = await SDK3DVerse.engineAPI.findEntitiesByEUID('5cb66493-3289-40fa-9b8a-175b1b07b2bc');
+  const ToHubDoor                 = await SDK3DVerse.engineAPI.findEntitiesByEUID('cffd55a8-968b-4e22-a163-33d52ec90854');
   const CoralZone                 = await SDK3DVerse.engineAPI.findEntitiesByEUID('a1584b3a-f729-4e08-a873-a34f6260f90c');
 
   // Menu button define
@@ -489,6 +489,7 @@ async function InitApp() {
     console.log(tpPoint.getName());
     console.log("swim = ",scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"]);
     console.log(InsideHubDoorToOutside[0].getName());
+
     if (tpPoint.getName() == InsideHubDoorToOutside[0].getName()){
       scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"] = 1;
       scriptComponent.elements[characterControllerUUID].dataJSON["walkSpeed"] = 1.5;
@@ -496,19 +497,18 @@ async function InitApp() {
       scriptComponent.elements[characterControllerUUID].dataJSON["gravityValue"] = 0.2;
       scriptComponent.elements[characterControllerUUID].dataJSON["pitch"] = 0.0;
       scriptComponent.elements[characterControllerUUID].dataJSON["yaw"] = 90.0;
+
       currentPlayerController.setComponent("script_map", scriptComponent);
       setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
-
-
       document.removeEventListener('click', teleport);
-    }
-    else if (tpPoint.getName() == ToHubDoor[0].getName()){
+    } else if (tpPoint.getName() == ToHubDoor[0]. getName()){
       scriptComponent.elements[characterControllerUUID].dataJSON["isSwimming"] = 0;
       scriptComponent.elements[characterControllerUUID].dataJSON["walkSpeed"] = 2;
       scriptComponent.elements[characterControllerUUID].dataJSON["runSpeed"] = 6;
       scriptComponent.elements[characterControllerUUID].dataJSON["gravityValue"] = 9.8;
       scriptComponent.elements[characterControllerUUID].dataJSON["pitch"] = 0.0;
       scriptComponent.elements[characterControllerUUID].dataJSON["yaw"] = 90.0;
+
       currentPlayerController.setComponent("script_map", scriptComponent);
       setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
       document.removeEventListener('click', teleport);
@@ -519,6 +519,7 @@ async function InitApp() {
       scriptComponent.elements[characterControllerUUID].dataJSON["gravityValue"] = 9.8;
       scriptComponent.elements[characterControllerUUID].dataJSON["pitch"] = 0.0;
       scriptComponent.elements[characterControllerUUID].dataJSON["yaw"] = -90.0;
+
       currentPlayerController.setComponent("script_map", scriptComponent);
       setTimeout(()=>{SDK3DVerse.engineAPI.assignClientToScripts(currentPlayerController)}, 100);
       document.removeEventListener('click', teleport);
@@ -926,7 +927,7 @@ async function InitApp() {
     let b = 0;
     for(let i = 0; i <= Coral_list.length-1; i++){
       console.log(Coral_list[i]);
-      b += coralCleaning[Coral_list[i]]
+      b += Coral_cleaning[Coral_list[i]]
     }
     if (b > 100){
       b=100;

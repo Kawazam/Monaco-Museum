@@ -1,13 +1,13 @@
 // Définition de l'inventaire comme un objet
 const inventory = {
-    "coral_1": 999,
-    "coral_2": 999,
-    "coral_3": 999,
-    "coral_4": 999,
-    "coral_5": 999,
-    "coral_6": 999,
-    "coral_7": 999,
-    "coral_8": 999,
+    "Coral_1": 999,
+    "Coral_2": 999,
+    "Coral_3": 999,
+    "Coral_4": 999,
+    "Coral_5": 999,
+    "Coral_6": 999,
+    "Coral_7": 999,
+    "Coral_8": 999,
     "DNA_token": 10
 };
 
