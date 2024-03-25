@@ -369,7 +369,7 @@ async function InitApp() {
   var tpPoint;
   let Coral_list=[];
   
-  const zoneName = await CoralZone[0].getChildren();
+  const CoralZoneChildren = await CoralZone[0].getChildren();
   const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
   console.log(GlobalPlantation[0]);
   const GlobalPlantationChildren = await GlobalPlantation[0].getChildren();
@@ -611,11 +611,11 @@ async function InitApp() {
         console.log(Coral_list);
         let adjustedLengths = adjustCoralList(Coral_list, nbZones);
         console.log(adjustedLengths);
-        for (let i = 0; i < nbZones; i++) {
+        for (let i = 0; i < CoralZoneChildren.length - 1; i++) {
           // Get a random Coral type and decrement its count
           let randomCoral = getRandomCoralAndDecrement(adjustedLengths, Coral_list, nbZones);
+          let zoneName = await CoralZoneChildren[i].getChildren();
           console.log("voici",CoralZone[0].getName());
-          console.log(zoneName[i].getName());
           console.log(randomCoral);
           console.log("this = ",zoneCoralPlace[randomCoral])
           zoneName[i].setComponent('scene_ref',{value : zoneCoralPlace[randomCoral], maxRecursionCount: 0});
