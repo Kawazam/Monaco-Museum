@@ -4,7 +4,7 @@ class Zone_1 {
     }
 
     Mesh_specs() {
-        this.ZoneMesh1 = "95372d61-afeb-4a48-a7ad-957a49fcc7be";
+        this.ZoneMesh1 = "188cf95a-1591-41b7-a432-9d2bb02328f4";
     }
 }
 
@@ -14,7 +14,7 @@ class Zone_2 {
     }
 
     Mesh_specs() {
-        this.ZoneMesh2 = "aaf706e4-7c87-492b-9a9a-2b00c0202199";
+        this.ZoneMesh2 = "188cf95a-1591-41b7-a432-9d2bb02328f4";
     }
 }
 
@@ -24,7 +24,7 @@ class Zone_3 {
     }
 
     Mesh_specs() {
-        this.ZoneMesh3 = "76397521-9e28-41d6-b1f2-dc1746442c97";
+        this.ZoneMesh3 = "188cf95a-1591-41b7-a432-9d2bb02328f4";
     }
 }
 
@@ -34,7 +34,7 @@ class Zone_4 {
     }
 
     Mesh_specs() {
-        this.ZoneMesh4 = "e96bf9dd-1bc1-4317-88a1-3f3c2389027d";
+        this.ZoneMesh4 = "0e181907-28af-4722-8106-37033cc9e3b3";
     }
 }
 
@@ -44,7 +44,7 @@ class Zone_5 {
     }
 
     Mesh_specs() {
-        this.ZoneMesh5 = "e6b7e6d7-6a6d-492e-ac10-2e9605b8f442";
+        this.ZoneMesh5 = "346195d1-3a3d-47a6-9a75-002fe28d2673";
     }
 }
 
@@ -54,7 +54,7 @@ class Zone_6 {
     }
 
     Mesh_specs() {
-        this.ZoneMesh6 = "3b8465a1-4fd1-4b65-a569-28d3ee3d1e13";
+        this.ZoneMesh6 = "346195d1-3a3d-47a6-9a75-002fe28d2673";
     }
 }
 
@@ -64,7 +64,17 @@ class Zone_7 {
     }
 
     Mesh_specs() {
-        this.ZoneMesh7 = "611e8267-0334-4aa6-9750-e52436eca903";
+        this.ZoneMesh7 = "48ee7cf5-8fbd-4f55-ba4c-138d8f7a3de6";
+    }
+}
+
+class Zone_8 {
+    constructor() {
+        this.Mesh_specs();
+    }
+
+    Mesh_specs() {
+        this.ZoneMesh8 = "48ee7cf5-8fbd-4f55-ba4c-138d8f7a3de6";
     }
 }
 
@@ -75,6 +85,7 @@ const zone4 = new Zone_4();
 const zone5 = new Zone_5();
 const zone6 = new Zone_6();
 const zone7 = new Zone_7();
+const zone8 = new Zone_8();
 
 const Zone_map = {
     ZonePlace_1: zone1.ZoneMesh1,
@@ -84,6 +95,7 @@ const Zone_map = {
     ZonePlace_5: zone5.ZoneMesh5,
     ZonePlace_6: zone6.ZoneMesh6,
     ZonePlace_7: zone7.ZoneMesh7,
+    ZonePlace_8: zone7.ZoneMesh8,
 };
 
 export {
@@ -95,4 +107,5 @@ export {
     Zone_5,
     Zone_6,
     Zone_7,
+    Zone_8
 };

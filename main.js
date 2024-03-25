@@ -243,9 +243,9 @@ async function InitApp() {
     createDefaultCamera: false,
     startSimulation: "on-assets-loaded",
   });
+  
 
   //------------------------------------------------------------------------------
-  let seconds = 0;
   let newfogColor;
   characterController = await InitFirstPersonController(characterControllerSceneUUID);
   const getCam = await characterController.firstPersonController.getChildren();
@@ -254,7 +254,6 @@ async function InitApp() {
   var dataJSON = camera.getComponent('camera').dataJSON;
   const getCamChildren = await getCam[1].getChildren();
   lamp = await getCamChildren[0];
-
   console.log("debug_anim", characterController.playerSceneEntity);
   //SDK3DVerse.engineAPI.playAnimationSequence('ba7a979b-8238-4f45-a8c8-151b5c0474e0', {playbackSpeed : /*5*/ 5}, characterController.playerSceneEntity);
 
@@ -369,9 +368,8 @@ async function InitApp() {
 
   //Robin's define
   var tpPoint;
-  let Coral_list=[];
   
-  const zoneName = await CoralZone[0].getChildren();
+  const CoralZoneChildren = await CoralZone[0].getChildren();
   const GlobalPlantation = await SDK3DVerse.engineAPI.findEntitiesByNames("Plantations");
   console.log(GlobalPlantation[0]);
   const GlobalPlantationChildren = await GlobalPlantation[0].getChildren();
@@ -394,7 +392,9 @@ async function InitApp() {
   let zone;
   let currentPlayerController;
   let outsideTrigger = false;
+  let Coral_list=[];
   await checkCoralList();
+  await coralClean();
 
   //------------------------------------------------------------------------------
   SDK3DVerse.engineAPI.registerToEvent(engineOutputEventUUID, "log", (event) => console.log(event.dataObject.output));
@@ -445,7 +445,6 @@ async function InitApp() {
     return Coral_list;
   }
   console.log(CoralZone);
-  console.log(zoneName);
 
   //------------------------------------------------------------------------------
   async function checkPlantCoral(event) {
@@ -620,15 +619,14 @@ async function InitApp() {
         console.log(Coral_list);
         let adjustedLengths = adjustCoralList(Coral_list, nbZones);
         console.log(adjustedLengths);
-        for (let i = 0; i < nbZones; i++) {
+        for (let i = 0; i < CoralZoneChildren.length - 1; i++) {
           // Get a random Coral type and decrement its count
           let randomCoral = getRandomCoralAndDecrement(adjustedLengths, Coral_list, nbZones);
           console.log("voici",CoralZone[0].getName());
-          console.log(zoneName[i].getName());
           console.log(randomCoral);
           console.log("this = ",zoneCoralPlace[randomCoral])
-          zoneName[i].setComponent('scene_ref',{value : zoneCoralPlace[randomCoral], maxRecursionCount: 0});
-          zoneName[i].setGlobalTransform(CoralZone[0]);
+          CoralZoneChildren[i].setComponent('scene_ref',{value : zoneCoralPlace[randomCoral], maxRecursionCount: 0});
+          CoralZoneChildren[i].setGlobalTransform(CoralZone[0]);
           console.log(`Zone ${i + 1}: ${randomCoral}`);
         }
       }else{

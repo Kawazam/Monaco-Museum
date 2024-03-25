@@ -262,8 +262,8 @@ body {
   position: absolute;
   height: 100%;
   width: 100%;
-  top: 0;
-  left: 0;
+  top: 0px;
+  left: 0px;
   background-color: #000;
   visibility: hidden;
   background-image: url(img/loading_screen.png);
@@ -281,8 +281,6 @@ body {
   text-align: center;
   font-size: 4em;
   color: #000;
-  /* background-color: #fff;
-  backdrop-filter: blur(10px); */
 }
 /*------------------------------------------------------------*/
 
